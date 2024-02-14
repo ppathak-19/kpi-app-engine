@@ -1,13 +1,11 @@
-import Borders from '@dynatrace/strato-design-tokens/borders';
-import BoxShadows from '@dynatrace/strato-design-tokens/box-shadows';
-import Colors from '@dynatrace/strato-design-tokens/colors';
-import { Flex, Link } from '@dynatrace/strato-components-preview';
-import { Link as RouterLink } from 'react-router-dom';
-import React from 'react';
+import Borders from "@dynatrace/strato-design-tokens/borders";
+import BoxShadows from "@dynatrace/strato-design-tokens/box-shadows";
+import Colors from "@dynatrace/strato-design-tokens/colors";
+import { Flex, Link } from "@dynatrace/strato-components-preview";
+import { Link as RouterLink } from "react-router-dom";
+import React from "react";
 
 type CardProps = {
-  /** Absolute or relative link for the Card */
-  href: string;
   /** The src for the image to show. */
   imgSrc: string;
   /** The name for the Card to show below the image. */
@@ -16,7 +14,7 @@ type CardProps = {
   inAppLink?: boolean;
 };
 
-export const Card = ({ href, inAppLink, imgSrc, name }: CardProps) => {
+export const Card = ({ inAppLink, imgSrc, name }: CardProps) => {
   const content = (
     <Flex flexDirection="column" alignItems="center" gap={24}>
       <img src={imgSrc} alt={name} height="100px" width="100px" />
@@ -31,9 +29,9 @@ export const Card = ({ href, inAppLink, imgSrc, name }: CardProps) => {
       justifyContent="center"
       gap={24}
       style={{
-        width: '210px',
-        height: '210px',
-        textAlign: 'center',
+        width: "210px",
+        height: "210px",
+        textAlign: "center",
         border: `${Colors.Border.Neutral.Default}`,
         borderRadius: `${Borders.Radius.Container.Default}`,
         background: `${Colors.Background.Surface.Default}`,
@@ -42,11 +40,11 @@ export const Card = ({ href, inAppLink, imgSrc, name }: CardProps) => {
     >
       {/* An in-app link needs to be handled by react-router to avoid full page reloads */}
       {inAppLink ? (
-        <Link as={RouterLink} to={href}>
+        <Link as={RouterLink} to={""}>
           {content}
         </Link>
       ) : (
-        <Link target="_blank" href={href} rel="noopener noreferrer">
+        <Link target="_blank" rel="noopener noreferrer">
           {content}
         </Link>
       )}

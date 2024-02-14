@@ -5,6 +5,13 @@
     "version": "0.0.0",
     "description": "A starting project with routing, fetching data, and charting",
     "id": "my.kpi.dashboard",
-    "scopes": [{ "name": "storage:logs:read", "comment": "default template" }, { "name": "storage:buckets:read", "comment": "default template" }]
+    "scopes": [
+      { "name": "storage:logs:read", "comment": "default template" },
+      { "name": "storage:buckets:read", "comment": "default template" },
+      { "name": "environment-api:problems:read", "comment": "problem scope" },
+      { "name": "storage:events:read", "comment": "event scope" },
+      { "name": "storage:buckets:read", "comment": "bucket scope" },
+      { "name": "storage:metrics:read", "comment": "storage scope" }
+    ]
   }
 }
