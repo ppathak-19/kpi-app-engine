@@ -41,6 +41,12 @@ const Home: React.FC<AppCompProps> = () => {
     getListOfClosedProblems();
   }, []);
 
+  useEffect(() => {
+    const getAllProblems = async () => {
+      const allProblemsData = await problemsClient.getProblems();
+    };
+  }, []);
+
   return (
     <>
       {isDataLoaded ? (
