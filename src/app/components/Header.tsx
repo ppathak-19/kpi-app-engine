@@ -1,8 +1,9 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { AppHeader } from '@dynatrace/strato-components-preview';
+import React from "react";
+import { Link } from "react-router-dom";
+import { AppHeader } from "@dynatrace/strato-components-preview";
+import { type AppCompProps } from "types";
 
-export const Header = () => {
+const Header: React.FC<AppCompProps> = () => {
   return (
     <AppHeader>
       <AppHeader.NavItems>
@@ -14,3 +15,5 @@ export const Header = () => {
     </AppHeader>
   );
 };
+
+export default Header;
