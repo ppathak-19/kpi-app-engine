@@ -92,6 +92,12 @@ export const Home = () => {
     getProblemsData();
   }, []);
 
+  useEffect(() => {
+    const getAllProblems = async () => {
+      const allProblemsData = await problemsClient.getProblems();
+    };
+  }, []);
+
   return (
     <>
       <Flex flexDirection="column" alignItems="center" padding={32}>
