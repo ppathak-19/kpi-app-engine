@@ -14,39 +14,23 @@ import {
   convertUTCToDate,
   formatProblemTimeWithDiff,
 } from "../utils/timeConverters";
+import {
+  problemColumns,
+  problemColumnsMTTR,
+} from "../constants/problemTableColumns";
+import { mttdObject, mttrObject } from "../constants/kpis-placeholder";
 
 // const from = "now() - 80d";
 
 // const EVENT_QUERY = `fetch events, from: ${from}`;
 
-import styled from "styled-components";
-import { problemColumns } from "../constants/problemTableColumns";
-
-const StyledContainer = styled.div`
-  outline: solid 1px black;
-  outline-offset: 1px;
-  width: 40%;
-  height: 150px;
-  margin-bottom: 16px;
-`;
-
 export const Home = () => {
   const theme = useCurrentTheme();
-  const [storedMTTDforProblem, setStoredMTTDforProblem] = useState({
-    displayName: "",
-    evidenceType: "",
-    problemStartTime: "",
-    evidenceStartTime: "",
-    mttd: "",
-  });
+  const [storedMTTDforProblem, setStoredMTTDforProblem] = useState(mttdObject);
+  const [storedMTTRforProblem, setStoredMTTRforProblem] = useState(mttrObject);
+
   const [storedMTTDforProblemList, setStoredMTTDforProblemList] = useState([
-    {
-      displayName: "",
-      evidenceType: "",
-      problemStartTime: "",
-      evidenceStartTime: "",
-      mttd: "",
-    },
+    mttdObject,
   ]);
 
   // const resp = useDqlQuery({
@@ -69,55 +53,40 @@ export const Home = () => {
         problemForEvidenceDetail.startTime
       );
 
-      if (problemForEvidenceDetail.evidenceDetails) {
-        const sortProblemEvidence =
-          problemForEvidenceDetail.evidenceDetails.details.sort(
-            (a, b) => a.startTime - b.startTime
-          );
+      if (!problemForEvidenceDetail.evidenceDetails) return;
 
-        const updatedProblemEvidenceArray = sortProblemEvidence?.map(
-          (problem) => {
-            const convertedTime = convertUTCToDate(problem.startTime);
-
-            return {
-              ...problem,
-              startTime: convertedTime,
-            };
-          }
+      const sortProblemEvidence =
+        problemForEvidenceDetail.evidenceDetails.details.sort(
+          (a, b) => a.startTime - b.startTime
         );
 
-        const getEvidenceList = updatedProblemEvidenceArray.map((problem) => {
-          return {
-            displayName: problem.displayName,
-            evidenceType: problem.evidenceType,
-            problemStartTime: convertUTCToTime(
-              problemForEvidenceDetail.startTime
-            ),
-            evidenceStartTime: convertUTCToTime(problem.startTime.getTime()),
-            mttd: formatProblemTimeWithDiff(
-              problemStartTime,
-              problem.startTime
-            ),
-          };
-        });
+      setStoredMTTDforProblem({
+        displayID: problemForEvidenceDetail.displayId,
+        displayName: sortProblemEvidence[0].displayName,
+        evidenceType: sortProblemEvidence[0].evidenceType,
+        problemStartTime: convertUTCToTime(problemForEvidenceDetail.startTime),
+        evidenceStartTime: convertUTCToTime(
+          convertUTCToDate(sortProblemEvidence[0].startTime).getTime()
+        ),
+        mttd: formatProblemTimeWithDiff(
+          problemStartTime,
+          convertUTCToDate(sortProblemEvidence[0].startTime)
+        ),
+      });
 
-        setStoredMTTDforProblemList(getEvidenceList);
-
-        setStoredMTTDforProblem({
-          displayName: updatedProblemEvidenceArray[0].displayName,
-          evidenceType: updatedProblemEvidenceArray[0].evidenceType,
-          problemStartTime: convertUTCToTime(
-            problemForEvidenceDetail.startTime
-          ),
-          evidenceStartTime: convertUTCToTime(
-            updatedProblemEvidenceArray[0].startTime.getTime()
-          ),
-          mttd: formatProblemTimeWithDiff(
-            problemStartTime,
-            updatedProblemEvidenceArray[0].startTime
-          ),
-        });
-      }
+      setStoredMTTRforProblem({
+        displayID: problemForEvidenceDetail.displayId,
+        displayName: sortProblemEvidence[0].displayName,
+        evidenceType: sortProblemEvidence[0].evidenceType,
+        problemStartTime: convertUTCToTime(problemForEvidenceDetail.startTime),
+        problemEndTime: convertUTCToTime(
+          convertUTCToDate(problemForEvidenceDetail.endTime).getTime()
+        ),
+        mttr: formatProblemTimeWithDiff(
+          convertUTCToDate(sortProblemEvidence[0].startTime),
+          convertUTCToDate(problemForEvidenceDetail.endTime)
+        ),
+      });
     };
 
     getProblemsData();
@@ -128,12 +97,12 @@ export const Home = () => {
       <Flex flexDirection="column" alignItems="center" padding={32}>
         <h1>KPI Metric Data</h1>
         <Flex
-          flexDirection="column"
+          flexDirection="row"
           alignItems="center"
           justifyContent="center"
           gap={24}
           style={{
-            width: "55%",
+            width: "100%",
             height: "210px",
             textAlign: "center",
             border: `${Colors.Border.Neutral.Default}`,
@@ -143,10 +112,18 @@ export const Home = () => {
           }}
         >
           <div>
-            <Heading level={2}>MTTD for a problem</Heading>
+            <Heading level={2}>MTTD for a problem evidence</Heading>
             <SimpleTable
               columns={problemColumns}
               data={[storedMTTDforProblem]}
+            />
+          </div>
+
+          <div>
+            <Heading level={2}>MTTR for a problem</Heading>
+            <SimpleTable
+              columns={problemColumnsMTTR}
+              data={[storedMTTRforProblem]}
             />
           </div>
         </Flex>
@@ -180,19 +157,23 @@ export const Home = () => {
           />
         </div>
 
-        <div>
-          <Heading level={2}>MTTR for problems</Heading>
+        {storedMTTDforProblemList.length > 0 ? (
+          <div>
+            <Heading level={2}>MTTR for problems</Heading>
 
-          <SimpleTable
-            variant={{
-              rowDensity: "comfortable",
-              rowSeparation: "zebraStripes",
-              verticalDividers: true,
-            }}
-            columns={problemColumns}
-            data={storedMTTDforProblemList}
-          />
-        </div>
+            <SimpleTable
+              variant={{
+                rowDensity: "comfortable",
+                rowSeparation: "zebraStripes",
+                verticalDividers: true,
+              }}
+              columns={problemColumns}
+              data={storedMTTDforProblemList}
+            />
+          </div>
+        ) : (
+          <h4>No Table data present</h4>
+        )}
       </Flex>
     </>
   );
