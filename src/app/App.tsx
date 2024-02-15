@@ -1,9 +1,9 @@
 import { Page } from "@dynatrace/strato-components-preview";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { Data } from "./pages/Data";
-import { Header } from "./components/Header";
-import { Home } from "./pages/Home";
+import Header from "./components/Header";
+import Data from "./pages/Data";
+import Home from "./pages/Home";
 
 export const App = () => {
   return (

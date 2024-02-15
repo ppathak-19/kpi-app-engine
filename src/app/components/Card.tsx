@@ -1,9 +1,9 @@
+import { Flex, Link } from "@dynatrace/strato-components-preview";
 import Borders from "@dynatrace/strato-design-tokens/borders";
 import BoxShadows from "@dynatrace/strato-design-tokens/box-shadows";
 import Colors from "@dynatrace/strato-design-tokens/colors";
-import { Flex, Link } from "@dynatrace/strato-components-preview";
-import { Link as RouterLink } from "react-router-dom";
 import React from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 type CardProps = {
   /** The src for the image to show. */
@@ -14,7 +14,7 @@ type CardProps = {
   inAppLink?: boolean;
 };
 
-export const Card = ({ inAppLink, imgSrc, name }: CardProps) => {
+const Card: React.FC<CardProps> = ({ inAppLink, imgSrc, name }: CardProps) => {
   const content = (
     <Flex flexDirection="column" alignItems="center" gap={24}>
       <img src={imgSrc} alt={name} height="100px" width="100px" />
@@ -51,3 +51,5 @@ export const Card = ({ inAppLink, imgSrc, name }: CardProps) => {
     </Flex>
   );
 };
+
+export default Card;

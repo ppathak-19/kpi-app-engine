@@ -8,27 +8,35 @@ import {
   TimeseriesChart,
   convertToTimeseries,
   recommendVisualizations,
-} from '@dynatrace/strato-components-preview';
-import { useDqlQuery } from '@dynatrace-sdk/react-hooks';
-import * as Colors from '@dynatrace/strato-design-tokens/colors';
-import { ErrorIcon } from '@dynatrace/strato-icons';
-import React, { useState } from 'react';
+} from "@dynatrace/strato-components-preview";
+import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
+import * as Colors from "@dynatrace/strato-design-tokens/colors";
+import { ErrorIcon } from "@dynatrace/strato-icons";
+import React, { useState } from "react";
+import { type AppCompProps } from "types";
 
-export const Data = () => {
+const Data: React.FC<AppCompProps> = () => {
   const initialQuery =
-    'fetch logs \n| summarize count(), by:{bin(timestamp, 1m)}';
+    "fetch logs \n| summarize count(), by:{bin(timestamp, 1m)}";
 
   const [editorQueryString, setEditorQueryString] =
     useState<string>(initialQuery);
   const [queryString, setQueryString] = useState<string>(initialQuery);
 
   const { data, errorDetails, isLoading, cancel, refetch } = useDqlQuery({
-    body: { query: queryString },
+    body: {
+      query: `fetch events,from: now() - 30d
+      | filter event.status == "CLOSED"
+      | filter event.kind == "DAVIS_PROBLEM"
+      `,
+    },
   });
+
+  console.log(data?.records);
 
   const recommendations = recommendVisualizations(
     data?.records ?? [],
-    data?.types ?? [],
+    data?.types ?? []
   );
 
   // onClickQuery function is executed when the "RUN QUERY" Button is clicked and fetches the data from Grail.
@@ -43,13 +51,13 @@ export const Data = () => {
 
   let queryState: QueryStateType;
   if (errorDetails) {
-    queryState = 'error';
+    queryState = "error";
   } else if (isLoading) {
-    queryState = 'loading';
+    queryState = "loading";
   } else if (data) {
-    queryState = 'success';
+    queryState = "success";
   } else {
-    queryState = 'idle';
+    queryState = "idle";
   }
 
   return (
@@ -72,10 +80,10 @@ export const Data = () => {
           value={queryString}
           onChange={(event) => setEditorQueryString(event)}
         />
-        <Flex justifyContent={errorDetails ? 'space-between' : 'flex-end'}>
+        <Flex justifyContent={errorDetails ? "space-between" : "flex-end"}>
           {errorDetails && (
             <Flex
-              alignItems={'center'}
+              alignItems={"center"}
               style={{ color: Colors.default.Text.Critical.Default }}
             >
               <ErrorIcon />
@@ -87,7 +95,7 @@ export const Data = () => {
           )}
           {!errorDetails &&
             data?.records &&
-            !recommendations.includes('TimeSeriesChart') && (
+            !recommendations.includes("TimeSeriesChart") && (
               <Paragraph>use a query which has time series data</Paragraph>
             )}
           <RunQueryButton
@@ -95,7 +103,7 @@ export const Data = () => {
             queryState={queryState}
           ></RunQueryButton>
         </Flex>
-        {data?.records && recommendations.includes('TimeSeriesChart') && (
+        {data?.records && recommendations.includes("TimeSeriesChart") && (
           <TimeseriesChart
             data={convertToTimeseries(data.records, data.types)}
             gapPolicy="connect"
@@ -106,3 +114,5 @@ export const Data = () => {
     </>
   );
 };
+
+export default Data;
