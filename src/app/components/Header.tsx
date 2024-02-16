@@ -9,7 +9,7 @@ const Header: React.FC<AppCompProps> = () => {
       <AppHeader.NavItems>
         <AppHeader.AppNavLink as={Link} to="/" />
         <AppHeader.NavItem as={Link} to="/data">
-          Explore Data
+          Visualizations
         </AppHeader.NavItem>
       </AppHeader.NavItems>
     </AppHeader>
