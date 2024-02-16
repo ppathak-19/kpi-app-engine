@@ -1,55 +1,40 @@
-import { SimpleTableColumn } from "@dynatrace/strato-components-preview";
+import { TableColumn } from "@dynatrace/strato-components-preview";
 
-export const problemColumns: SimpleTableColumn[] = [
+export const problemColumns: TableColumn[] = [
   {
-    header: "Display ID",
-    accessor: "displayID",
+    header: "Problem Details",
+    id: "problemDetails",
+    columns: [
+      {
+        header: "Display Name",
+        accessor: "displayName",
+      },
+      {
+        header: "Problem ID",
+        accessor: "problemId",
+      },
+      {
+        header: "Problem Start time",
+        accessor: "problemStartTime",
+      },
+      {
+        header: "Problem End time",
+        accessor: "problemEndTime",
+      },
+    ],
   },
   {
-    header: "Display Name",
-    accessor: "displayName",
-  },
-  {
-    header: "Evidence Type",
-    accessor: "evidenceType",
-  },
-  {
-    header: "Problem Start time",
-    accessor: "problemStartTime",
-  },
-  {
-    header: "Evidence Start Time",
-    accessor: "evidenceStartTime",
-  },
-  {
-    header: "MTTD (HH:mm:ss)",
-    accessor: "mttd",
-  },
-];
-
-export const problemColumnsMTTR: SimpleTableColumn[] = [
-  {
-    header: "Display ID",
-    accessor: "displayID",
-  },
-  {
-    header: "Display Name",
-    accessor: "displayName",
-  },
-  {
-    header: "Evidence Type",
-    accessor: "evidenceType",
-  },
-  {
-    header: "Problem Start time",
-    accessor: "problemStartTime",
-  },
-  {
-    header: "Problem End Time",
-    accessor: "problemEndTime",
-  },
-  {
-    header: "MTTR (HH:mm:ss)",
-    accessor: "mttr",
+    header: "KPI's",
+    id: "kpi",
+    columns: [
+      {
+        header: "MTTD (HH:mm:ss)",
+        accessor: "mttd",
+      },
+      {
+        header: "MTTR (HH:mm:ss)",
+        accessor: "mttr",
+      },
+    ],
   },
 ];
