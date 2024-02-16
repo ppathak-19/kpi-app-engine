@@ -20,12 +20,12 @@ const Home: React.FC<AppCompProps> = () => {
           problemSelector: "status(closed)",
         })
         .then((res) => {
-          const aa = res.problems.map(
+          const dataPromises = res.problems.map(
             async (eachProblem) =>
               await convertProbelmsData(eachProblem.problemId)
           );
 
-          Promise.all(aa)
+          Promise.all(dataPromises)
             .then((res) => {
               setTableDataForKPI(res);
               setDataLoaded(true);
@@ -39,12 +39,6 @@ const Home: React.FC<AppCompProps> = () => {
     };
 
     getListOfClosedProblems();
-  }, []);
-
-  useEffect(() => {
-    const getAllProblems = async () => {
-      const allProblemsData = await problemsClient.getProblems();
-    };
   }, []);
 
   return (
