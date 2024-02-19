@@ -28,11 +28,11 @@ export const problemColumns: TableColumn[] = [
     id: "kpi",
     columns: [
       {
-        header: "MTTD (HH:mm:ss)",
+        header: "MTTD (min)",
         accessor: "mttd",
       },
       {
-        header: "MTTR (HH:mm:ss)",
+        header: "MTTR (min)",
         accessor: "mttr",
       },
     ],
