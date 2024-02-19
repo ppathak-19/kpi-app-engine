@@ -1,4 +1,4 @@
-import { type EvidenceArray, type TableDataType } from "types";
+import { type EvidenceArrayType, type TableDataType } from "types";
 import { getProblemDetails } from "./getProblemDetails";
 import {
   convertUTCToDate,
@@ -7,7 +7,7 @@ import {
 } from "./timeConverters";
 
 export const convertProbelmsData = async (problemId: string) => {
-  let updatedProblemEvidenceArray: EvidenceArray[], MTTR, MTTD;
+  let updatedProblemEvidenceArray: EvidenceArrayType[], MTTR, MTTD;
 
   const problemDetails = await getProblemDetails(problemId);
 
