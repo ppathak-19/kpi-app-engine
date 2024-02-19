@@ -1,12 +1,11 @@
 import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   DataTable,
-  Flex,
   ProgressCircle,
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
+import type { AppCompProps, TableDataType } from "types";
 import { problemColumns } from "../constants/problemTableColumns";
-import { TableDataType } from "types";
 
 export interface ResultRecordProps {
   event?: {
@@ -14,12 +13,12 @@ export interface ResultRecordProps {
   };
 }
 
-export const ProblemEvents = () => {
+const ProblemEvents: React.FC<AppCompProps> = () => {
   const initialQuery = `fetch events, from:now() - 30d | filter event.kind == "DAVIS_PROBLEM" | filter event.status == "CLOSED" | limit 50`;
 
   const [problemMttr, setProblemMttr] = useState<TableDataType[]>([]);
 
-  const { data, errorDetails, isLoading, cancel, refetch } = useDqlQuery({
+  const { data, isLoading } = useDqlQuery({
     body: { query: initialQuery },
   });
 
@@ -73,3 +72,5 @@ export const ProblemEvents = () => {
     </div>
   );
 };
+
+export default ProblemEvents;
