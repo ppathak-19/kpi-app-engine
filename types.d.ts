@@ -33,3 +33,10 @@ export type ProblemEvidenceLineChartType = {
     value: string;
   }[];
 };
+
+/** Application Routing Type */
+export type appRoutesType = {
+  path: string;
+  element: React.JSX.Element;
+  label: string;
+};

@@ -1,12 +1,11 @@
 import { Page } from "@dynatrace/strato-components-preview";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import type { AppCompProps } from "types";
 import Header from "./components/Header";
-import Data from "./pages/Data";
-import Home from "./pages/Home";
-import { ProblemEvents } from "./pages/ProblemEvents";
+import { appRoutes } from "./constants/AppRoutes";
 
-export const App = () => {
+const App: React.FC<AppCompProps> = () => {
   return (
     <Page>
       <Page.Header>
@@ -14,11 +13,17 @@ export const App = () => {
       </Page.Header>
       <Page.Main>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/data" element={<Data />} />
-          <Route path="/problem-events" element={<ProblemEvents />} />
+          {appRoutes.map((EachRoute) => (
+            <Route
+              key={EachRoute.path}
+              path={EachRoute.path}
+              element={EachRoute.element}
+            />
+          ))}
         </Routes>
       </Page.Main>
     </Page>
   );
 };
+
+export default App;
