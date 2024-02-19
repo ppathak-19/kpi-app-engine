@@ -16,7 +16,7 @@ const Home: React.FC<AppCompProps> = () => {
     const getListOfClosedProblems = async () => {
       await problemsClient
         .getProblems({
-          from: "now-1m/w",
+          from: "now-7d",
           problemSelector: "status(closed)",
         })
         .then((res) => {

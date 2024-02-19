@@ -11,6 +11,9 @@ const Header: React.FC<AppCompProps> = () => {
         <AppHeader.NavItem as={Link} to="/data">
           Visualizations
         </AppHeader.NavItem>
+        <AppHeader.NavItem as={Link} to="/problem-events">
+          DQL Problem Events
+        </AppHeader.NavItem>
       </AppHeader.NavItems>
     </AppHeader>
   );

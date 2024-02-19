@@ -7,11 +7,27 @@ import {
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
 import { TableDataType, type AppCompProps } from "types";
-import { problemsClient } from "@dynatrace-sdk/client-classic-environment-v2";
+import {
+  Evidence,
+  problemsClient,
+} from "@dynatrace-sdk/client-classic-environment-v2";
 import { convertProbelmsData } from "../utils/convertProblemsData";
 
-import { SingleValue } from "@dynatrace/strato-components-preview/charts";
+import {
+  SingleValue,
+  Timeseries,
+  TimeseriesChart,
+} from "@dynatrace/strato-components-preview/charts";
 import styled from "styled-components";
+import {
+  convertUTCToDate,
+  convertUTCToTime,
+  formatProblemTimeWithDiff,
+} from "../utils/timeConverters";
+
+export interface EvidenceData extends Evidence {
+  endTime?: number;
+}
 
 const StyledContainer = styled.div`
   outline: solid 1px black;
@@ -26,12 +42,14 @@ const StyledContainer = styled.div`
 const Data: React.FC<AppCompProps> = () => {
   const [isDataLoaded, setDataLoaded] = useState(false);
   const [problemsListData, setProblemsListData] = useState<TableDataType[]>([]);
+  const [problemData, setProblemData] = useState<Timeseries[]>([]);
   const [value, setValue] = useState<Timeframe | null>({
     from: "now-7d",
     to: "now",
   });
 
   useEffect(() => {
+    setDataLoaded(false);
     const getListOfClosedProblems = async () => {
       await problemsClient
         .getProblems({
@@ -46,7 +64,7 @@ const Data: React.FC<AppCompProps> = () => {
 
           Promise.all(dataPromises)
             .then((res) => {
-              console.log(res, "response");
+              // console.log(res, "response");
               setProblemsListData(res);
               setDataLoaded(true);
             })
@@ -59,6 +77,46 @@ const Data: React.FC<AppCompProps> = () => {
 
     getListOfClosedProblems();
   }, [value]);
+
+  useEffect(() => {
+    const getEvidenceOfProblem = async () => {
+      await problemsClient
+        .getProblem({
+          problemId: "-5106178591734242686_1708282680000V2",
+        })
+        .then((res) => {
+          if (!res.evidenceDetails) return;
+          const problemEvidenceData: Timeseries[] = [
+            {
+              name: res.displayId,
+              unit: "M",
+              datapoints: res.evidenceDetails.details
+                .sort((a, b) => a.startTime - b.startTime)
+                .map((data: EvidenceData) => {
+                  return {
+                    start: new Date(res.startTime),
+                    end: new Date(data.startTime),
+                    value: Number(
+                      timeStringToMinutes(
+                        formatProblemTimeWithDiff(
+                          convertUTCToDate(res.startTime),
+                          convertUTCToDate(data.startTime)
+                        )
+                      )
+                    ),
+                  };
+                }),
+            },
+          ];
+          setProblemData(problemEvidenceData);
+
+          // console.log(res, "---------------------");
+        })
+        .catch((err) => console.log(err));
+    };
+
+    getEvidenceOfProblem();
+  }, []);
 
   function timeStringToMinutes(timeString) {
     const [hours, minutes, seconds] = timeString.split(":").map(Number);
@@ -75,8 +133,7 @@ const Data: React.FC<AppCompProps> = () => {
     return total + mttdMinutes;
   }, 0);
 
-  console.log(totalMTTDMinutes, "total in min");
-  console.log(totalMTTDMinutes / problemsListData.length, "calculated MTTd");
+  // console.log(totalMTTDMinutes / problemsListData.length, "calculated MTTd");
 
   return (
     <>
@@ -103,7 +160,7 @@ const Data: React.FC<AppCompProps> = () => {
                 <SingleValue
                   data={`MTTD : ${
                     totalMTTDMinutes > 0
-                      ? totalMTTDMinutes / problemsListData.length
+                      ? (totalMTTDMinutes / problemsListData.length).toFixed(2)
                       : 0
                   }min`}
                 />
@@ -124,13 +181,15 @@ const Data: React.FC<AppCompProps> = () => {
                 <SingleValue
                   data={`MTTR : ${
                     totalMTTRMinutes > 0
-                      ? totalMTTRMinutes / problemsListData.length
+                      ? (totalMTTRMinutes / problemsListData.length).toFixed(2)
                       : 0
                   }min`}
                 />
               </StyledContainer>
             </Flex>
           </Flex>
+
+          {/* <TimeseriesChart data={problemData} /> */}
         </>
       ) : (
         <ProgressCircle />
