@@ -1,8 +1,8 @@
-import { type EvidenceArrayType, type TableDataType } from "types";
+import type { EvidenceArrayType, TableDataType } from "types";
 import { getProblemDetails } from "./getProblemDetails";
 import {
+  convertMilliSecondsIntoDate,
   convertUTCToDate,
-  convertUTCToTime,
   formatProblemTimeWithDiff,
 } from "./timeConverters";
 
@@ -58,8 +58,8 @@ export const convertProbelmsData = async (problemId: string) => {
   const res: TableDataType = {
     problemId: problemDetails.problemId,
     displayName: problemDetails.displayId,
-    problemStartTime: convertUTCToTime(problemDetails.startTime),
-    problemEndTime: convertUTCToTime(problemDetails.endTime),
+    problemStartTime: convertMilliSecondsIntoDate(problemDetails.startTime),
+    problemEndTime: convertMilliSecondsIntoDate(problemDetails.endTime),
     // evidenceStartTime: updatedProblemEvidenceArray[0].startTime).toLocaleString(),
     mttd: MTTD,
     mttr: MTTR,
