@@ -23,3 +23,13 @@ export type EvidenceArrayType = {
   groupingEntity?: EntityStub | undefined;
   rootCauseRelevant: boolean;
 };
+
+export type ProblemEvidenceLineChartType = {
+  name: string;
+  unit: string;
+  datapoints: {
+    start: Date;
+    end: Date;
+    value: string;
+  }[];
+};

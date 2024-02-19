@@ -8,18 +8,22 @@ export const problemColumns: TableColumn[] = [
       {
         header: "Display Name",
         accessor: "displayName",
+        autoWidth: true,
       },
       {
         header: "Problem ID",
         accessor: "problemId",
+        autoWidth: true,
       },
       {
         header: "Problem Start time",
         accessor: "problemStartTime",
+        autoWidth: true,
       },
       {
         header: "Problem End time",
         accessor: "problemEndTime",
+        autoWidth: true,
       },
     ],
   },
@@ -28,12 +32,14 @@ export const problemColumns: TableColumn[] = [
     id: "kpi",
     columns: [
       {
-        header: "MTTD (min)",
+        header: "MTTD (HH:mm:ss)",
         accessor: "mttd",
+        autoWidth: true,
       },
       {
-        header: "MTTR (min)",
+        header: "MTTR (HH:mm:ss)",
         accessor: "mttr",
+        autoWidth: true,
       },
     ],
   },
