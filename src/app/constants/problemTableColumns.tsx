@@ -44,3 +44,78 @@ export const problemColumns: TableColumn[] = [
     ],
   },
 ];
+
+export const queryKPITableColumn: TableColumn[] = [
+  {
+    header: "Min",
+    id: "min",
+    columns: [
+      {
+        header: "Last 2 days",
+        accessor: "min2Day",
+      },
+      {
+        header: "Last 7 days",
+        accessor: "min7Day",
+      },
+      {
+        header: "Previous month",
+        accessor: "minMonth",
+      },
+    ],
+  },
+  {
+    header: "Max",
+    id: "max",
+    columns: [
+      {
+        header: "Last 2 days",
+        accessor: "max2Day",
+      },
+      {
+        header: "Last 7 days",
+        accessor: "max7Day",
+      },
+      {
+        header: "Previous month",
+        accessor: "maxMonth",
+      },
+    ],
+  },
+  {
+    header: "Average",
+    id: "avg",
+    columns: [
+      {
+        header: "Last 2 days",
+        accessor: "avg2Day",
+      },
+      {
+        header: "Last 7 days",
+        accessor: "avg7Day",
+      },
+      {
+        header: "Previous month",
+        accessor: "avgMonth",
+      },
+    ],
+  },
+  {
+    header: "Median",
+    id: "median",
+    columns: [
+      {
+        header: "Last 2 days",
+        accessor: "med2Day",
+      },
+      {
+        header: "Last 7 days",
+        accessor: "med7Day",
+      },
+      {
+        header: "Previous month",
+        accessor: "medMonth",
+      },
+    ],
+  },
+];
