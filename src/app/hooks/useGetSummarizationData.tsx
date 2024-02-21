@@ -1,19 +1,17 @@
 import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 
 const useGetSummarizationData = (data: number[]) => {
-  console.log(data);
+  /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
   const summarizedData = useDqlQuery({
     body: {
       query: `
-                  expand ${data}
-                 | summarize sum = sum(${data})
+      data record(a = array(${data}))
+      | fieldsAdd average = arrayAvg(a), max = arrayMax(a), min = arrayMin(a), median = arrayMedian(a)
             `,
     },
   });
 
-  console.log(summarizedData.data?.records);
-
-  return summarizedData.data;
+  return summarizedData;
 };
 
 export default useGetSummarizationData;
