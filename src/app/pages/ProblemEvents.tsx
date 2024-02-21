@@ -10,8 +10,8 @@ import {
   TableColumn,
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
+import type { AppCompProps, TableDataType } from "types";
 import { problemColumns } from "../constants/problemTableColumns";
-import { TableDataType } from "types";
 import {
   convertUTCToDate,
   convertUTCToTime,
@@ -40,7 +40,7 @@ export const ProblemEvents = () => {
 
   const [problemMttr, setProblemMttr] = useState<TableDataType[]>([]);
 
-  const { data, errorDetails, isLoading, cancel, refetch } = useDqlQuery({
+  const { data, isLoading } = useDqlQuery({
     body: { query: initialQuery },
   });
 
@@ -82,9 +82,11 @@ export const ProblemEvents = () => {
             displayName: problem?.["event.name"],
             problemStartTime: problem?.["event.start"],
             problemEndTime: problem?.["event.end"],
-            mttd: formatProblemTimeWithDiff(
-              convertUTCToDate(problem?.["event.start"]),
-              convertUTCToDate(problem?.["res.event.start"])
+            mttd: String(
+              formatProblemTimeWithDiff(
+                convertUTCToDate(problem?.["event.start"]),
+                convertUTCToDate(problem?.["res.event.start"])
+              )
             ),
             mttr: convertUTCToTime(
               Number(problem?.["resolved_problem_duration"] * 1000)
@@ -230,3 +232,5 @@ export const ProblemEvents = () => {
     </div>
   );
 };
+
+export default ProblemEvents;
