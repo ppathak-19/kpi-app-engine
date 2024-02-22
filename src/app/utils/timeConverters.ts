@@ -40,18 +40,44 @@ export function convertMilliSecondsIntoDate(ms: number) {
   return new Date(ms).toString();
 }
 
-export function convertKpiQueryMS_to_Time(milliseconds: number) {
-  let hour, minute;
-  // seconds = Math.floor(milliseconds / 1000);
-  minute = Math.floor(milliseconds / 60000000000);
-  // seconds = seconds % 60;
+/** Converts the given minutes into actual time */
+/** 237 -> 3 Hours 57 minutes */
+
+export function convertKpiQueryMin_to_Time(minute: number) {
+  let hour;
   hour = Math.floor(minute / 60);
   minute = minute % 60;
   const day = Math.floor(hour / 24);
   hour = hour % 24;
-  return {
-    day: day,
-    hour: hour,
-    minute: minute,
-  };
+
+  const finalDays = day > 0 ? `${day} Days` : "";
+  const finalHours = hour > 0 ? `${Math.floor(hour)} Hours` : "";
+  const finalMinutes = minute >= 0 ? `${Math.floor(minute)} minutes` : "";
+
+  const formattedTime = `${finalDays} ${finalHours} ${finalMinutes}`;
+  return formattedTime;
+}
+
+export function formatDate(date: Date) {
+  // leading zero if date/month is single digit
+  const pad = (num) => (num < 10 ? "0" + num : num);
+
+  const year = date.getFullYear();
+  const month = pad(date.getMonth() + 1);
+  const day = pad(date.getDate());
+
+  return `${year}-${month}-${day}T00:00:00Z`;
+}
+
+export function getLastMonth() {
+  const now = new Date();
+  const lastday = new Date(now.getFullYear(), now.getMonth(), 0);
+  const firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
+
+  const formattedStartDate = formatDate(firstday);
+  const formattedEndDate = formatDate(lastday);
+
+  const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+  return timeframe;
 }
