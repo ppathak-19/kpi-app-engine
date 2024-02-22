@@ -1,4 +1,14 @@
 import { TableColumn } from "@dynatrace/strato-components-preview";
+import {
+  averageMTTD,
+  averageMTTR,
+  maxMTTD,
+  maxMTTR,
+  medianMTTD,
+  medianMTTR,
+  minMTTD,
+  minMTTR,
+} from "./KpiFieldConstants";
 
 export const problemColumns: TableColumn[] = [
   {
@@ -32,7 +42,7 @@ export const problemColumns: TableColumn[] = [
     id: "kpi",
     columns: [
       {
-        header: "MTTD (HH:mm:ss)",
+        header: "MTTR (HH:mm:ss)",
         accessor: "mttd",
         autoWidth: true,
       },
@@ -115,6 +125,63 @@ export const queryKPITableColumn: TableColumn[] = [
       {
         header: "Previous month",
         accessor: "medMonth",
+      },
+    ],
+  },
+];
+
+export const queryKPITableColumnV2: TableColumn[] = [
+  {
+    header: "MTTD",
+    id: "mttd",
+    alignment: "center",
+    columns: [
+      {
+        header: "Maximum",
+        accessor: maxMTTD,
+        minWidth: 150,
+      },
+      {
+        header: "Minimum",
+        accessor: minMTTD,
+        minWidth: 130,
+      },
+      {
+        header: "Average",
+        accessor: averageMTTD,
+        minWidth: 150,
+      },
+      {
+        header: "Median",
+        accessor: medianMTTD,
+        minWidth: 150,
+      },
+    ],
+  },
+  {
+    header: "MTTR",
+    id: "mttr",
+    alignment: "center",
+    columns: [
+      {
+        header: "Maximum",
+        accessor: maxMTTR,
+        minWidth: 150,
+      },
+      {
+        header: "Minimum",
+        accessor: minMTTR,
+        minWidth: 130,
+      },
+      {
+        header: "Average",
+        accessor: averageMTTR,
+        minWidth: 150,
+      },
+      {
+        header: "Median",
+        accessor: medianMTTR,
+        minWidth: 150,
       },
     ],
   },

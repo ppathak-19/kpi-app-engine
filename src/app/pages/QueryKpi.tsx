@@ -3,108 +3,32 @@ import {
   Flex,
   Heading,
   Surface,
-  TableColumn,
   TitleBar,
 } from "@dynatrace/strato-components-preview";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import type { AppCompProps } from "types";
-import useGetKPIQueryData from "../hooks/useGetKPIQueryData";
-import useGetSummarizationData from "../hooks/useGetSummarizationData";
-import { queryKPITableColumn } from "../constants/problemTableColumns";
-import {
-  // convertKpiQueryMS_to_Time,
-  convertUTCToDate,
-  formatProblemTimeWithDiff,
-} from "../utils/timeConverters";
-import { ResultRecord } from "@dynatrace-sdk/client-query";
+import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
+import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
+import { getLastMonth } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
-  const dataOfLastDay = useGetKPIQueryData({ timeLine: "now()-10d" });
-  // console.log(dataOfLastDay?.records);
+  /** Getting Metrices for Last 2 Days */
+  const last2DaysData = useGetKPIMetrices({
+    timeline: "now()-2d",
+    shouldUseTimeFrame: false,
+  });
 
-  const [lastDayData, setLastDateData] = useState<(ResultRecord | null)[]>([]);
-  const [mttdArrayList, setMttdArrayList] = useState<number[]>([]);
-  const [mttrArrayList, setMttrArrayList] = useState<number[]>([]);
+  /** Getting Metrices for Last 7 Days */
+  const last7DaysData = useGetKPIMetrices({
+    timeline: "now()-7d",
+    shouldUseTimeFrame: false,
+  });
 
-  useEffect(() => {
-    if (!!dataOfLastDay && dataOfLastDay.records) {
-      const data = dataOfLastDay?.records.map((eachR) => {
-        const mttd = formatProblemTimeWithDiff(
-          convertUTCToDate(eachR?.["event.start"] as string),
-          convertUTCToDate(eachR?.["res.event.start"] as string)
-        );
-
-        const mttr = formatProblemTimeWithDiff(
-          convertUTCToDate(eachR?.["event.start"] as string),
-          convertUTCToDate(eachR?.["event.end"] as string)
-        );
-
-        return {
-          ...eachR,
-          mttdTime: mttd,
-          mttrTime: mttr,
-        };
-      });
-      setLastDateData(data);
-      setMttdArrayList(data.map((ea) => Number(ea.mttdTime)));
-      setMttrArrayList(data.map((ea) => Number(ea.mttrTime)));
-    }
-  }, [dataOfLastDay]);
-  // console.log({ lastDayData, mttdArrayList, mttrArrayList });
-
-  // const [resolvedDuration, setResolvedDuration] = useState<number[]>([]);
-
-  // useEffect(() => {
-  //   if (!!dataOfLastDay && dataOfLastDay.records) {
-  //     const resolved_problem_duration = dataOfLastDay?.records?.map((eachR) =>
-  //       Number(eachR?.resolved_problem_duration)
-  //     );
-
-  //     setResolvedDuration(resolved_problem_duration || []);
-  //   }
-  // }, [dataOfLastDay]);
-
-  const metricData = useGetSummarizationData(mttdArrayList, mttrArrayList);
-  console.log(metricData);
-
-  // const getActualTimeOfData = () => {
-  //   if (
-  //     !!metricData &&
-  //     metricData.data?.records &&
-  //     metricData.data.records.length >= 0
-  //   ) {
-  //     const metrices = metricData?.data?.records[0];
-  //     const averageMTTR = convertKpiQueryMS_to_Time(Number(metrices?.average));
-  //     const maximumMTTR = convertKpiQueryMS_to_Time(Number(metrices?.max));
-  //     const minimumMTTR = convertKpiQueryMS_to_Time(Number(metrices?.min));
-  //     const medianMTTR = convertKpiQueryMS_to_Time(Number(metrices?.median));
-  //     console.log({ maximumMTTR, medianMTTR, minimumMTTR, averageMTTR });
-  //   }
-  // };
-
-  // getActualTimeOfData();
-
-  // useEffect(() => {
-  //   const data = dataOfLastDay?.records.map((eachR) => {
-  //     const mttd = formatProblemTimeWithDiff(
-  //       convertUTCToDate(eachR?.["event.start"] as string),
-  //       convertUTCToDate(eachR?.["res.event.start"] as string)
-  //     );
-
-  //     const mttr = formatProblemTimeWithDiff(
-  //       convertUTCToDate(eachR?.["event.start"] as string),
-  //       convertUTCToDate(eachR?.["event.end"] as string)
-  //     );
-
-  //     return {
-  //       ...eachR,
-  //       mttdTime: mttd,
-  //       mttrTime: mttr,
-  //     };
-  //   });
-
-  //   console.log(data);
-  // }, [dataOfLastDay]);
+  /** Getting Metrices for Previous Month */
+  const last30DaysData = useGetKPIMetrices({
+    timeline: getLastMonth(),
+    shouldUseTimeFrame: true,
+  });
 
   return (
     <Surface>
@@ -112,21 +36,48 @@ const QueryKpi: React.FC<AppCompProps> = () => {
         <TitleBar.Title>KPI for Problems</TitleBar.Title>
       </TitleBar>
       <Flex flexDirection="column" padding={20}>
-        <Heading level={2}>MTTD</Heading>
+        <Heading level={2}>Last 2 Days Data</Heading>
         <DataTable
           resizable
           fullWidth
-          columns={queryKPITableColumn}
-          data={[]}
+          columns={queryKPITableColumnV2}
+          loading={last2DaysData.isLoading}
+          data={!!last2DaysData ? [last2DaysData] : []}
+          variant={{
+            rowDensity: "comfortable",
+            rowSeparation: "zebraStripes",
+            verticalDividers: true,
+          }}
         />
       </Flex>
       <Flex flexDirection="column" padding={20}>
-        <Heading level={2}>MTTR</Heading>
+        <Heading level={2}>Last 7 Days Data</Heading>
         <DataTable
           resizable
           fullWidth
-          columns={queryKPITableColumn}
-          data={[]}
+          columns={queryKPITableColumnV2}
+          loading={last7DaysData.isLoading}
+          data={!!last7DaysData ? [last7DaysData] : []}
+          variant={{
+            rowDensity: "comfortable",
+            rowSeparation: "zebraStripes",
+            verticalDividers: true,
+          }}
+        />
+      </Flex>
+      <Flex flexDirection="column" padding={20}>
+        <Heading level={2}>Previous Month Data</Heading>
+        <DataTable
+          resizable
+          fullWidth
+          columns={queryKPITableColumnV2}
+          loading={last30DaysData.isLoading}
+          data={!!last30DaysData ? [last30DaysData] : []}
+          variant={{
+            rowDensity: "comfortable",
+            rowSeparation: "zebraStripes",
+            verticalDividers: true,
+          }}
         />
       </Flex>
     </Surface>
