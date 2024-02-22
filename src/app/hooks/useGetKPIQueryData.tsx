@@ -1,23 +1,33 @@
-import { QueryResult } from "@dynatrace-sdk/client-query";
+import { type QueryResult } from "@dynatrace-sdk/client-query";
 import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 
 type QueryProps = {
   timeLine: string;
+  shouldUseTimeFrame: boolean;
 };
 
+/** This Hook Returns the `QueryResult of the provided timeline / timeframe` */
 const useGetKPIQueryData = (props: QueryProps): QueryResult | undefined => {
-  const { timeLine } = props;
+  const { timeLine, shouldUseTimeFrame } = props;
 
   const queryData = useDqlQuery({
     body: {
-      query: `// fetching events in given timeline
-      fetch events, from: ${timeLine}
+      query: `// fetching events in given timeline/timeframe
+      fetch events, ${
+        shouldUseTimeFrame === true
+          ? `timeframe:"${timeLine}"`
+          : `from: ${timeLine}`
+      }
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
       | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id
       | fieldsAdd res = lookup([
-          fetch events, from: ${timeLine}
+        fetch events, ${
+          shouldUseTimeFrame === true
+            ? `timeframe:"${timeLine}"`
+            : `from: ${timeLine}`
+        }
           | filter event.kind == "DAVIS_EVENT"
           |  sort timestamp asc
           | fields event.id, event.kind, event.start]
