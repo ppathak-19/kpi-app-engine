@@ -42,7 +42,10 @@ export const ProblemEvents = () => {
     return timeframe;
   }
 
-  const kpiData = useGetKPIQueryData({ timeLine: String(getLastMonth()) });
+  const kpiData = useGetKPIQueryData({
+    timeLine: "",
+    shouldUseTimeFrame: false,
+  });
 
   const [kpiTimeRangeArray, setKpiTimeRangeArray] = useState<any[]>([]);
 
