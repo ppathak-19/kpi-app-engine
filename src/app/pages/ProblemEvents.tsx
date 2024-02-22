@@ -1,22 +1,15 @@
-import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   DataTable,
   Flex,
   Heading,
-  Paragraph,
-  ProgressCircle,
-  SimpleTable,
-  SimpleTableColumn,
-  TableColumn,
+  Surface,
+  TitleBar,
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
-import type { AppCompProps, TableDataType } from "types";
-import { problemColumns } from "../constants/problemTableColumns";
-import {
-  convertUTCToDate,
-  convertUTCToTime,
-  formatProblemTimeWithDiff,
-} from "../utils/timeConverters";
+import { queryKPITableColumn } from "../constants/problemTableColumns";
+
+import useGetKPIQueryData from "../hooks/useGetKPIQueryData";
+import { useGetTotalKpiDifference } from "../hooks/useGetTotalKpiDifference";
 
 export interface ResultRecordProps {
   event?: {
@@ -25,210 +18,69 @@ export interface ResultRecordProps {
 }
 
 export const ProblemEvents = () => {
-  const initialQuery = `fetch events, from: now() - 30d
-  | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
-  | expand dt.davis.event_ids
-   
-  | fieldsAdd res = lookup([
-      fetch events, from: now() - 30d
-      | filter event.kind == "DAVIS_EVENT"
-      | fields event.id, event.kind, event.start, event.end]
-  , sourceField: dt.davis.event_ids, lookupField: event.id) 
-  | fieldsFlatten res
-  | sort res.event.start asc 
-  | dedup event.id`;
+  function formatDate(date) {
+    // leading zero if date/month is single digit
+    const pad = (num) => (num < 10 ? "0" + num : num);
 
-  const [problemMttr, setProblemMttr] = useState<TableDataType[]>([]);
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
 
-  const { data, isLoading } = useDqlQuery({
-    body: { query: initialQuery },
-  });
-
-  console.log(data?.records, "query data");
-
-  function convertMsToTime(timestamp) {
-    const milliseconds = timestamp % 1000;
-    const seconds = Math.floor(timestamp / 1000) % 60;
-    const minutes = Math.floor(timestamp / (1000 * 60)) % 60;
-    const hours = Math.floor(timestamp / (1000 * 60 * 60));
-
-    return `${hours} hours ${minutes} minutes ${seconds} seconds ${milliseconds} milliseconds`;
+    return `${year}-${month}-${day}T00:00:00Z`;
   }
 
+  function getLastMonth() {
+    var now = new Date();
+    var lastday = new Date(now.getFullYear(), now.getMonth(), 0);
+    var firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
+
+    const formattedStartDate = formatDate(firstday);
+    const formattedEndDate = formatDate(lastday);
+
+    const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+    return timeframe;
+  }
+
+  const kpiData = useGetKPIQueryData({ timeLine: String(getLastMonth()) });
+
+  const [kpiTimeRangeArray, setKpiTimeRangeArray] = useState<any[]>([]);
+
+  const [metricsStats] = useGetTotalKpiDifference(kpiData);
+
+  console.log(getLastMonth(), "last month");
+
   useEffect(() => {
-    const getProblemsTableData = () => {
-      if (!data) return;
+    console.log(kpiData, "stats");
+  }, [kpiData]);
 
-      const minutes = Math.floor(
-        Number(data?.records[0]?.["resolved_problem_duration"]) / (1000 * 60)
-      );
-      const minuteValue = minutes / 60;
-      console.log(
-        data?.records[0],
-        minutes,
-        convertMsToTime(
-          Number(data?.records[0]?.["resolved_problem_duration"])
-        ),
-
-        convertUTCToTime(
-          Number(data?.records[0]?.["resolved_problem_duration"]) * 1000
-        )
-      );
-      const problemRecords =
-        data.records &&
-        data.records.map((problem: ResultRecordProps | null) => {
-          return {
-            problemId: problem?.["event.id"],
-            displayName: problem?.["event.name"],
-            problemStartTime: problem?.["event.start"],
-            problemEndTime: problem?.["event.end"],
-            mttd: String(
-              formatProblemTimeWithDiff(
-                convertUTCToDate(problem?.["event.start"]),
-                convertUTCToDate(problem?.["res.event.start"])
-              )
-            ),
-            mttr: convertUTCToTime(
-              Number(problem?.["resolved_problem_duration"] * 1000)
-            ),
-          };
-        });
-
-      setProblemMttr(problemRecords);
-    };
-
-    console.log(new Date(1320000000000), "-");
-
-    getProblemsTableData();
-  }, [data]);
-
-  const sampleColumns: TableColumn[] = [
-    {
-      header: "Min",
-      id: "min",
-      columns: [
-        {
-          header: "last 2 days",
-          accessor: "2day",
-        },
-        {
-          header: "weekly",
-          accessor: "weeday",
-        },
-        {
-          header: "monthly",
-          accessor: "mday",
-        },
-      ],
-    },
-    {
-      header: "Max",
-      id: "max",
-      columns: [
-        {
-          header: "last 2 days",
-          accessor: "max2day",
-        },
-        {
-          header: "weekly",
-          accessor: "maxweekday",
-        },
-        {
-          header: "monthly",
-          accessor: "maxmday",
-        },
-      ],
-    },
-    {
-      header: "Average",
-      id: "avg",
-      columns: [
-        {
-          header: "last 2 days",
-          accessor: "avg2day",
-        },
-        {
-          header: "weekly",
-          accessor: "avgweekly",
-        },
-        {
-          header: "monthly",
-          accessor: "avgmontly",
-        },
-      ],
-    },
-    {
-      header: "Median",
-      id: "median",
-      columns: [
-        {
-          header: "last 2 days",
-          accessor: "me2day",
-        },
-        {
-          header: "weekly",
-          accessor: "meweekly",
-        },
-        {
-          header: "monthly",
-          accessor: "memonth",
-        },
-      ],
-    },
-  ];
-
-  const sampleData = [
-    {
-      min: "et-demo-2-win4",
-      max: "213.4",
-      avg: 5830000000,
-      median: "2022-09-26T12:45:07Z",
-    },
-    {
-      min: "et-demo-2-win4",
-      max: "213.4",
-      avg: 5830000000,
-      median: "2022-09-26T12:45:07Z",
-    },
-  ];
+  console.log(kpiTimeRangeArray, "arrays");
 
   return (
     <div>
-      {isLoading ? (
-        <ProgressCircle />
-      ) : (
-        <>
-          <h3>KPI for Problems</h3>
+      <Surface>
+        <TitleBar>
+          <TitleBar.Title>KPI for Problems</TitleBar.Title>
+        </TitleBar>
+        <Flex flexDirection="column" padding={20}>
+          <Heading level={2}>MTTD</Heading>
           <DataTable
-            columns={problemColumns}
-            data={problemMttr}
-            sortable
             resizable
             fullWidth
-            variant={{
-              rowDensity: "comfortable",
-              rowSeparation: "zebraStripes",
-              verticalDividers: true,
-            }}
-          >
-            <DataTable.ExpandableRow>
-              {({ row }) => {
-                return (
-                  <Flex flexDirection="column">
-                    <Heading level={2}>MTTD</Heading>
-                    <DataTable
-                      resizable
-                      fullWidth
-                      columns={sampleColumns}
-                      data={[]}
-                    />
-                  </Flex>
-                );
-              }}
-            </DataTable.ExpandableRow>
-          </DataTable>
-        </>
-      )}
+            columns={queryKPITableColumn}
+            data={[]}
+          />
+        </Flex>
+        <Flex flexDirection="column" padding={20}>
+          <Heading level={2}>MTTR</Heading>
+          <DataTable
+            resizable
+            fullWidth
+            columns={queryKPITableColumn}
+            data={[]}
+          />
+        </Flex>
+      </Surface>
     </div>
   );
 };
