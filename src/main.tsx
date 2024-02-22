@@ -1,8 +1,8 @@
-import { AppRoot } from '@dynatrace/strato-components-preview';
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
-import { App } from './app/App';
+import { AppRoot } from "@dynatrace/strato-components-preview";
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter } from "react-router-dom";
+import App from "./app/App";
 
 ReactDOM.render(
   <AppRoot>
@@ -10,5 +10,5 @@ ReactDOM.render(
       <App />
     </BrowserRouter>
   </AppRoot>,
-  document.getElementById('root'),
+  document.getElementById("root")
 );

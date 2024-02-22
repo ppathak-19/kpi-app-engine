@@ -1,4 +1,8 @@
 import {
+  Evidence,
+  problemsClient,
+} from "@dynatrace-sdk/client-classic-environment-v2";
+import {
   Flex,
   Heading,
   ProgressCircle,
@@ -7,23 +11,13 @@ import {
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
 import { TableDataType, type AppCompProps } from "types";
-import {
-  Evidence,
-  problemsClient,
-} from "@dynatrace-sdk/client-classic-environment-v2";
 import { convertProbelmsData } from "../utils/convertProblemsData";
 
 import {
   SingleValue,
   Timeseries,
-  TimeseriesChart,
 } from "@dynatrace/strato-components-preview/charts";
 import styled from "styled-components";
-import {
-  convertUTCToDate,
-  convertUTCToTime,
-  formatProblemTimeWithDiff,
-} from "../utils/timeConverters";
 
 export interface EvidenceData extends Evidence {
   endTime?: number;
@@ -96,14 +90,7 @@ const Data: React.FC<AppCompProps> = () => {
                   return {
                     start: new Date(res.startTime),
                     end: new Date(data.startTime),
-                    value: Number(
-                      timeStringToMinutes(
-                        formatProblemTimeWithDiff(
-                          convertUTCToDate(res.startTime),
-                          convertUTCToDate(data.startTime)
-                        )
-                      )
-                    ),
+                    value: 21,
                   };
                 }),
             },
@@ -118,18 +105,13 @@ const Data: React.FC<AppCompProps> = () => {
     getEvidenceOfProblem();
   }, []);
 
-  function timeStringToMinutes(timeString) {
-    const [hours, minutes, seconds] = timeString.split(":").map(Number);
-    return hours * 60 + minutes + seconds / 60;
-  }
-
   const totalMTTDMinutes = problemsListData.reduce((total, obj) => {
-    const mttdMinutes = timeStringToMinutes(obj.mttd);
+    const mttdMinutes = +obj.mttd;
     return total + mttdMinutes;
   }, 0);
 
   const totalMTTRMinutes = problemsListData.reduce((total, obj) => {
-    const mttdMinutes = timeStringToMinutes(obj.mttr);
+    const mttdMinutes = +obj.mttr;
     return total + mttdMinutes;
   }, 0);
 

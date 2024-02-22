@@ -1,12 +1,15 @@
-import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   DataTable,
   Flex,
-  ProgressCircle,
+  Heading,
+  Surface,
+  TitleBar,
 } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
-import { problemColumns } from "../constants/problemTableColumns";
-import { TableDataType } from "types";
+import { queryKPITableColumn } from "../constants/problemTableColumns";
+
+import useGetKPIQueryData from "../hooks/useGetKPIQueryData";
+import { useGetTotalKpiDifference } from "../hooks/useGetTotalKpiDifference";
 
 export interface ResultRecordProps {
   event?: {
@@ -15,61 +18,74 @@ export interface ResultRecordProps {
 }
 
 export const ProblemEvents = () => {
-  const initialQuery = `fetch events, from:now() - 30d | filter event.kind == "DAVIS_PROBLEM" | filter event.status == "CLOSED" | limit 50`;
+  function formatDate(date) {
+    // leading zero if date/month is single digit
+    const pad = (num) => (num < 10 ? "0" + num : num);
 
-  const [problemMttr, setProblemMttr] = useState<TableDataType[]>([]);
+    const year = date.getFullYear();
+    const month = pad(date.getMonth() + 1);
+    const day = pad(date.getDate());
 
-  const { data, errorDetails, isLoading, cancel, refetch } = useDqlQuery({
-    body: { query: initialQuery },
+    return `${year}-${month}-${day}T00:00:00Z`;
+  }
+
+  function getLastMonth() {
+    var now = new Date();
+    var lastday = new Date(now.getFullYear(), now.getMonth(), 0);
+    var firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
+
+    const formattedStartDate = formatDate(firstday);
+    const formattedEndDate = formatDate(lastday);
+
+    const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+    return timeframe;
+  }
+
+  const kpiData = useGetKPIQueryData({
+    timeLine: "",
+    shouldUseTimeFrame: false,
   });
 
-  console.log(data?.records, "query data");
+  const [kpiTimeRangeArray, setKpiTimeRangeArray] = useState<any[]>([]);
+
+  const [metricsStats] = useGetTotalKpiDifference(kpiData);
+
+  console.log(getLastMonth(), "last month");
 
   useEffect(() => {
-    const getProblemsTableData = () => {
-      if (!data) return;
-      const problemRecords =
-        data.records &&
-        data.records.map((problem: ResultRecordProps | null) => {
-          return {
-            problemId: problem?.["event.id"],
-            displayName: problem?.["event.name"],
-            problemStartTime: problem?.["event.start"],
-            problemEndTime: problem?.["event.end"],
-            mttd: "-",
-            mttr: "-",
-          };
-        });
+    console.log(kpiData, "stats");
+  }, [kpiData]);
 
-      setProblemMttr(problemRecords);
-    };
-
-    console.log(new Date(1320000000000), "-");
-
-    getProblemsTableData();
-  }, [data]);
+  console.log(kpiTimeRangeArray, "arrays");
 
   return (
     <div>
-      {isLoading ? (
-        <ProgressCircle />
-      ) : (
-        <>
-          <h3>MTTR for Problems</h3>
+      <Surface>
+        <TitleBar>
+          <TitleBar.Title>KPI for Problems</TitleBar.Title>
+        </TitleBar>
+        <Flex flexDirection="column" padding={20}>
+          <Heading level={2}>MTTD</Heading>
           <DataTable
-            columns={problemColumns}
-            data={problemMttr}
-            sortable
             resizable
             fullWidth
-            variant={{
-              rowDensity: "comfortable",
-              rowSeparation: "zebraStripes",
-              verticalDividers: true,
-            }}
+            columns={queryKPITableColumn}
+            data={[]}
           />
-        </>
-      )}
+        </Flex>
+        <Flex flexDirection="column" padding={20}>
+          <Heading level={2}>MTTR</Heading>
+          <DataTable
+            resizable
+            fullWidth
+            columns={queryKPITableColumn}
+            data={[]}
+          />
+        </Flex>
+      </Surface>
     </div>
   );
 };
+
+export default ProblemEvents;
