@@ -40,3 +40,24 @@ export type appRoutesType = {
   element: React.JSX.Element;
   label: string;
 };
+
+export type RequiredDataResponse = {
+  maxMTTD: string;
+  minMTTD: string;
+  medianMTTD: string;
+  averageMTTD: string;
+  maxMTTR: string;
+  minMTTR: string;
+  medianMTTR: string;
+  averageMTTR: string;
+  isLoading: boolean;
+  isError: ErrorResponse | undefined;
+  minMTTDInMin: number;
+  maxMTTDInMin: number;
+  averageMTTDInMin: number;
+  medianMTTDInMin: number;
+  minMTTRInMin: number;
+  maxMTTRInMin: number;
+  averageMTTRInMin: number;
+  medianMTTRInMin: number;
+};

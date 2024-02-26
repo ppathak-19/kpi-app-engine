@@ -84,7 +84,34 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
     isLoading: mttdsummarizedData.isLoading && mttrsummarizedData.isLoading,
 
     /** Error Indicator */
-    isError: mttrsummarizedData.error && mttdsummarizedData.error,
+    isError: mttdsummarizedData.errorDetails && mttrsummarizedData.errorDetails,
+
+    /** MTTR Data & MTTD in minutes -> directly returning the number */
+    minMTTDInMin: Math.floor(
+      mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number
+    ),
+    maxMTTDInMin: Math.floor(
+      mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number
+    ),
+    averageMTTDInMin: Math.floor(
+      mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number
+    ),
+    medianMTTDInMin: Math.floor(
+      mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number
+    ),
+
+    minMTTRInMin: Math.floor(
+      mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number
+    ),
+    maxMTTRInMin: Math.floor(
+      mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number
+    ),
+    averageMTTRInMin: Math.floor(
+      mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number
+    ),
+    medianMTTRInMin: Math.floor(
+      mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number
+    ),
   };
 
   return response;
