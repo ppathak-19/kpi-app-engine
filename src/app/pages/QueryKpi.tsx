@@ -6,11 +6,14 @@ import {
   Surface,
   TitleBar,
 } from "@dynatrace/strato-components-preview";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { AppCompProps } from "types";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import { getLastMonth } from "../utils/timeConverters";
+import {
+  getLastMonth,
+  getTwoDaysBeforeLastTwoDays,
+} from "../utils/timeConverters";
 import { InformationIcon, SettingIcon } from "@dynatrace/strato-icons";
 import { InfoModal } from "../components/modals/InfoModal";
 import { SettingsModal } from "../components/modals/settingsModal";
@@ -36,6 +39,10 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     timeline: getLastMonth(),
     shouldUseTimeFrame: true,
   });
+
+  useEffect(() => {
+    getTwoDaysBeforeLastTwoDays();
+  }, []);
 
   return (
     <Surface>
