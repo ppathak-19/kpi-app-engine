@@ -16,11 +16,11 @@ export const appRoutes: appRoutesType[] = [
     element: <Data />,
     label: "Data Visualizations",
   },
-  {
-    path: "/problem-events-v1",
-    element: <ProblemEvents />,
-    label: "DQL Problem Events",
-  },
+  // {
+  //   path: "/problem-events-v1",
+  //   element: <ProblemEvents />,
+  //   label: "DQL Problem Events",
+  // },
   {
     path: "/kpi-query-v2",
     element: <QueryKpi />,

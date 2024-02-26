@@ -81,3 +81,21 @@ export function getLastMonth() {
 
   return timeframe;
 }
+
+export function getTwoDaysBeforeLastTwoDays() {
+  let currentDate = new Date();
+  let twoDaysAgo = new Date(currentDate);
+  twoDaysAgo.setDate(currentDate.getDate() - 4);
+  let twoDaysAfter = new Date(currentDate);
+  twoDaysAfter.setDate(currentDate.getDate() - 2);
+
+  let startDate = twoDaysAgo.toString();
+  let endDate = twoDaysAfter.toString();
+
+  const formattedStartDate = formatDate(new Date(startDate));
+  const formattedEndDate = formatDate(new Date(endDate));
+
+  const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+  return timeframe;
+}

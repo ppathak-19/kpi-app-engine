@@ -1,17 +1,27 @@
 import {
+  Button,
   DataTable,
   Flex,
   Heading,
   Surface,
   TitleBar,
 } from "@dynatrace/strato-components-preview";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import type { AppCompProps } from "types";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import { getLastMonth } from "../utils/timeConverters";
+import {
+  getLastMonth,
+  getTwoDaysBeforeLastTwoDays,
+} from "../utils/timeConverters";
+import { InformationIcon, SettingIcon } from "@dynatrace/strato-icons";
+import { InfoModal } from "../components/modals/InfoModal";
+import { SettingsModal } from "../components/modals/settingsModal";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
+  const [infoModalState, setInfoModalState] = useState(false);
+  const [settingsModalState, setSettingsModalState] = useState(false);
+
   /** Getting Metrices for Last 2 Days */
   const last2DaysData = useGetKPIMetrices({
     timeline: "now()-2d",
@@ -30,10 +40,33 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     shouldUseTimeFrame: true,
   });
 
+  useEffect(() => {
+    getTwoDaysBeforeLastTwoDays();
+  }, []);
+
   return (
     <Surface>
       <TitleBar>
-        <TitleBar.Title>KPI for Problems</TitleBar.Title>
+        <TitleBar.Title>Problems Overview</TitleBar.Title>
+        <TitleBar.Suffix>
+          <Flex gap={4}>
+            <Button
+              variant="default"
+              data-testid="open-info-modal-button"
+              onClick={() => setInfoModalState(true)}
+            >
+              <Button.Prefix>{<InformationIcon />}</Button.Prefix>
+              Info
+            </Button>
+            <Button
+              variant="default"
+              data-testid="open-settings-modal-button"
+              onClick={() => setSettingsModalState(true)}
+            >
+              <Button.Prefix>{<SettingIcon />}</Button.Prefix>Settings
+            </Button>
+          </Flex>
+        </TitleBar.Suffix>
       </TitleBar>
       <Flex flexDirection="column" padding={20}>
         <Heading level={2}>Last 2 Days Data</Heading>
@@ -80,6 +113,15 @@ const QueryKpi: React.FC<AppCompProps> = () => {
           }}
         />
       </Flex>
+
+      <InfoModal
+        infoModalState={infoModalState}
+        setInfoModalState={setInfoModalState}
+      />
+      <SettingsModal
+        settingsModalState={settingsModalState}
+        setSettingsModalState={setSettingsModalState}
+      />
     </Surface>
   );
 };
