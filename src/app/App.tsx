@@ -56,21 +56,19 @@ const App: React.FC<AppCompProps> = () => {
           }
         >
           {/* Modal For User Input */}
-          <Flex gap={4}>
-            <Flex flexDirection="column" gap={12}>
-              <KPINumberInput
-                label="Baseline MTTD"
-                value={initialMttdValue}
-                onChange={setMttdValue}
-                placeholder="Enter baseline for MTTD"
-              />
-              <KPINumberInput
-                label="Baseline MTTR"
-                value={initialMttrValue}
-                onChange={setMttrValue}
-                placeholder="Enter baseline for MTTR"
-              />
-            </Flex>
+          <Flex flexDirection="column" gap={12}>
+            <KPINumberInput
+              label="Baseline MTTD"
+              value={initialMttdValue}
+              onChange={setMttdValue}
+              placeholder="Enter baseline for MTTD"
+            />
+            <KPINumberInput
+              label="Baseline MTTR"
+              value={initialMttrValue}
+              onChange={setMttrValue}
+              placeholder="Enter baseline for MTTR"
+            />
           </Flex>
 
           {/* nested modal for successfull save or not */}
