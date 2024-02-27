@@ -10,10 +10,7 @@ import React, { useEffect, useState } from "react";
 import type { AppCompProps } from "types";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import {
-  getLastMonth,
-  getTwoDaysBeforeLastTwoDays,
-} from "../utils/timeConverters";
+import { getLastMonth } from "../utils/timeConverters";
 import { InformationIcon, SettingIcon } from "@dynatrace/strato-icons";
 import { InfoModal } from "../components/modals/InfoModal";
 import { SettingsModal } from "../components/modals/settingsModal";
@@ -36,13 +33,9 @@ const QueryKpi: React.FC<AppCompProps> = () => {
 
   /** Getting Metrices for Previous Month */
   const last30DaysData = useGetKPIMetrices({
-    timeline: getLastMonth(),
+    timeline: getLastMonth(1),
     shouldUseTimeFrame: true,
   });
-
-  useEffect(() => {
-    getTwoDaysBeforeLastTwoDays();
-  }, []);
 
   return (
     <Surface>
