@@ -10,7 +10,7 @@ import {
   minMTTR,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
-import useGetAppState from "./useGetAppState";
+import { useMetricsContext } from "./context/MetricsContext";
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
 const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
@@ -36,8 +36,9 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
 
   // console.log({ mttdsummarizedData, mttrsummarizedData });
 
-  const { data } = useGetAppState({ key: "data" });
-  console.log({ data });
+  const { initialMttdValue, initialMttrValue } = useMetricsContext();
+
+  console.log(initialMttdValue, initialMttrValue, "from other component");
 
   const response = {
     /** MTTD Data */

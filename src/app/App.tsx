@@ -9,6 +9,8 @@ import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
 import { InformationModalData } from "./constants/ModalData";
 import Home from "./pages/Home";
 import { setAppState } from "./utils/appState";
+import { stateClient } from "@dynatrace-sdk/client-state";
+import { useMetricsContext } from "./hooks/context/MetricsContext";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -16,14 +18,41 @@ const App: React.FC<AppCompProps> = () => {
   const [settingsModalState, setSettingsModalState] = useState(false);
   const [showNestedModal, setNestedModalState] = useState(false);
 
-  /** States For Baseline mttr,mttd values */
-  const [initialMttdValue, setMttdValue] = useState<number | null>(0);
-  const [initialMttrValue, setMttrValue] = useState<number | null>(0);
+  const { initialMttdValue, initialMttrValue, setMetricsData } =
+    useMetricsContext();
+
+  const [infoModalState2, setInfoModalState2] = useState(false);
 
   useEffect(() => {
-    const metrices = { initialMttdValue, initialMttrValue };
-    setAppState({ key: "data", value: JSON.stringify(metrices) });
-  }, []);
+    const setMetricsDatafunc = async () => {
+      try {
+        const res = await stateClient.getAppState({ key: "data" });
+        const prevStoredAppData = JSON.parse(res.value);
+        setMetricsData(prevStoredAppData);
+
+        console.log(
+          prevStoredAppData.initialMttdValue,
+          prevStoredAppData.initialMttrValue,
+          "value"
+        );
+
+        setAppState({
+          key: "data",
+          value: JSON.stringify(prevStoredAppData),
+        });
+      } catch (err) {
+        setAppState({
+          key: "data",
+          value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+        });
+        console.log(err);
+      } finally {
+        setInfoModalState2(false);
+      }
+    };
+
+    setMetricsDatafunc();
+  }, [infoModalState2]);
 
   return (
     <Page>
@@ -55,13 +84,13 @@ const App: React.FC<AppCompProps> = () => {
             <KPIButton
               label="Save"
               onClick={async () => {
-                // console.log({ initialMttdValue, initialMttrValue });
                 setNestedModalState(true);
-                const data = {
-                  initialMttdValue,
-                  initialMttrValue,
-                };
-                await setAppState({ key: "data", value: JSON.stringify(data) });
+                setInfoModalState2(true);
+
+                await setAppState({
+                  key: "data",
+                  value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+                });
               }}
             />
           }
@@ -71,13 +100,17 @@ const App: React.FC<AppCompProps> = () => {
             <KPINumberInput
               label="Baseline MTTD"
               value={initialMttdValue}
-              onChange={setMttdValue}
+              onChange={(value: number) =>
+                setMetricsData({ initialMttdValue: value })
+              }
               placeholder="Enter baseline for MTTD"
             />
             <KPINumberInput
               label="Baseline MTTR"
               value={initialMttrValue}
-              onChange={setMttrValue}
+              onChange={(value: number) =>
+                setMetricsData({ initialMttrValue: value })
+              }
               placeholder="Enter baseline for MTTR"
             />
           </Flex>
