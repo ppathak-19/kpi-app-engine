@@ -11,7 +11,15 @@
       { "name": "environment-api:problems:read", "comment": "problem scope" },
       { "name": "storage:events:read", "comment": "event scope" },
       { "name": "storage:buckets:read", "comment": "bucket scope" },
-      { "name": "storage:metrics:read", "comment": "storage scope" }
+      { "name": "storage:metrics:read", "comment": "storage scope" },
+      {
+        "name": "state:app-states:write",
+        "comment": "Access to write app state"
+      },
+      {
+        "name": "state:app-states:read",
+        "comment": "Access to read app state"
+      }
     ]
   }
 }

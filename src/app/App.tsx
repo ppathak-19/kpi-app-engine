@@ -1,5 +1,5 @@
 import { Flex, Page } from "@dynatrace/strato-components-preview";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
 import Header from "./components/Header";
@@ -8,6 +8,7 @@ import KPIModal from "./components/ReusableComponents/KPIModal";
 import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
 import { InformationModalData } from "./constants/ModalData";
 import Home from "./pages/Home";
+import { setAppState } from "./utils/appState";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -18,6 +19,11 @@ const App: React.FC<AppCompProps> = () => {
   /** States For Baseline mttr,mttd values */
   const [initialMttdValue, setMttdValue] = useState<number | null>(0);
   const [initialMttrValue, setMttrValue] = useState<number | null>(0);
+
+  useEffect(() => {
+    const metrices = { initialMttdValue, initialMttrValue };
+    setAppState({ key: "data", value: JSON.stringify(metrices) });
+  }, []);
 
   return (
     <Page>
@@ -48,9 +54,14 @@ const App: React.FC<AppCompProps> = () => {
           footer={
             <KPIButton
               label="Save"
-              onClick={() => {
-                console.log({ initialMttdValue, initialMttrValue });
+              onClick={async () => {
+                // console.log({ initialMttdValue, initialMttrValue });
                 setNestedModalState(true);
+                const data = {
+                  initialMttdValue,
+                  initialMttrValue,
+                };
+                await setAppState({ key: "data", value: JSON.stringify(data) });
               }}
             />
           }
