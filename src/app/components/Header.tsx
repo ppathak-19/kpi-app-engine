@@ -1,20 +1,41 @@
-import { AppHeader } from "@dynatrace/strato-components-preview";
+import { Button, Flex, TitleBar } from "@dynatrace/strato-components-preview";
+import { InformationIcon, SettingIcon } from "@dynatrace/strato-icons";
 import React from "react";
-import { Link } from "react-router-dom";
-import type { AppCompProps } from "types";
-import { appRoutes } from "../constants/AppRoutes";
 
-const Header: React.FC<AppCompProps> = () => {
+type HeaderProps = {
+  setInfoModalState: React.Dispatch<React.SetStateAction<boolean>>;
+  setSettingModalState: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Header: React.FC<HeaderProps> = (props) => {
+  const { setInfoModalState, setSettingModalState } = props;
   return (
-    <AppHeader>
-      <AppHeader.NavItems>
-        {appRoutes.map((eachRoute) => (
-          <AppHeader.NavItem as={Link} to={eachRoute.path} key={eachRoute.path}>
-            {eachRoute.label}
-          </AppHeader.NavItem>
-        ))}
-      </AppHeader.NavItems>
-    </AppHeader>
+    <Flex p={8}>
+      <TitleBar>
+        <TitleBar.Title>Business Impact App</TitleBar.Title>
+        <TitleBar.Suffix>
+          <TitleBar.Suffix>
+            <Flex gap={4}>
+              <Button
+                variant="default"
+                data-testid="open-info-modal-button"
+                onClick={() => setInfoModalState(true)}
+              >
+                <Button.Prefix>{<InformationIcon />}</Button.Prefix>
+                Info
+              </Button>
+              <Button
+                variant="default"
+                data-testid="open-settings-modal-button"
+                onClick={() => setSettingModalState(true)}
+              >
+                <Button.Prefix>{<SettingIcon />}</Button.Prefix>Settings
+              </Button>
+            </Flex>
+          </TitleBar.Suffix>
+        </TitleBar.Suffix>
+      </TitleBar>
+    </Flex>
   );
 };
 
