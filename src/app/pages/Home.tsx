@@ -1,11 +1,20 @@
-import { Surface } from "@dynatrace/strato-components-preview/layouts-core";
-import React from "react";
-import type { AppCompProps } from "types";
+import {
+  Flex,
+  Surface,
+} from "@dynatrace/strato-components-preview/layouts-core";
+import { Tooltip } from "@dynatrace/strato-components-preview/overlays";
+import { Text } from "@dynatrace/strato-components-preview/typography";
 import { WarningIcon } from "@dynatrace/strato-icons";
+import React from "react";
 import QueryKpi from "./QueryKpi";
 
-const Home: React.FC<AppCompProps> = () => {
-  const isUserInputtedData = true;
+type HomeCompProps = {
+  setModalState: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+const Home: React.FC<HomeCompProps> = (props) => {
+  const { setModalState } = props;
+  const isUserInputtedData = false;
 
   return (
     <Surface>
@@ -15,7 +24,24 @@ const Home: React.FC<AppCompProps> = () => {
         </>
       ) : (
         <>
-          <WarningIcon />
+          {/* <Tooltip text="Click Here to add values">
+            <WarningIcon />
+          </Tooltip>
+          <Button onClick={() => console.log("first")}>
+            <Text>Click Here to add the BaseLine Values For Calculations</Text>
+          </Button> */}
+          <Flex>
+            <Flex>
+              <Tooltip text="Click Here to add values">
+                <WarningIcon />
+              </Tooltip>
+            </Flex>
+            <Flex onClick={() => setModalState(true)}>
+              <Text>
+                Click Here to add the BaseLine Values For Calculations
+              </Text>
+            </Flex>
+          </Flex>
         </>
       )}
     </Surface>
