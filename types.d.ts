@@ -61,3 +61,11 @@ export type RequiredDataResponse = {
   averageMTTRInMin: number;
   medianMTTRInMin: number;
 };
+
+/** Query Props */
+export type QueryProps = {
+  timeLine1: "now()-7d" | "now()-2d" | "now()-30d" | string;
+  shouldUseTimeFrame1: boolean;
+  timeLine2: "now()-7d" | "now()-2d" | "now()-30d" | string;
+  shouldUseTimeFrame2: boolean;
+};
