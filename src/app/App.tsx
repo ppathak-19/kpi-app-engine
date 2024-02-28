@@ -1,5 +1,5 @@
 import { Flex, Page } from "@dynatrace/strato-components-preview";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
 import Header from "./components/Header";
@@ -9,6 +9,7 @@ import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
 import { InformationModalData } from "./constants/ModalData";
 import Home from "./pages/Home";
 import { setAppState } from "./utils/appState";
+// import { useSetAppState } from "@dynatrace-sdk/react-hooks";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -19,11 +20,6 @@ const App: React.FC<AppCompProps> = () => {
   /** States For Baseline mttr,mttd values */
   const [initialMttdValue, setMttdValue] = useState<number | null>(0);
   const [initialMttrValue, setMttrValue] = useState<number | null>(0);
-
-  useEffect(() => {
-    const metrices = { initialMttdValue, initialMttrValue };
-    setAppState({ key: "data", value: JSON.stringify(metrices) });
-  }, []);
 
   return (
     <Page>
@@ -36,7 +32,10 @@ const App: React.FC<AppCompProps> = () => {
       <Page.Main>
         {/* Any Additonal Routes Needed, you can add here */}
         <Routes>
-          <Route element={<Home />} path="/" />
+          <Route
+            element={<Home setModalState={setSettingsModalState} />}
+            path="/"
+          />
         </Routes>
 
         {/* Modals For Info & Settings */}
