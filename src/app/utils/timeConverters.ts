@@ -100,14 +100,14 @@ export function getLastMonth(monthsBefore) {
 
 // gets days before past days
 export function getBeforePastDays(numberOfDays) {
-  let currentDate = new Date();
-  let twoDaysAgo = new Date(currentDate);
+  const currentDate = new Date();
+  const twoDaysAgo = new Date(currentDate);
   twoDaysAgo.setDate(currentDate.getDate() - (numberOfDays + numberOfDays));
-  let twoDaysAfter = new Date(currentDate);
+  const twoDaysAfter = new Date(currentDate);
   twoDaysAfter.setDate(currentDate.getDate() - numberOfDays);
 
-  let startDate = twoDaysAgo.toString();
-  let endDate = twoDaysAfter.toString();
+  const startDate = twoDaysAgo.toString();
+  const endDate = twoDaysAfter.toString();
 
   const formattedStartDate = formatDate(new Date(startDate));
   const formattedEndDate = formatDate(new Date(endDate));
