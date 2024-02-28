@@ -10,7 +10,6 @@ import {
   minMTTR,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
-import useGetAppState from "./useGetAppState";
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
 const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
@@ -35,9 +34,6 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
   });
 
   // console.log({ mttdsummarizedData, mttrsummarizedData });
-
-  const { data } = useGetAppState({ key: "data" });
-  console.log({ data });
 
   const response = {
     /** MTTD Data */
@@ -117,6 +113,20 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
       mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number
     ),
   };
+
+  // const responseInPercentage = {
+  //   [minMTTD]: calculatePercentage(response.minMTTDInMin, baselineMTTD),
+  //   [maxMTTD]: calculatePercentage(response.maxMTTDInMin, baselineMTTD),
+  //   [averageMTTD]: calculatePercentage(response.averageMTTRInMin, baselineMTTD),
+  //   [medianMTTD]: calculatePercentage(response.medianMTTDInMin, baselineMTTD),
+
+  //   [minMTTR]: calculatePercentage(response.minMTTRInMin, baselineMTTR),
+  //   [maxMTTR]: calculatePercentage(response.maxMTTRInMin, baselineMTTR),
+  //   [averageMTTR]: calculatePercentage(response.averageMTTRInMin, baselineMTTR),
+  //   [medianMTTR]: calculatePercentage(response.medianMTTRInMin, baselineMTTR),
+  // };
+
+  // console.log({ responseInPercentage });
 
   return response;
 };
