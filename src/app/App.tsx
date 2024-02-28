@@ -1,4 +1,4 @@
-import { Flex, Page } from "@dynatrace/strato-components-preview";
+import { Flex, Page, showToast } from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
@@ -16,12 +16,10 @@ const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
   const [infoModalState, setInfoModalState] = useState(false);
   const [settingsModalState, setSettingsModalState] = useState(false);
-  const [showNestedModal, setNestedModalState] = useState(false);
-
   const { initialMttdValue, initialMttrValue, setMetricsData } =
     useMetricsContext();
 
-  const [infoModalState2, setInfoModalState2] = useState(false);
+  const [modalCloseIndication, setModalCloseIndication] = useState(false);
 
   useEffect(() => {
     const setMetricsDatafunc = async () => {
@@ -29,12 +27,6 @@ const App: React.FC<AppCompProps> = () => {
         const res = await stateClient.getAppState({ key: "data" });
         const prevStoredAppData = JSON.parse(res.value);
         setMetricsData(prevStoredAppData);
-
-        console.log(
-          prevStoredAppData.initialMttdValue,
-          prevStoredAppData.initialMttrValue,
-          "value"
-        );
 
         setAppState({
           key: "data",
@@ -47,12 +39,12 @@ const App: React.FC<AppCompProps> = () => {
         });
         console.log(err);
       } finally {
-        setInfoModalState2(false);
+        setModalCloseIndication(false);
       }
     };
 
     setMetricsDatafunc();
-  }, [infoModalState2]);
+  }, [modalCloseIndication]);
 
   return (
     <Page>
@@ -84,8 +76,14 @@ const App: React.FC<AppCompProps> = () => {
             <KPIButton
               label="Save"
               onClick={async () => {
-                setNestedModalState(true);
-                setInfoModalState2(true);
+                setModalCloseIndication(true);
+                setSettingsModalState(false);
+
+                showToast({
+                  type: "success",
+                  title: "Success",
+                  message: <>Baseline Added Successfully.</>,
+                });
 
                 await setAppState({
                   key: "data",
@@ -114,18 +112,6 @@ const App: React.FC<AppCompProps> = () => {
               placeholder="Enter baseline for MTTR"
             />
           </Flex>
-
-          {/* nested modal for successfull save or not */}
-          <KPIModal
-            modalTitle="Nested Modal"
-            open={showNestedModal}
-            onClose={() => {
-              setNestedModalState(false);
-              setSettingsModalState(false);
-            }}
-          >
-            {InformationModalData}
-          </KPIModal>
         </KPIModal>
       </Page.Main>
     </Page>

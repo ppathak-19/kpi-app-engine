@@ -19,7 +19,7 @@ export const getAppState = async (key: string) => {
 export const setAppState = async (args: AppStateTypes) => {
   const data = await stateClient.setAppState({
     key: args.key,
-    body: { value: args.value, validUntilTime: "now+5m" },
+    body: { value: args.value, validUntilTime: "now+5d" },
   });
 
   return data;
