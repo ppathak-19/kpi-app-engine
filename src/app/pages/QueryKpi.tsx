@@ -10,7 +10,7 @@ import { InfoModal } from "../components/modals/InfoModal";
 import { SettingsModal } from "../components/modals/settingsModal";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import { getTwoDaysBeforeLastTwoDays } from "../utils/timeConverters";
+import { getBeforePastDays } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   const [infoModalState, setInfoModalState] = useState(false);
@@ -20,7 +20,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   const last2DaysData = useGetKPIMetrices({
     timeLine1: "now()-2d",
     shouldUseTimeFrame1: false,
-    timeLine2: getTwoDaysBeforeLastTwoDays(),
+    timeLine2: getBeforePastDays(2),
     shouldUseTimeFrame2: true,
   });
 
