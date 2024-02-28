@@ -1,5 +1,5 @@
-import { Flex, Page } from "@dynatrace/strato-components-preview";
-import React, { useState } from "react";
+import { Flex, Page, showToast } from "@dynatrace/strato-components-preview";
+import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
 import Header from "./components/Header";
@@ -9,17 +9,42 @@ import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
 import { InformationModalData } from "./constants/ModalData";
 import Home from "./pages/Home";
 import { setAppState } from "./utils/appState";
-// import { useSetAppState } from "@dynatrace-sdk/react-hooks";
+import { stateClient } from "@dynatrace-sdk/client-state";
+import { useMetricsContext } from "./hooks/context/MetricsContext";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
   const [infoModalState, setInfoModalState] = useState(false);
   const [settingsModalState, setSettingsModalState] = useState(false);
-  const [showNestedModal, setNestedModalState] = useState(false);
+  const { initialMttdValue, initialMttrValue, setMetricsData } =
+    useMetricsContext();
 
-  /** States For Baseline mttr,mttd values */
-  const [initialMttdValue, setMttdValue] = useState<number | null>(0);
-  const [initialMttrValue, setMttrValue] = useState<number | null>(0);
+  const [modalCloseIndication, setModalCloseIndication] = useState(false);
+
+  useEffect(() => {
+    const setMetricsDatafunc = async () => {
+      try {
+        const res = await stateClient.getAppState({ key: "data" });
+        const prevStoredAppData = JSON.parse(res.value);
+        setMetricsData(prevStoredAppData);
+
+        setAppState({
+          key: "data",
+          value: JSON.stringify(prevStoredAppData),
+        });
+      } catch (err) {
+        setAppState({
+          key: "data",
+          value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+        });
+        console.log(err);
+      } finally {
+        setModalCloseIndication(false);
+      }
+    };
+
+    setMetricsDatafunc();
+  }, [modalCloseIndication]);
 
   return (
     <Page>
@@ -54,46 +79,42 @@ const App: React.FC<AppCompProps> = () => {
             <KPIButton
               label="Save"
               onClick={async () => {
-                // console.log({ initialMttdValue, initialMttrValue });
-                setNestedModalState(true);
-                const data = {
-                  initialMttdValue,
-                  initialMttrValue,
-                };
-                await setAppState({ key: "data", value: JSON.stringify(data) });
+                setModalCloseIndication(true);
+                setSettingsModalState(false);
+
+                showToast({
+                  type: "success",
+                  title: "Success",
+                  message: <>Baseline Added Successfully.</>,
+                });
+
+                await setAppState({
+                  key: "data",
+                  value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+                });
               }}
             />
           }
         >
           {/* Modal For User Input */}
-          <Flex gap={4}>
-            <Flex flexDirection="column" gap={12}>
-              <KPINumberInput
-                label="Baseline MTTD"
-                value={initialMttdValue}
-                onChange={setMttdValue}
-                placeholder="Enter baseline for MTTD"
-              />
-              <KPINumberInput
-                label="Baseline MTTR"
-                value={initialMttrValue}
-                onChange={setMttrValue}
-                placeholder="Enter baseline for MTTR"
-              />
-            </Flex>
+          <Flex flexDirection="column" gap={12}>
+            <KPINumberInput
+              label="Baseline MTTD"
+              value={initialMttdValue}
+              onChange={(value: number) =>
+                setMetricsData({ initialMttdValue: value })
+              }
+              placeholder="Enter baseline for MTTD"
+            />
+            <KPINumberInput
+              label="Baseline MTTR"
+              value={initialMttrValue}
+              onChange={(value: number) =>
+                setMetricsData({ initialMttrValue: value })
+              }
+              placeholder="Enter baseline for MTTR"
+            />
           </Flex>
-
-          {/* nested modal for successfull save or not */}
-          <KPIModal
-            modalTitle="Nested Modal"
-            open={showNestedModal}
-            onClose={() => {
-              setNestedModalState(false);
-              setSettingsModalState(false);
-            }}
-          >
-            {InformationModalData}
-          </KPIModal>
         </KPIModal>
       </Page.Main>
     </Page>
