@@ -9,7 +9,7 @@ import ProblemsKPISDK from "../components/ProblemsKPISDK";
 export const appRoutes: appRoutesType[] = [
   {
     path: "/",
-    element: <Home />,
+    element: <Home setModalState={() => false} />,
     label: "Home",
   },
   {
