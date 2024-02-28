@@ -4,16 +4,13 @@ import {
   Heading,
   Surface,
 } from "@dynatrace/strato-components-preview";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import type { AppCompProps } from "types";
 import { InfoModal } from "../components/modals/InfoModal";
 import { SettingsModal } from "../components/modals/settingsModal";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import {
-  getLastMonth,
-  getTwoDaysBeforeLastTwoDays,
-} from "../utils/timeConverters";
+import { getTwoDaysBeforeLastTwoDays } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   const [infoModalState, setInfoModalState] = useState(false);
@@ -21,9 +18,13 @@ const QueryKpi: React.FC<AppCompProps> = () => {
 
   /** Getting Metrices for Last 2 Days */
   const last2DaysData = useGetKPIMetrices({
-    timeline: "now()-2d",
-    shouldUseTimeFrame: false,
+    timeLine1: "now()-2d",
+    shouldUseTimeFrame1: false,
+    timeLine2: getTwoDaysBeforeLastTwoDays(),
+    shouldUseTimeFrame2: true,
   });
+
+  console.log({ last2DaysData });
 
   /** Getting Metrices for Last 7 Days */
   // const last7DaysData = useGetKPIMetrices({
@@ -37,9 +38,10 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   //   shouldUseTimeFrame: true,
   // });
 
-  useEffect(() => {
-    getTwoDaysBeforeLastTwoDays();
-  }, []);
+  // useEffect(() => {
+  //   const aa = getTwoDaysBeforeLastTwoDays();
+  //   console.log({ aa });
+  // }, []);
 
   return (
     <Surface>
