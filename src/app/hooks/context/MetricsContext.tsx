@@ -1,16 +1,15 @@
 import React, { createContext, useContext, useState } from "react";
 
-interface MetricsContextType {
-  metrics: any;
-  initialMttdValue: any;
-  initialMttrValue: any;
+type MetricsContextType = {
+  initialMttdValue: number;
+  initialMttrValue: number;
   setMetricsData: (values: Partial<MetricsContextType>) => void;
-}
+};
 
 const defaultMetricsContext: MetricsContextType = {
-  metrics: {},
   initialMttdValue: 0,
   initialMttrValue: 0,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
   setMetricsData: () => {},
 };
 

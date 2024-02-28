@@ -17,6 +17,7 @@ import {
 import useGetKPIQueryData from "./useGetKPIQueryData";
 import useGetSummarizationData from "./useGetSummarizationData";
 import type { QueryProps } from "types";
+import { useMetricsContext } from "./context/MetricsContext";
 
 /** This Hook Gives the Required Data for Table */
 const useGetKPIMetrices = (props: QueryProps) => {
@@ -122,8 +123,8 @@ const useGetKPIMetrices = (props: QueryProps) => {
   );
 
   // assumption
-  const baselineMTTD = 100;
-  const baselineMTTR = 100;
+  const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
+    useMetricsContext();
 
   const responseInPercentageWithBaseline = {
     minMTTD: calculatePercentage(metricData1.minMTTDInMin, baselineMTTD),
