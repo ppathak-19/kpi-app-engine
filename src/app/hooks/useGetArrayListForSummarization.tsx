@@ -20,6 +20,7 @@ const useGetArrayListForSummarization = (
   const { data } = props;
 
   const [arrayList, setArrayList] = useState<arrayListType>([]);
+  const [isDataLoaded, setDataLoaded] = useState(false);
 
   useEffect(() => {
     if (!!data && data.records) {
@@ -51,10 +52,11 @@ const useGetArrayListForSummarization = (
         })
         .filter((eachR) => Number(eachR.mttrTime) > 5); // filtering mttr values less than 5 min,as said by florent
       setArrayList(modifiedData);
+      setDataLoaded(true);
     }
   }, [data]);
 
-  return arrayList.map((aa) => aa.mttdTime && aa.mttrTime);
+  return { isDataLoaded, arrayList };
 };
 
 export default useGetArrayListForSummarization;
