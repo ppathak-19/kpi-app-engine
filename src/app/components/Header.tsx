@@ -10,7 +10,7 @@ type HeaderProps = {
 const Header: React.FC<HeaderProps> = (props) => {
   const { setInfoModalState, setSettingModalState } = props;
   return (
-    <Flex p={8}>
+    <Flex p={12}>
       <TitleBar>
         <TitleBar.Title>Business Impact App</TitleBar.Title>
         <TitleBar.Suffix>
