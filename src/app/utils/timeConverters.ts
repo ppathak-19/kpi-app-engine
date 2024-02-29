@@ -69,13 +69,48 @@ export function formatDate(date: Date) {
   return `${year}-${month}-${day}T00:00:00Z`;
 }
 
-export function getLastMonth() {
+// get past months start and end date
+export function getLastMonth(monthsBefore) {
   const now = new Date();
-  const lastday = new Date(now.getFullYear(), now.getMonth(), 0);
-  const firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
 
-  const formattedStartDate = formatDate(firstday);
-  const formattedEndDate = formatDate(lastday);
+  const targetMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() - monthsBefore,
+    1
+  );
+  const firstDayOfTargetMonth = new Date(
+    targetMonth.getFullYear(),
+    targetMonth.getMonth(),
+    1
+  );
+
+  const lastDayOfTargetMonth = new Date(
+    targetMonth.getFullYear(),
+    targetMonth.getMonth() + 1,
+    0
+  );
+
+  const formattedStartDate = formatDate(firstDayOfTargetMonth);
+  const formattedEndDate = formatDate(lastDayOfTargetMonth);
+
+  const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+  return timeframe;
+}
+
+// gets days before past days
+export function getBeforePastDays(numberOfDays) {
+  const currentDate = new Date();
+  const twoDaysAgo = new Date(currentDate);
+  twoDaysAgo.setDate(currentDate.getDate() - (numberOfDays + numberOfDays));
+  const twoDaysAfter = new Date(currentDate);
+  twoDaysAfter.setDate(currentDate.getDate() - numberOfDays);
+
+  const startDate = twoDaysAgo.toString();
+  const endDate = twoDaysAfter.toString();
+
+  const formattedStartDate = formatDate(new Date(startDate));
+  const formattedEndDate = formatDate(new Date(endDate));
 
   const timeframe = `${formattedStartDate}/${formattedEndDate}`;
 

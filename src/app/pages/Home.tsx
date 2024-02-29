@@ -1,73 +1,57 @@
-import { problemsClient } from "@dynatrace-sdk/client-classic-environment-v2";
 import {
-  Container,
-  ProgressCircle,
-  ToggleButtonGroup,
-  ToggleButtonGroupItem,
-} from "@dynatrace/strato-components-preview";
-import React, { useEffect, useState } from "react";
-import type { AppCompProps, TableDataType } from "types";
-import DataTableKpi from "../components/DataTableKpi";
-import LineTimeSeries from "../components/LineTimeSeries";
-import { convertProbelmsData } from "../utils/convertProblemsData";
+  Flex,
+  Surface,
+} from "@dynatrace/strato-components-preview/layouts-core";
+import { Tooltip } from "@dynatrace/strato-components-preview/overlays";
+import { Text } from "@dynatrace/strato-components-preview/typography";
+import { WarningIcon } from "@dynatrace/strato-icons";
+import React from "react";
+import QueryKpi from "./QueryKpi";
+import { useMetricsContext } from "../hooks/context/MetricsContext";
+import { Button } from "@dynatrace/strato-components-preview";
 
-const Home: React.FC<AppCompProps> = () => {
-  const [isDataLoaded, setDataLoaded] = useState(false);
-  const [tableDataForKPI, setTableDataForKPI] = useState<TableDataType[]>([]);
-  const [clickedBtn, setClickedBtn] = useState("line");
+type HomeCompProps = {
+  setModalState: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
-  useEffect(() => {
-    const getListOfClosedProblems = async () => {
-      await problemsClient
-        .getProblems({
-          from: "now-1y/w",
-          problemSelector: "status(closed)",
-        })
-        .then((res) => {
-          const dataPromises = res.problems.map(
-            async (eachProblem) =>
-              await convertProbelmsData(eachProblem.problemId)
-          );
+const Home: React.FC<HomeCompProps> = (props) => {
+  const { setModalState } = props;
 
-          Promise.all(dataPromises)
-            .then((res) => {
-              setTableDataForKPI(res);
-              setDataLoaded(true);
-            })
-            .catch((err) => {
-              setTableDataForKPI([]);
-              setDataLoaded(true);
-              console.error("Error in Fetching Data", err.message);
-            });
-        });
-    };
-
-    getListOfClosedProblems();
-  }, []);
+  const { initialMttdValue, initialMttrValue } = useMetricsContext();
+  const isUserInputtedData = initialMttdValue !== 0 && initialMttrValue !== 0;
 
   return (
-    <Container>
-      <ToggleButtonGroup value={clickedBtn} onChange={setClickedBtn}>
-        <ToggleButtonGroupItem value="dataTable">
-          Data Table
-        </ToggleButtonGroupItem>
-        <ToggleButtonGroupItem value="line">Line Series</ToggleButtonGroupItem>
-      </ToggleButtonGroup>
-
-      <br />
-      <br />
-      <br />
-      {isDataLoaded ? (
+    <Surface>
+      {isUserInputtedData ? (
         <>
-          {clickedBtn === "dataTable" && (
-            <DataTableKpi data={tableDataForKPI} />
-          )}
-          {clickedBtn === "line" && <LineTimeSeries data={tableDataForKPI} />}
+          <QueryKpi />
         </>
       ) : (
-        <ProgressCircle />
+        <Surface height={400}>
+          <Flex
+            style={{
+              textAlign: "center",
+              cursor: "pointer",
+            }}
+            justifyContent="center"
+            alignContent="center"
+          >
+            <Flex>
+              <Button color="warning" size="condensed">
+                <Tooltip text="Click Here to add values">
+                  <WarningIcon />
+                </Tooltip>
+              </Button>
+            </Flex>
+            <Flex onClick={() => setModalState(true)}>
+              <Text>
+                Click Here to add the BaseLine Values For Calculations
+              </Text>
+            </Flex>
+          </Flex>
+        </Surface>
       )}
-    </Container>
+    </Surface>
   );
 };
 

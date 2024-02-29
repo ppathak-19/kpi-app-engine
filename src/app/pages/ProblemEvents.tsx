@@ -30,9 +30,9 @@ export const ProblemEvents = () => {
   }
 
   function getLastMonth() {
-    var now = new Date();
-    var lastday = new Date(now.getFullYear(), now.getMonth(), 0);
-    var firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
+    const now = new Date();
+    const lastday = new Date(now.getFullYear(), now.getMonth(), 0);
+    const firstday = new Date(lastday.getFullYear(), lastday.getMonth(), 1);
 
     const formattedStartDate = formatDate(firstday);
     const formattedEndDate = formatDate(lastday);
@@ -42,20 +42,20 @@ export const ProblemEvents = () => {
     return timeframe;
   }
 
-  const kpiData = useGetKPIQueryData({
-    timeLine: "",
-    shouldUseTimeFrame: false,
-  });
+  // const kpiData = useGetKPIQueryData({
+  //   timeLine: "",
+  //   shouldUseTimeFrame: false,
+  // });
 
   const [kpiTimeRangeArray, setKpiTimeRangeArray] = useState<any[]>([]);
 
-  const [metricsStats] = useGetTotalKpiDifference(kpiData);
+  // const [metricsStats] = useGetTotalKpiDifference(kpiData);
 
   console.log(getLastMonth(), "last month");
 
-  useEffect(() => {
-    console.log(kpiData, "stats");
-  }, [kpiData]);
+  // useEffect(() => {
+  //   console.log(kpiData, "stats");
+  // }, [kpiData]);
 
   console.log(kpiTimeRangeArray, "arrays");
 

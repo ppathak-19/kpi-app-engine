@@ -132,7 +132,7 @@ export const queryKPITableColumn: TableColumn[] = [
 
 export const queryKPITableColumnV2: TableColumn[] = [
   {
-    header: "MTTD",
+    header: "MTTD (BaseLine, Previous Data)",
     id: "mttd",
     alignment: "center",
     columns: [
@@ -159,7 +159,7 @@ export const queryKPITableColumnV2: TableColumn[] = [
     ],
   },
   {
-    header: "MTTR",
+    header: "MTTR (BaseLine, Previous Data)",
     id: "mttr",
     alignment: "center",
     columns: [

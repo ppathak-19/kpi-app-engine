@@ -84,8 +84,49 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
     isLoading: mttdsummarizedData.isLoading && mttrsummarizedData.isLoading,
 
     /** Error Indicator */
-    isError: mttrsummarizedData.error && mttdsummarizedData.error,
+    isError: mttdsummarizedData.errorDetails && mttrsummarizedData.errorDetails,
+
+    /** MTTR Data & MTTD in minutes -> directly returning the number */
+    minMTTDInMin: Math.floor(
+      (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
+    ),
+    maxMTTDInMin: Math.floor(
+      (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
+    ),
+    averageMTTDInMin: Math.floor(
+      (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
+    ),
+    medianMTTDInMin: Math.floor(
+      (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
+    ),
+
+    minMTTRInMin: Math.floor(
+      (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
+    ),
+    maxMTTRInMin: Math.floor(
+      (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
+    ),
+    averageMTTRInMin: Math.floor(
+      (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
+    ),
+    medianMTTRInMin: Math.floor(
+      (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
+    ),
   };
+
+  // const responseInPercentage = {
+  //   [minMTTD]: calculatePercentage(response.minMTTDInMin, baselineMTTD),
+  //   [maxMTTD]: calculatePercentage(response.maxMTTDInMin, baselineMTTD),
+  //   [averageMTTD]: calculatePercentage(response.averageMTTRInMin, baselineMTTD),
+  //   [medianMTTD]: calculatePercentage(response.medianMTTDInMin, baselineMTTD),
+
+  //   [minMTTR]: calculatePercentage(response.minMTTRInMin, baselineMTTR),
+  //   [maxMTTR]: calculatePercentage(response.maxMTTRInMin, baselineMTTR),
+  //   [averageMTTR]: calculatePercentage(response.averageMTTRInMin, baselineMTTR),
+  //   [medianMTTR]: calculatePercentage(response.medianMTTRInMin, baselineMTTR),
+  // };
+
+  // console.log({ responseInPercentage });
 
   return response;
 };
