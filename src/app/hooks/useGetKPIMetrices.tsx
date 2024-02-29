@@ -32,13 +32,13 @@ const useGetKPIMetrices = (props: QueryProps) => {
       shouldUseTimeFrame2,
     });
 
-  // console.log(q1,q2);
-
+  /** State For Current Days */
   const [mttdArrayListForCurrentDays, setMttdArrayListForCurrentDays] =
     useState<number[]>([]);
   const [mttrArrayListForCurrentDays, setMttrArrayListForCurrentDays] =
     useState<number[]>([]);
 
+  /** State For Previous Days -> like if current day is 2, previous day is 2 days before */
   const [mttdArrayListForPreviousDays, setMttdArrayListForPreviousDays] =
     useState<number[]>([]);
   const [mttrArrayListForPreviousDays, setMttrArrayListForPreviousDays] =
@@ -112,20 +112,25 @@ const useGetKPIMetrices = (props: QueryProps) => {
   }, [q1, q2]);
 
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
+
+  //* passing current days mttd,mttr values so we get avg,min,etc.. for current days data
   const metricData1 = useGetSummarizationData(
     mttdArrayListForCurrentDays,
     mttrArrayListForCurrentDays
   );
 
+  //* passing previous days mttd,mttr values so we get avg,min,etc.. for previous days data
   const metricData2 = useGetSummarizationData(
     mttdArrayListForPreviousDays,
     mttrArrayListForPreviousDays
   );
 
-  // assumption
+  /** Taking baseline values from useContext  */
   const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
     useMetricsContext();
 
+  /** To cal % with respect to baseline -> divide metricData by baseline value from context */
+  // if metricData is 5, baseline is 10 -> (5/10) * 100 => 50%
   const responseInPercentageWithBaseline = {
     minMTTD: calculatePercentage(metricData1.minMTTDInMin, baselineMTTD),
     maxMTTD: calculatePercentage(metricData1.maxMTTDInMin, baselineMTTD),
@@ -144,42 +149,44 @@ const useGetKPIMetrices = (props: QueryProps) => {
     medianMTTR: calculatePercentage(metricData1.medianMTTRInMin, baselineMTTR),
   };
 
+  /** To cal % with respect to current days & previous day -> divide previous day by current day */
   const responseInPercentageWithPreviousDay = {
     minMTTD: calculatePercentage(
-      metricData1.minMTTDInMin,
-      metricData2.minMTTDInMin
+      metricData2.minMTTDInMin,
+      metricData1.minMTTDInMin
     ),
     maxMTTD: calculatePercentage(
-      metricData1.maxMTTDInMin,
-      metricData2.maxMTTDInMin
+      metricData2.maxMTTDInMin,
+      metricData1.maxMTTDInMin
     ),
     averageMTTD: calculatePercentage(
-      metricData1.averageMTTRInMin,
-      metricData2.averageMTTDInMin
+      metricData2.averageMTTDInMin,
+      metricData1.averageMTTRInMin
     ),
     medianMTTD: calculatePercentage(
-      metricData1.medianMTTDInMin,
-      metricData2.medianMTTDInMin
+      metricData2.medianMTTDInMin,
+      metricData1.medianMTTDInMin
     ),
 
     minMTTR: calculatePercentage(
-      metricData1.minMTTRInMin,
-      metricData2.minMTTRInMin
+      metricData2.minMTTRInMin,
+      metricData1.minMTTRInMin
     ),
     maxMTTR: calculatePercentage(
-      metricData1.maxMTTRInMin,
-      metricData2.maxMTTRInMin
+      metricData2.maxMTTRInMin,
+      metricData1.maxMTTRInMin
     ),
     averageMTTR: calculatePercentage(
-      metricData1.averageMTTRInMin,
-      metricData2.averageMTTRInMin
+      metricData2.averageMTTRInMin,
+      metricData1.averageMTTRInMin
     ),
     medianMTTR: calculatePercentage(
-      metricData1.medianMTTRInMin,
-      metricData2.medianMTTRInMin
+      metricData2.medianMTTRInMin,
+      metricData1.medianMTTRInMin
     ),
   };
 
+  /** Final Response For DataTable */
   const finalResponse = {
     /** MTTD Data */
     [minMTTD]: `${responseInPercentageWithBaseline.minMTTD} % , ${responseInPercentageWithPreviousDay.minMTTD} %`,
