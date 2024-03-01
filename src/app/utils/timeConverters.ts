@@ -51,8 +51,8 @@ export function convertKpiQueryMin_to_Time(minute: number) {
   hour = hour % 24;
 
   const finalDays = day > 0 ? `${day} Days` : "";
-  const finalHours = hour > 0 ? `${Math.floor(hour)} Hours` : "";
-  const finalMinutes = minute >= 0 ? `${Math.floor(minute)} minutes` : "";
+  const finalHours = hour > 0 ? `${Math.floor(hour)} Hrs` : "";
+  const finalMinutes = minute >= 0 ? `${Math.floor(minute)} min` : "";
 
   const formattedTime = `${finalDays} ${finalHours} ${finalMinutes}`;
   return formattedTime;

@@ -9,7 +9,10 @@ import {
   minMTTD,
   minMTTR,
 } from "../constants/KpiFieldConstants";
-import { calculatePercentage } from "../utils/calculations";
+import {
+  calculateImprovementWithPreviousdata,
+  calculatePercentage,
+} from "../utils/calculations";
 import {
   convertUTCToDate,
   formatProblemTimeWithDiff,
@@ -135,7 +138,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     minMTTD: calculatePercentage(metricData1.minMTTDInMin, baselineMTTD),
     maxMTTD: calculatePercentage(metricData1.maxMTTDInMin, baselineMTTD),
     averageMTTD: calculatePercentage(
-      metricData1.averageMTTRInMin,
+      metricData1.averageMTTDInMin,
       baselineMTTD
     ),
     medianMTTD: calculatePercentage(metricData1.medianMTTDInMin, baselineMTTD),
@@ -151,36 +154,36 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   /** To cal % with respect to current days & previous day -> divide previous day by current day */
   const responseInPercentageWithPreviousDay = {
-    minMTTD: calculatePercentage(
+    minMTTD: calculateImprovementWithPreviousdata(
       metricData2.minMTTDInMin,
       metricData1.minMTTDInMin
     ),
-    maxMTTD: calculatePercentage(
+    maxMTTD: calculateImprovementWithPreviousdata(
       metricData2.maxMTTDInMin,
       metricData1.maxMTTDInMin
     ),
-    averageMTTD: calculatePercentage(
+    averageMTTD: calculateImprovementWithPreviousdata(
       metricData2.averageMTTDInMin,
-      metricData1.averageMTTRInMin
+      metricData1.averageMTTDInMin
     ),
-    medianMTTD: calculatePercentage(
+    medianMTTD: calculateImprovementWithPreviousdata(
       metricData2.medianMTTDInMin,
       metricData1.medianMTTDInMin
     ),
 
-    minMTTR: calculatePercentage(
+    minMTTR: calculateImprovementWithPreviousdata(
       metricData2.minMTTRInMin,
       metricData1.minMTTRInMin
     ),
-    maxMTTR: calculatePercentage(
+    maxMTTR: calculateImprovementWithPreviousdata(
       metricData2.maxMTTRInMin,
       metricData1.maxMTTRInMin
     ),
-    averageMTTR: calculatePercentage(
+    averageMTTR: calculateImprovementWithPreviousdata(
       metricData2.averageMTTRInMin,
       metricData1.averageMTTRInMin
     ),
-    medianMTTR: calculatePercentage(
+    medianMTTR: calculateImprovementWithPreviousdata(
       metricData2.medianMTTRInMin,
       metricData1.medianMTTRInMin
     ),
@@ -189,16 +192,16 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** Final Response For DataTable */
   const finalResponse = {
     /** MTTD Data */
-    [minMTTD]: `${responseInPercentageWithBaseline.minMTTD} % , ${responseInPercentageWithPreviousDay.minMTTD} %`,
-    [maxMTTD]: `${responseInPercentageWithBaseline.maxMTTD} % , ${responseInPercentageWithPreviousDay.maxMTTD} %`,
-    [averageMTTD]: `${responseInPercentageWithBaseline.averageMTTD} % , ${responseInPercentageWithPreviousDay.averageMTTD} %`,
-    [medianMTTD]: `${responseInPercentageWithBaseline.medianMTTD} % , ${responseInPercentageWithPreviousDay.medianMTTD} %`,
+    [minMTTD]: `${metricData1.minMTTD}, ${responseInPercentageWithBaseline.minMTTD} %, ${metricData2.minMTTD}, ${responseInPercentageWithPreviousDay.minMTTD} %`,
+    [maxMTTD]: `${metricData1.maxMTTD}, ${responseInPercentageWithBaseline.maxMTTD} %, ${metricData2.maxMTTD}, ${responseInPercentageWithPreviousDay.maxMTTD} %`,
+    [averageMTTD]: `${metricData1.averageMTTD}, ${responseInPercentageWithBaseline.averageMTTD} %, ${metricData2.averageMTTD}, ${responseInPercentageWithPreviousDay.averageMTTD} %`,
+    [medianMTTD]: `${metricData1.medianMTTD}, ${responseInPercentageWithBaseline.medianMTTD} %, ${metricData2.medianMTTD}, ${responseInPercentageWithPreviousDay.medianMTTD} %`,
 
     /** MTTR Data */
-    [minMTTR]: `${responseInPercentageWithBaseline.minMTTR} % , ${responseInPercentageWithPreviousDay.minMTTR} %`,
-    [maxMTTR]: `${responseInPercentageWithBaseline.maxMTTR} % , ${responseInPercentageWithPreviousDay.maxMTTR} %`,
-    [averageMTTR]: `${responseInPercentageWithBaseline.averageMTTR} % , ${responseInPercentageWithPreviousDay.averageMTTR} %`,
-    [medianMTTR]: `${responseInPercentageWithBaseline.medianMTTD} % , ${responseInPercentageWithPreviousDay.medianMTTR} %`,
+    [minMTTR]: `${metricData1.minMTTR}, ${responseInPercentageWithBaseline.minMTTR} %, ${metricData2.minMTTR}, ${responseInPercentageWithPreviousDay.minMTTR} %`,
+    [maxMTTR]: `${metricData1.maxMTTR}, ${responseInPercentageWithBaseline.maxMTTR} %, ${metricData2.maxMTTR}, ${responseInPercentageWithPreviousDay.maxMTTR} %`,
+    [averageMTTR]: `${metricData1.averageMTTR}, ${responseInPercentageWithBaseline.averageMTTR} %, ${metricData2.averageMTTR}, ${responseInPercentageWithPreviousDay.averageMTTR} %`,
+    [medianMTTR]: `${metricData1.medianMTTR}, ${responseInPercentageWithBaseline.medianMTTD} %, ${metricData2.medianMTTR}, ${responseInPercentageWithPreviousDay.medianMTTR} %`,
 
     /** Other Info */
     isLoading: metricData1.isLoading && metricData2.isLoading,
