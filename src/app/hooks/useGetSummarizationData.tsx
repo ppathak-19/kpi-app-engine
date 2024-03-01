@@ -40,44 +40,44 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
     [maxMTTD]:
       !!mttdsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number
+        (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
       ),
     [minMTTD]:
       !!mttdsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number
+        (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
       ),
     [medianMTTD]:
       !!mttdsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number
+        (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
       ),
     [averageMTTD]:
       !!mttdsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number
+        (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
       ),
 
     /** MTTR Data */
     [maxMTTR]:
       !!mttrsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number
+        (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
       ),
     [minMTTR]:
       !!mttrsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number
+        (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
       ),
     [medianMTTR]:
       !!mttrsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number
+        (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
       ),
     [averageMTTR]:
       !!mttrsummarizedData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number
+        (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
       ),
 
     /** Loading Indicator */
@@ -87,46 +87,32 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
     isError: mttdsummarizedData.errorDetails && mttrsummarizedData.errorDetails,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
-    minMTTDInMin: Math.floor(
+    minMTTDInNum: Math.floor(
       (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
     ),
-    maxMTTDInMin: Math.floor(
+    maxMTTDInNum: Math.floor(
       (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
     ),
-    averageMTTDInMin: Math.floor(
+    averageMTTDInNum: Math.floor(
       (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
     ),
-    medianMTTDInMin: Math.floor(
+    medianMTTDInNum: Math.floor(
       (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
     ),
 
-    minMTTRInMin: Math.floor(
+    minMTTRInNum: Math.floor(
       (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
     ),
-    maxMTTRInMin: Math.floor(
+    maxMTTRInNum: Math.floor(
       (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
     ),
-    averageMTTRInMin: Math.floor(
+    averageMTTRInNum: Math.floor(
       (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
     ),
-    medianMTTRInMin: Math.floor(
+    medianMTTRInNum: Math.floor(
       (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
     ),
   };
-
-  // const responseInPercentage = {
-  //   [minMTTD]: calculatePercentage(response.minMTTDInMin, baselineMTTD),
-  //   [maxMTTD]: calculatePercentage(response.maxMTTDInMin, baselineMTTD),
-  //   [averageMTTD]: calculatePercentage(response.averageMTTRInMin, baselineMTTD),
-  //   [medianMTTD]: calculatePercentage(response.medianMTTDInMin, baselineMTTD),
-
-  //   [minMTTR]: calculatePercentage(response.minMTTRInMin, baselineMTTR),
-  //   [maxMTTR]: calculatePercentage(response.maxMTTRInMin, baselineMTTR),
-  //   [averageMTTR]: calculatePercentage(response.averageMTTRInMin, baselineMTTR),
-  //   [medianMTTR]: calculatePercentage(response.medianMTTRInMin, baselineMTTR),
-  // };
-
-  // console.log({ responseInPercentage });
 
   return response;
 };

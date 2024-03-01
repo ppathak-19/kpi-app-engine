@@ -135,57 +135,57 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
   // if metricData is 5, baseline is 10 -> (5/10) * 100 => 50%
   const responseInPercentageWithBaseline = {
-    minMTTD: calculatePercentage(metricData1.minMTTDInMin, baselineMTTD),
-    maxMTTD: calculatePercentage(metricData1.maxMTTDInMin, baselineMTTD),
+    minMTTD: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
+    maxMTTD: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
     averageMTTD: calculatePercentage(
-      metricData1.averageMTTDInMin,
+      metricData1.averageMTTDInNum,
       baselineMTTD
     ),
-    medianMTTD: calculatePercentage(metricData1.medianMTTDInMin, baselineMTTD),
+    medianMTTD: calculatePercentage(metricData1.medianMTTDInNum, baselineMTTD),
 
-    minMTTR: calculatePercentage(metricData1.minMTTRInMin, baselineMTTR),
-    maxMTTR: calculatePercentage(metricData1.maxMTTRInMin, baselineMTTR),
+    minMTTR: calculatePercentage(metricData1.minMTTRInNum, baselineMTTR),
+    maxMTTR: calculatePercentage(metricData1.maxMTTRInNum, baselineMTTR),
     averageMTTR: calculatePercentage(
-      metricData1.averageMTTRInMin,
+      metricData1.averageMTTRInNum,
       baselineMTTR
     ),
-    medianMTTR: calculatePercentage(metricData1.medianMTTRInMin, baselineMTTR),
+    medianMTTR: calculatePercentage(metricData1.medianMTTRInNum, baselineMTTR),
   };
 
   /** To cal % with respect to current days & previous day -> divide previous day by current day */
   const responseInPercentageWithPreviousDay = {
     minMTTD: calculateImprovementWithPreviousdata(
-      metricData2.minMTTDInMin,
-      metricData1.minMTTDInMin
+      metricData2.minMTTDInNum,
+      metricData1.minMTTDInNum
     ),
     maxMTTD: calculateImprovementWithPreviousdata(
-      metricData2.maxMTTDInMin,
-      metricData1.maxMTTDInMin
+      metricData2.maxMTTDInNum,
+      metricData1.maxMTTDInNum
     ),
     averageMTTD: calculateImprovementWithPreviousdata(
-      metricData2.averageMTTDInMin,
-      metricData1.averageMTTDInMin
+      metricData2.averageMTTDInNum,
+      metricData1.averageMTTDInNum
     ),
     medianMTTD: calculateImprovementWithPreviousdata(
-      metricData2.medianMTTDInMin,
-      metricData1.medianMTTDInMin
+      metricData2.medianMTTDInNum,
+      metricData1.medianMTTDInNum
     ),
 
     minMTTR: calculateImprovementWithPreviousdata(
-      metricData2.minMTTRInMin,
-      metricData1.minMTTRInMin
+      metricData2.minMTTRInNum,
+      metricData1.minMTTRInNum
     ),
     maxMTTR: calculateImprovementWithPreviousdata(
-      metricData2.maxMTTRInMin,
-      metricData1.maxMTTRInMin
+      metricData2.maxMTTRInNum,
+      metricData1.maxMTTRInNum
     ),
     averageMTTR: calculateImprovementWithPreviousdata(
-      metricData2.averageMTTRInMin,
-      metricData1.averageMTTRInMin
+      metricData2.averageMTTRInNum,
+      metricData1.averageMTTRInNum
     ),
     medianMTTR: calculateImprovementWithPreviousdata(
-      metricData2.medianMTTRInMin,
-      metricData1.medianMTTRInMin
+      metricData2.medianMTTRInNum,
+      metricData1.medianMTTRInNum
     ),
   };
 
