@@ -51,15 +51,15 @@ export type RequiredDataResponse = {
   medianMTTR: string;
   averageMTTR: string;
   isLoading: boolean;
-  isError: ErrorResponse | undefined;
-  minMTTDInMin: number;
-  maxMTTDInMin: number;
-  averageMTTDInMin: number;
-  medianMTTDInMin: number;
-  minMTTRInMin: number;
-  maxMTTRInMin: number;
-  averageMTTRInMin: number;
-  medianMTTRInMin: number;
+  isError?: ErrorResponse | undefined;
+  minMTTDInNum?: number;
+  maxMTTDInNum?: number;
+  averageMTTDInNum?: number;
+  medianMTTDInNum?: number;
+  minMTTRInNum?: number;
+  maxMTTRInNum?: number;
+  averageMTTRInNum?: number;
+  medianMTTRInNum?: number;
 };
 
 /** Query Props */
