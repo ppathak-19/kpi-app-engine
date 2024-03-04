@@ -28,3 +28,8 @@ export const calculateImprovementWithPreviousdata = (x: number, y: number) => {
     return 0;
   }
 };
+
+export const convertNumberIntoK = (val: number) => {
+  const res = new Intl.NumberFormat("en", { notation: "compact" }).format(val);
+  return res;
+};
