@@ -41,7 +41,12 @@ export type appRoutesType = {
   label: string;
 };
 
-export type RequiredDataResponse = {
+export type OtherType = {
+  isLoading?: boolean;
+  isError?: ErrorResponse | undefined;
+};
+
+export type InitialDataResponseInStrings = {
   maxMTTD: string;
   minMTTD: string;
   medianMTTD: string;
@@ -50,17 +55,36 @@ export type RequiredDataResponse = {
   minMTTR: string;
   medianMTTR: string;
   averageMTTR: string;
-  isLoading: boolean;
-  isError?: ErrorResponse | undefined;
-  minMTTDInNum?: number;
-  maxMTTDInNum?: number;
-  averageMTTDInNum?: number;
-  medianMTTDInNum?: number;
-  minMTTRInNum?: number;
-  maxMTTRInNum?: number;
-  averageMTTRInNum?: number;
-  medianMTTRInNum?: number;
 };
+
+export type InitialDataResponseInNumbers = {
+  minMTTDInNum: number;
+  maxMTTDInNum: number;
+  averageMTTDInNum: number;
+  medianMTTDInNum: number;
+  minMTTRInNum: number;
+  maxMTTRInNum: number;
+  averageMTTRInNum: number;
+  medianMTTRInNum: number;
+};
+
+export type ResponseTypeInPercentage = {
+  minMTTD: number;
+  maxMTTD: number;
+  averageMTTD: number;
+  medianMTTD: number;
+  minMTTR: number;
+  maxMTTR: number;
+  averageMTTR: number;
+  medianMTTR: number;
+};
+
+export type RequiredDataResponse = InitialDataResponseInStrings &
+  InitialDataResponseInNumbers &
+  OtherType & {
+    responseInPercentageWithPreviousDay: ResponseTypeInPercentage;
+    responseInPercentageWithBaseline: ResponseTypeInPercentage;
+  };
 
 /** Query Props */
 export type QueryProps = {
