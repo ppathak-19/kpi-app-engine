@@ -19,7 +19,7 @@ import {
 } from "../utils/timeConverters";
 import useGetKPIQueryData from "./useGetKPIQueryData";
 import useGetSummarizationData from "./useGetSummarizationData";
-import type { QueryProps } from "types";
+import type { QueryProps, RequiredDataResponse } from "types";
 import { useMetricsContext } from "./context/MetricsContext";
 
 /** This Hook Gives the Required Data for Table */
@@ -34,6 +34,8 @@ const useGetKPIMetrices = (props: QueryProps) => {
       shouldUseTimeFrame1,
       shouldUseTimeFrame2,
     });
+
+  // console.log({ q1, q2, props });
 
   /** State For Current Days */
   const [mttdArrayListForCurrentDays, setMttdArrayListForCurrentDays] =
@@ -121,12 +123,15 @@ const useGetKPIMetrices = (props: QueryProps) => {
     mttdArrayListForCurrentDays,
     mttrArrayListForCurrentDays
   );
+  // console.log({ metricData1 });
 
   //* passing previous days mttd,mttr values so we get avg,min,etc.. for previous days data
   const metricData2 = useGetSummarizationData(
     mttdArrayListForPreviousDays,
     mttrArrayListForPreviousDays
   );
+
+  // console.log({ metricData2 });
 
   /** Taking baseline values from useContext  */
   const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
@@ -190,14 +195,14 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** Final Response For DataTable */
-  const finalResponse = {
-    /** MTTD Data */
+  const finalResponse: RequiredDataResponse = {
+    /** MTTD Data For Table*/
     [minMTTD]: `${metricData1.minMTTD}, ${responseInPercentageWithBaseline.minMTTD} %, ${metricData2.minMTTD}, ${responseInPercentageWithPreviousDay.minMTTD} %`,
     [maxMTTD]: `${metricData1.maxMTTD}, ${responseInPercentageWithBaseline.maxMTTD} %, ${metricData2.maxMTTD}, ${responseInPercentageWithPreviousDay.maxMTTD} %`,
     [averageMTTD]: `${metricData1.averageMTTD}, ${responseInPercentageWithBaseline.averageMTTD} %, ${metricData2.averageMTTD}, ${responseInPercentageWithPreviousDay.averageMTTD} %`,
     [medianMTTD]: `${metricData1.medianMTTD}, ${responseInPercentageWithBaseline.medianMTTD} %, ${metricData2.medianMTTD}, ${responseInPercentageWithPreviousDay.medianMTTD} %`,
 
-    /** MTTR Data */
+    /** MTTR Data For Table*/
     [minMTTR]: `${metricData1.minMTTR}, ${responseInPercentageWithBaseline.minMTTR} %, ${metricData2.minMTTR}, ${responseInPercentageWithPreviousDay.minMTTR} %`,
     [maxMTTR]: `${metricData1.maxMTTR}, ${responseInPercentageWithBaseline.maxMTTR} %, ${metricData2.maxMTTR}, ${responseInPercentageWithPreviousDay.maxMTTR} %`,
     [averageMTTR]: `${metricData1.averageMTTR}, ${responseInPercentageWithBaseline.averageMTTR} %, ${metricData2.averageMTTR}, ${responseInPercentageWithPreviousDay.averageMTTR} %`,
@@ -205,6 +210,23 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
     /** Other Info */
     isLoading: metricData1.isLoading && metricData2.isLoading,
+    isError: metricData1.isError && metricData2.isError,
+
+    /** MTTD In Number */
+    averageMTTDInNum: !!metricData1 ? metricData1.averageMTTDInNum : 0,
+    maxMTTDInNum: !!metricData1 ? metricData1.maxMTTDInNum : 0,
+    minMTTDInNum: !!metricData1 ? metricData1.minMTTDInNum : 0,
+    medianMTTDInNum: !!metricData1 ? metricData1.medianMTTDInNum : 0,
+
+    /** MTTR In Number */
+    averageMTTRInNum: !!metricData1 ? metricData1.averageMTTDInNum : 0,
+    maxMTTRInNum: !!metricData1 ? metricData1.maxMTTDInNum : 0,
+    minMTTRInNum: !!metricData1 ? metricData1.minMTTDInNum : 0,
+    medianMTTRInNum: !!metricData1 ? metricData1.medianMTTDInNum : 0,
+
+    /** Other calculations */
+    responseInPercentageWithBaseline,
+    responseInPercentageWithPreviousDay,
   };
   return finalResponse;
 };
