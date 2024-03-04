@@ -15,14 +15,14 @@ type KPIMultiMeterCompProps = {
 
 const KPIMultiMeterComp: React.FC<KPIMultiMeterCompProps> = (props) => {
   const {
-    averageMTTDInMin,
-    averageMTTRInMin,
-    maxMTTDInMin,
-    maxMTTRInMin,
-    minMTTRInMin,
-    minMTTDInMin,
-    medianMTTRInMin,
-    medianMTTDInMin,
+    averageMTTDInNum,
+    averageMTTRInNum,
+    maxMTTDInNum,
+    maxMTTRInNum,
+    minMTTDInNum,
+    minMTTRInNum,
+    medianMTTDInNum,
+    medianMTTRInNum,
     // isLoading,
   } = props.data;
   return (
@@ -38,19 +38,19 @@ const KPIMultiMeterComp: React.FC<KPIMultiMeterCompProps> = (props) => {
           <MultiMeterBarChart.Label>MTTD Metrices</MultiMeterBarChart.Label>
           <MultiMeterBarChart.Tooltip />
           <MultiMeterBarChart.Segment
-            value={minMTTDInMin}
+            value={minMTTDInNum}
             name="Minimum MTTD"
           />
           <MultiMeterBarChart.Segment
-            value={maxMTTDInMin}
+            value={maxMTTDInNum}
             name="Maximum MTTD"
           />
           <MultiMeterBarChart.Segment
-            value={averageMTTDInMin}
+            value={averageMTTDInNum}
             name="Average MTTD"
           />
           <MultiMeterBarChart.Segment
-            value={medianMTTDInMin}
+            value={medianMTTDInNum}
             name="Median MTTD"
           />
           <MultiMeterBarChart.Legend />
@@ -63,19 +63,19 @@ const KPIMultiMeterComp: React.FC<KPIMultiMeterCompProps> = (props) => {
           <MultiMeterBarChart.Label>MTTR Metrices</MultiMeterBarChart.Label>
           <MultiMeterBarChart.Tooltip />
           <MultiMeterBarChart.Segment
-            value={minMTTRInMin}
+            value={minMTTRInNum}
             name="Minimum MTTR"
           />
           <MultiMeterBarChart.Segment
-            value={maxMTTRInMin}
+            value={maxMTTRInNum}
             name="Maximum MTTR"
           />
           <MultiMeterBarChart.Segment
-            value={averageMTTRInMin}
+            value={averageMTTRInNum}
             name="Average MTTR"
           />
           <MultiMeterBarChart.Segment
-            value={medianMTTRInMin}
+            value={medianMTTRInNum}
             name="Median MTTR"
           />
           <MultiMeterBarChart.Legend />

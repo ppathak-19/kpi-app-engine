@@ -10,6 +10,7 @@ import type { AppCompProps } from "types";
 import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { getBeforePastDays } from "../utils/timeConverters";
+import KPICategoryBarChart from "../components/KPICategoryBarChart";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** Getting Metrices for Last 2 Days */
@@ -23,12 +24,12 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   // console.log({ last2DaysData });
 
   /** Getting Metrices for Last 7 Days */
-  const last7DaysData = useGetKPIMetrices({
-    timeLine1: "now()-7d",
-    shouldUseTimeFrame1: false,
-    timeLine2: getBeforePastDays(7),
-    shouldUseTimeFrame2: true,
-  });
+  // const last7DaysData = useGetKPIMetrices({
+  //   timeLine1: "now()-7d",
+  //   shouldUseTimeFrame1: false,
+  //   timeLine2: getBeforePastDays(7),
+  //   shouldUseTimeFrame2: true,
+  // });
 
   /** Getting Metrices for Previous Month */
   // const last30DaysData = useGetKPIMetrices({
@@ -41,6 +42,10 @@ const QueryKpi: React.FC<AppCompProps> = () => {
       <TitleBar>
         <TitleBar.Title>KPI With MTTD, MTTR</TitleBar.Title>
       </TitleBar>
+      <Flex flexDirection="column" padding={20}>
+        <KPICategoryBarChart data={last2DaysData} />
+      </Flex>
+      <br />
       <Flex flexDirection="column" padding={20}>
         <Heading level={4}>Last 2 Days Data</Heading>
         <DataTable
@@ -57,7 +62,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
         />
       </Flex>
       <br />
-      <Flex flexDirection="column" padding={20}>
+      {/* <Flex flexDirection="column" padding={20}>
         <Heading level={4}>Last 7 Days Data</Heading>
         <DataTable
           resizable
@@ -71,7 +76,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             verticalDividers: true,
           }}
         />
-      </Flex>
+      </Flex> */}
       <br />
       {/*  <Flex flexDirection="column" padding={20}>
         <Heading level={2}>Previous Month Data</Heading>
@@ -88,6 +93,13 @@ const QueryKpi: React.FC<AppCompProps> = () => {
           }}
         />
       </Flex> */}
+      <p>1st Value - Current Days Value in minutes</p>
+      <p>2nd Value - Comparison with baseline in percentage</p>
+      <p>3rd Value - Previous Days Value in minutes</p>
+      <p>
+        4rth Value - Comparison with previous day data(2 days before past 2 day)
+        and current day data in percentage
+      </p>
     </Surface>
   );
 };
