@@ -37,6 +37,7 @@ const useGetKPIQueryData = (
       | fieldsFlatten res // flattening the response of lookup
       | sort  res.event.start asc // sorting the response with ascending order
       | dedup  event.id // removing the duplicates of event id's
+      | filter res != "null" // removing records having res == null
       `,
     },
   });
@@ -66,6 +67,7 @@ const useGetKPIQueryData = (
       | fieldsFlatten res // flattening the response of lookup
       | sort  res.event.start asc // sorting the response with ascending order
       | dedup  event.id // removing the duplicates of event id's
+      | filter res != "null" // removing records having res == null
       `,
     },
   });
