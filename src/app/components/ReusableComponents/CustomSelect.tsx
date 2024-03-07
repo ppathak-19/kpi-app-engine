@@ -15,7 +15,7 @@ interface CustomSelectProps {
   value: string | null;
   onChange: (value: SelectV2SingleValue<string>) => void;
   options: SelectOption[];
-  setLoading: (val: boolean) => void;
+  setLoading?: (val: boolean) => void;
 }
 
 export const CustomSelect = ({
@@ -26,10 +26,10 @@ export const CustomSelect = ({
   setLoading,
 }: CustomSelectProps) => {
   const handleOnChange = (e: SelectV2SingleValue<string>) => {
-    setLoading(true);
+    setLoading?.(true);
     onChange(e);
     setTimeout(() => {
-      setLoading(false);
+      setLoading?.(false);
     }, 1000);
   };
 

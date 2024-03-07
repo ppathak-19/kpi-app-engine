@@ -15,10 +15,13 @@ type StructuredData = Array<{
 export const useStructuredAggregationDetails = (
   daysData: RequiredDataResponse
 ) => {
+  console.log(daysData, "days");
   const extractStringValues = (obj) => {
     const stringValues = {};
     for (const key in obj) {
       if (typeof obj[key] === "string") {
+        stringValues[key] = obj[key];
+      } else if (typeof obj[key] === "number") {
         stringValues[key] = obj[key];
       } else if (typeof obj[key] === "object") {
         const nestedStringValues = extractStringValues(obj[key]);
@@ -30,27 +33,9 @@ export const useStructuredAggregationDetails = (
     return stringValues;
   };
 
-  const stringValues = extractStringValues(daysData);
+  const stringValues1 = Array(extractStringValues(daysData));
 
-  const extractValues = (str) => {
-    const parts = str.split(",").map((part) => part.trim());
-    const currentDayValue = parts[0];
-    const baselinePercentage = parts[1];
-    const previousDayValue = parts[2];
-    const comparisonWithPreviousDay = parts[3];
-    return {
-      currentDayValue,
-      baselinePercentage,
-      previousDayValue,
-      comparisonWithPreviousDay,
-    };
-  };
+  console.log(stringValues1, "values");
 
-  const structuredDetails: StructuredData = Object.entries(stringValues).map(
-    ([key, value]) => ({
-      [key]: extractValues(value),
-    })
-  );
-
-  return [structuredDetails];
+  return [stringValues1];
 };
