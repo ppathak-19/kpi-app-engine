@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import type { AppCompProps } from "types";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { getBeforePastDays } from "../utils/timeConverters";
-import { MetricDetailSection } from "../components/MetricDetailSection";
+import MetricDetailSection from "../components/MetricDetailSection";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   const [selectTimeFrame, setSelectTimeFrame] = useState<string | null>("2");
@@ -16,12 +16,16 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     shouldUseTimeFrame2: true,
   });
 
+  const handleTimeFrameChange = (time: string) => {
+    setSelectTimeFrame(time);
+  };
+
   return (
     <Flex>
       <MetricDetailSection
         daysData={daysData}
         selectedTimeFrame={selectTimeFrame}
-        setSelectedTimeFrame={setSelectTimeFrame}
+        setSelectedTimeFrame={handleTimeFrameChange}
       />
     </Flex>
   );

@@ -10,14 +10,19 @@ import {
   minMTTR,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
+import type { ResultRecord } from "@dynatrace-sdk/client-query";
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
-const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
+const useGetSummarizationData = (queryData: ResultRecord[]) => {
+  // console.log(queryData);
+  const mttdArrayList = queryData.map((each) => each.mttdTime);
+  const mttrArrayList = queryData.map((each) => each.mttrTime);
+
   /** Calculating the MTTD Metrices */
   const mttdsummarizedData = useDqlQuery({
     body: {
       query: `
-      data record(a = array(${mttdData}))
+      data record(a = array(${mttdArrayList}))
       | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
             `,
     },
@@ -27,7 +32,7 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
   const mttrsummarizedData = useDqlQuery({
     body: {
       query: `
-      data record(a = array(${mttrData}))
+      data record(a = array(${mttrArrayList}))
       | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a)
             `,
     },
@@ -84,7 +89,7 @@ const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
     isLoading: mttdsummarizedData.isLoading && mttrsummarizedData.isLoading,
 
     /** Error Indicator */
-    isError: mttdsummarizedData.errorDetails && mttrsummarizedData.errorDetails,
+    isError: mttdsummarizedData.isError && mttrsummarizedData.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
     minMTTDInNum: Math.floor(

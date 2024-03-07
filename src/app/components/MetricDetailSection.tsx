@@ -48,7 +48,7 @@ const InfoItem = ({ title, value }) => {
   );
 };
 
-export const MetricDetailSection = ({
+const MetricDetailSection = ({
   daysData,
   selectedTimeFrame,
   setSelectedTimeFrame,
@@ -167,3 +167,5 @@ export const MetricDetailSection = ({
     </Flex>
   );
 };
+
+export default MetricDetailSection;

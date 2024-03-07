@@ -43,48 +43,29 @@ export type appRoutesType = {
 
 export type OtherType = {
   isLoading?: boolean;
-  isError?: ErrorResponse | undefined;
+  isError?: boolean;
 };
 
-export type InitialDataResponseInStrings = {
-  maxMTTD: string;
-  minMTTD: string;
-  medianMTTD: string;
-  averageMTTD: string;
-  maxMTTR: string;
-  minMTTR: string;
-  medianMTTR: string;
-  averageMTTR: string;
-};
+export type KPIaggregationTypes =
+  | "minMTTD"
+  | "maxMTTD"
+  | "medianMTTD"
+  | "averageMTTD"
+  | "minMTTR"
+  | "maxMTTR"
+  | "medianMTTR"
+  | "averageMTTR";
 
-export type InitialDataResponseInNumbers = {
-  minMTTDInNum: number;
-  maxMTTDInNum: number;
-  averageMTTDInNum: number;
-  medianMTTDInNum: number;
-  minMTTRInNum: number;
-  maxMTTRInNum: number;
-  averageMTTRInNum: number;
-  medianMTTRInNum: number;
-};
+export type ResponseWithPercentages = Record<KPIaggregationTypes, number>;
 
-export type ResponseTypeInPercentage = {
-  minMTTD: number;
-  maxMTTD: number;
-  averageMTTD: number;
-  medianMTTD: number;
-  minMTTR: number;
-  maxMTTR: number;
-  averageMTTR: number;
-  medianMTTR: number;
-};
+export type ResponseWithMetricesData = Record<KPIaggregationTypes, string>;
 
-export type RequiredDataResponse = InitialDataResponseInStrings &
-  InitialDataResponseInNumbers &
-  OtherType & {
-    responseInPercentageWithPreviousDay: ResponseTypeInPercentage;
-    responseInPercentageWithBaseline: ResponseTypeInPercentage;
-  };
+export type RequiredDataResponse = {
+  responseInPercentageWithBaseline: ResponseWithPercentages;
+  responseInPercentageWithPreviousDay: ResponseWithPercentages;
+  responseWithCurrentDayData: ResponseWithMetricesData;
+  responseWithPreviousDayData: ResponseWithMetricesData;
+} & OtherType;
 
 /** Query Props */
 export type QueryProps = {

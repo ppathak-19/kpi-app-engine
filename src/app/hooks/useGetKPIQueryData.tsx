@@ -23,7 +23,7 @@ const useGetKPIQueryData = (
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
-      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id
+      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp
       | fieldsAdd res = lookup([
         fetch events, ${
           shouldUseTimeFrame1 === true
@@ -53,7 +53,7 @@ const useGetKPIQueryData = (
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
-      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id
+      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp
       | fieldsAdd res = lookup([
         fetch events, ${
           shouldUseTimeFrame2 === true
