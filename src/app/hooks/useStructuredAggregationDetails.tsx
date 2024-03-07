@@ -1,16 +1,5 @@
 import { RequiredDataResponse } from "types";
 
-type StructuredDetail = {
-  currentDayValue: string;
-  baselinePercentage: string;
-  previousDayValue: string;
-  comparisonWithPreviousDay: string;
-};
-
-type StructuredData = Array<{
-  [key: string]: StructuredDetail;
-}>;
-
 // seperates the aggregation with its (Structured Details)
 export const useStructuredAggregationDetails = (
   daysData: RequiredDataResponse
@@ -34,8 +23,6 @@ export const useStructuredAggregationDetails = (
   };
 
   const stringValues1 = Array(extractStringValues(daysData));
-
-  console.log(stringValues1, "values");
 
   return [stringValues1];
 };
