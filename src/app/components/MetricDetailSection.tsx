@@ -178,19 +178,19 @@ export const MetricDetailSection = ({
           ) : (
             <div style={{ margin: "1rem" }}>
               <InfoItem
-                title={"Last 2 days (Minutes)"}
+                title={`Last ${selectedTimeFrame} days (Minutes)`}
                 value={mttdData.currentDayValue}
               />
               <InfoItem
-                title={"2 days prior last 2 days (Minutes)"}
+                title={`${selectedTimeFrame} days prior (Minutes)`}
                 value={mttdData.previousDayValue}
               />
               <InfoItem
-                title={"Baseline comparison: past 2 days"}
+                title={`Baseline comparison: past ${selectedTimeFrame} days`}
                 value={mttdData.baselinePercentage}
               />
               <InfoItem
-                title={"Comparing Recent 2 Days with 2 Days Prior"}
+                title={`Comparing Recent ${selectedTimeFrame} Days with ${selectedTimeFrame} Days Prior`}
                 value={mttdData.comparisonWithPreviousDay}
               />
             </div>
@@ -210,7 +210,7 @@ export const MetricDetailSection = ({
                 value={mttrData.currentDayValue}
               />
               <InfoItem
-                title={"2 days prior last 2 days (Minutes)"}
+                title={"2 days prior (Minutes)"}
                 value={mttrData.previousDayValue}
               />
               <InfoItem
