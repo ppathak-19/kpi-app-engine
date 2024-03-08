@@ -246,7 +246,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     ),
   };
 
-  /** Final Response For DataTable */
+  /** Final Response */
   const finalResponse: RequiredDataResponse = {
     /** Other Info */
     isLoading: metricData1.isLoading || metricData2.isLoading,
@@ -257,8 +257,12 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseInPercentageWithPreviousDay,
     responseWithCurrentDayData,
     responseWithPreviousDayData,
-    timeSeriesWithCurrentDayData: metricData1.timeSeriesData,
-    timeSeriesWithPreviousDayData: metricData2.timeSeriesData,
+    timeSeriesWithCurrentDayData: !!q1
+      ? { metadata: {}, records: storeCurrentDay, types: q1.types }
+      : { metadata: {}, records: [], types: [] },
+    timeSeriesWithPreviousDayData: !!q2
+      ? { metadata: {}, records: storePreviousDay, types: q2.types }
+      : { metadata: {}, records: [], types: [] },
   };
   return finalResponse;
 };

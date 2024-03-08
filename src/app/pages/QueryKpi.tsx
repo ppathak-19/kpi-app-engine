@@ -1,7 +1,9 @@
 import {
   Flex,
+  Heading,
   TimeseriesChart,
   convertQueryResultToTimeseries,
+  convertToTimeseries,
 } from "@dynatrace/strato-components-preview";
 import React, { useState } from "react";
 import type { AppCompProps } from "types";
@@ -27,13 +29,33 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   // console.count();
 
   // console.log(daysData.isLoading);
-  // console.log(daysData);
+  // console.log(daysData.timeSeriesWithCurrentDayData);
 
-  const ab = convertQueryResultToTimeseries(
-    !!daysData.timeSeriesWithCurrentDayData
-      ? daysData.timeSeriesWithCurrentDayData
-      : { metadata: {}, records: [], types: [] }
+  // const currentDayTimeseries = convertQueryResultToTimeseries(
+  //   !!daysData.timeSeriesWithCurrentDayData
+  //     ? daysData.timeSeriesWithCurrentDayData
+  //     : { metadata: {}, records: [], types: [] }
+  // );
+
+  // const previousDayTimeseries = convertQueryResultToTimeseries(
+  //   !!daysData.timeSeriesWithPreviousDayData
+  //     ? daysData.timeSeriesWithPreviousDayData
+  //     : { metadata: {}, records: [], types: [] }
+  // );
+
+  const { records, types } = daysData.timeSeriesWithCurrentDayData;
+
+  const timeseries1 = convertToTimeseries(records, types, [
+    "res",
+    "dt.davis.event_ids",
+    "event.id",
+  ]);
+
+  const timeseries2 = convertQueryResultToTimeseries(
+    daysData.timeSeriesWithCurrentDayData
   );
+
+  // console.log(timeseries1);
 
   return (
     <>
@@ -47,7 +69,19 @@ const QueryKpi: React.FC<AppCompProps> = () => {
       <br />
       <br />
       <br />
-      <TimeseriesChart data={ab} variant="area" loading={daysData.isLoading} />
+      <Heading level={5}>Timeseries</Heading>
+      <TimeseriesChart
+        data={timeseries1}
+        variant="area"
+        loading={daysData.isLoading}
+      />
+      <br />
+      <br />
+      <TimeseriesChart
+        data={timeseries2}
+        variant="area"
+        loading={daysData.isLoading}
+      />
     </>
   );
 };
