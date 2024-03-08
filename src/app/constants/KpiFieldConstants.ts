@@ -1,5 +1,14 @@
 // This variables are used in tableColumns and useGetSummarizationData() hook, so that we will get the response from the hook with this below keys
 
+import type { QueryResult } from "@dynatrace-sdk/client-query";
+import type {
+  RequiredDataResponse,
+  ResponseWithMetricesData,
+  ResponseWithPercentages,
+} from "types";
+
+// if you are changing any value or adding new value, also make changes in `KPIaggregationTypes` types
+
 /** For MTTD  */
 export const medianMTTD = "medianMTTD";
 export const maxMTTD = "maxMTTD";
@@ -11,3 +20,15 @@ export const averageMTTR = "averageMTTR";
 export const medianMTTR = "medianMTTR";
 export const maxMTTR = "maxMTTR";
 export const minMTTR = "minMTTR";
+
+/** RequiredResponseType */
+export const emptyResponse: RequiredDataResponse = {
+  isError: false,
+  isLoading: true,
+  responseInPercentageWithBaseline: {} as ResponseWithPercentages,
+  responseInPercentageWithPreviousDay: {} as ResponseWithPercentages,
+  responseWithCurrentDayData: {} as ResponseWithMetricesData,
+  responseWithPreviousDayData: {} as ResponseWithMetricesData,
+  timeSeriesWithCurrentDayData: {} as QueryResult,
+  timeSeriesWithPreviousDayData: {} as QueryResult,
+};

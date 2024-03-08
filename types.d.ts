@@ -2,6 +2,7 @@ import {
   type EntityStub,
   type EvidenceEvidenceType,
 } from "@dynatrace-sdk/client-classic-environment-v2";
+import type { QueryResult } from "@dynatrace-sdk/client-query";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type AppCompProps = {};
@@ -65,6 +66,8 @@ export type RequiredDataResponse = {
   responseInPercentageWithPreviousDay: ResponseWithPercentages;
   responseWithCurrentDayData: ResponseWithMetricesData;
   responseWithPreviousDayData: ResponseWithMetricesData;
+  timeSeriesWithCurrentDayData: QueryResult;
+  timeSeriesWithPreviousDayData: QueryResult;
 } & OtherType;
 
 /** Query Props */

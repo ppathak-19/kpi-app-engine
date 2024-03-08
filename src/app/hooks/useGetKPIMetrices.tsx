@@ -1,4 +1,4 @@
-import { ResultRecord } from "@dynatrace-sdk/client-query";
+import type { ResultRecord } from "@dynatrace-sdk/client-query";
 import { useEffect, useState } from "react";
 import type {
   QueryProps,
@@ -113,10 +113,23 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
 
   //* passing current days mttd,mttr values so we get avg,min,etc.. for current days data
-  const metricData1 = useGetSummarizationData(storeCurrentDay);
+  const metricData1 = useGetSummarizationData({
+    queryData: storeCurrentDay,
+    shouldUseTimeFrame: false,
+    timeLine: timeLine1,
+  });
 
   //* passing previous days mttd,mttr values so we get avg,min,etc.. for previous days data
-  const metricData2 = useGetSummarizationData(storePreviousDay);
+  const metricData2 = useGetSummarizationData({
+    queryData: storePreviousDay,
+    shouldUseTimeFrame: true,
+    timeLine: timeLine2,
+  });
+
+  // console.log({
+  //   metricData1,
+  //   metricData2,
+  // });
 
   /** Taking baseline values from useContext  */
   const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
@@ -236,7 +249,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** Final Response For DataTable */
   const finalResponse: RequiredDataResponse = {
     /** Other Info */
-    isLoading: metricData1.isLoading && metricData2.isLoading,
+    isLoading: metricData1.isLoading || metricData2.isLoading,
     isError: metricData1.isError && metricData2.isError,
 
     /** Other calculations */
@@ -244,6 +257,8 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseInPercentageWithPreviousDay,
     responseWithCurrentDayData,
     responseWithPreviousDayData,
+    timeSeriesWithCurrentDayData: metricData1.timeSeriesData,
+    timeSeriesWithPreviousDayData: metricData2.timeSeriesData,
   };
   return finalResponse;
 };

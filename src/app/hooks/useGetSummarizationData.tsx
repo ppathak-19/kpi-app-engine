@@ -1,3 +1,4 @@
+import type { ResultRecord } from "@dynatrace-sdk/client-query";
 import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   averageMTTD,
@@ -10,10 +11,19 @@ import {
   minMTTR,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
-import type { ResultRecord } from "@dynatrace-sdk/client-query";
+
+type SummarizationDataHookProps = {
+  queryData: ResultRecord[];
+  shouldUseTimeFrame: boolean;
+  timeLine: string;
+};
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
-const useGetSummarizationData = (queryData: ResultRecord[]) => {
+const useGetSummarizationData = ({
+  queryData,
+  shouldUseTimeFrame,
+  timeLine,
+}: SummarizationDataHookProps) => {
   // console.log(queryData);
   const mttdArrayList = queryData.map((each) => each.mttdTime);
   const mttrArrayList = queryData.map((each) => each.mttrTime);
@@ -39,6 +49,22 @@ const useGetSummarizationData = (queryData: ResultRecord[]) => {
   });
 
   // console.log({ mttdsummarizedData, mttrsummarizedData });
+
+  const timeSeriesCals = useDqlQuery({
+    body: {
+      query: `
+      data json:"""${JSON.stringify(queryData)}"""
+      | fieldsAdd  timestamp =  toTimestamp(timestamp)
+      | makeTimeseries { max(mttrTime), min(mttrTime), avg(mttrTime), max(mttdTime), min(mttdTime), avg(mttdTime) }, ${
+        shouldUseTimeFrame === true
+          ? `timeframe: toTimeframe("${timeLine}")`
+          : `from:${timeLine}`
+      }
+      `,
+    },
+  });
+
+  console.log({ timeLine, timeSeriesCals });
 
   const response = {
     /** MTTD Data */
@@ -86,7 +112,10 @@ const useGetSummarizationData = (queryData: ResultRecord[]) => {
       ),
 
     /** Loading Indicator */
-    isLoading: mttdsummarizedData.isLoading && mttrsummarizedData.isLoading,
+    isLoading:
+      mttdsummarizedData.isLoading &&
+      mttrsummarizedData.isLoading &&
+      timeSeriesCals.isLoading,
 
     /** Error Indicator */
     isError: mttdsummarizedData.isError && mttrsummarizedData.isError,
@@ -117,6 +146,12 @@ const useGetSummarizationData = (queryData: ResultRecord[]) => {
     medianMTTRInNum: Math.floor(
       (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
     ),
+
+    /** MakeTimeseries data */
+    timeSeriesData:
+      !!timeSeriesCals && timeSeriesCals.data
+        ? timeSeriesCals.data
+        : { metadata: {}, records: [], types: [] },
   };
 
   return response;
