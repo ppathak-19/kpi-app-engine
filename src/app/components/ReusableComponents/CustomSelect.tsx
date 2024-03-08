@@ -23,14 +23,9 @@ export const CustomSelect = ({
   value,
   onChange,
   options,
-  setLoading,
 }: CustomSelectProps) => {
   const handleOnChange = (e: SelectV2SingleValue<string>) => {
-    setLoading?.(true);
     onChange(e);
-    setTimeout(() => {
-      setLoading?.(false);
-    }, 1000);
   };
 
   return (

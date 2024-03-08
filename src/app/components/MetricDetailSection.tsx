@@ -49,6 +49,10 @@ const MetricDetailSection = ({
     "median"
   );
 
+  const handleTimeFrameChange = (val: string) => {
+    setSelectedTimeFrame(val);
+  };
+
   return (
     <Flex flexDirection="column" width="100%">
       <Flex justifyContent="space-between">
@@ -61,7 +65,7 @@ const MetricDetailSection = ({
         <CustomSelect
           label="Select Timeframe"
           value={selectedTimeFrame}
-          onChange={setSelectedTimeFrame}
+          onChange={handleTimeFrameChange}
           options={timeFrameOptions}
         />
       </Flex>
