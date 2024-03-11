@@ -33,13 +33,16 @@ const useGetKPIMetrices = (props: QueryProps) => {
   const { shouldUseTimeFrame1, shouldUseTimeFrame2, timeLine1, timeLine2 } =
     props;
 
-  const { queryResponseWithTimeLine1: q1, queryResponseWithTimeLine2: q2 } =
-    useGetKPIQueryData({
-      timeLine1,
-      timeLine2,
-      shouldUseTimeFrame1,
-      shouldUseTimeFrame2,
-    });
+  const {
+    queryResponseWithTimeLine1: q1,
+    queryResponseWithTimeLine2: q2,
+    isLoading: mainQueryLoading,
+  } = useGetKPIQueryData({
+    timeLine1,
+    timeLine2,
+    shouldUseTimeFrame1,
+    shouldUseTimeFrame2,
+  });
 
   /** State For Storing all data i.e, current day & previous day */
   const [storeCurrentDay, setStoreCurrentDay] = useState<ResultRecord[]>([]);
@@ -249,8 +252,9 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** Final Response */
   const finalResponse: RequiredDataResponse = {
     /** Other Info */
-    isLoading: metricData1.isLoading || metricData2.isLoading,
-    isError: metricData1.isError && metricData2.isError,
+    isLoading:
+      mainQueryLoading || metricData1.isLoading || metricData2.isLoading,
+    isError: metricData1.isError || metricData2.isError,
 
     /** Other calculations */
     responseInPercentageWithBaseline,

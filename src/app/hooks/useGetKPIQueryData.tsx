@@ -8,6 +8,7 @@ const useGetKPIQueryData = (
 ): {
   queryResponseWithTimeLine1: QueryResult | undefined;
   queryResponseWithTimeLine2: QueryResult | undefined;
+  isLoading: boolean;
 } => {
   const { timeLine1, shouldUseTimeFrame1, timeLine2, shouldUseTimeFrame2 } =
     props;
@@ -75,6 +76,7 @@ const useGetKPIQueryData = (
   const response = {
     queryResponseWithTimeLine1: queryData1.data,
     queryResponseWithTimeLine2: queryData2.data,
+    isLoading: queryData1.isLoading || queryData2.isLoading,
   };
 
   return response;
