@@ -1,14 +1,14 @@
-import type { QueryResult, ResultRecord } from "@dynatrace-sdk/client-query";
 import {
+  Container,
   Flex,
   Heading,
   TimeseriesChart,
-  convertQueryResultToTimeseries,
 } from "@dynatrace/strato-components-preview";
 import React, { useState } from "react";
 import type { AppCompProps } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
+import { giveTimeseriesData } from "../utils/giveTimeseriesData";
 import { getBeforePastDays } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
@@ -30,77 +30,17 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   // console.log(daysData.isLoading);
   // console.log(daysData);
 
-  /** This function will return the ResultRecord[], which we are using to differentiate kpi data from one single timeseries data */
-  const giveRequiredKpi = (
-    records: (ResultRecord | null)[],
-    kpi: "mttr" | "mttd"
-  ): ResultRecord[] => {
-    const firstObj = records[0];
-    const res = {
-      [`avg(${kpi}Time)`]: !!firstObj
-        ? firstObj?.[`avg(${kpi}Time)`]
-        : ([] as number[]),
-      [`min(${kpi}Time)`]: !!firstObj
-        ? firstObj?.[`min(${kpi}Time)`]
-        : ([] as number[]),
-      [`max(${kpi}Time)`]: !!firstObj
-        ? firstObj?.[`max(${kpi}Time)`]
-        : ([] as number[]),
-      ["timeframe"]: !!firstObj ? firstObj?.["timeframe"] : ([] as number[]),
-      ["interval"]: !!firstObj ? firstObj?.["interval"] : "",
-    };
-    // console.log({ records, firstObj, res });
+  /** Passing Current Day Data  */
+  const {
+    timeseriesMttd: CurrentTimeseriesMttd,
+    timeseriesMttr: CurrentTimeseriesMttr,
+  } = giveTimeseriesData(!!daysData && daysData.timeSeriesWithCurrentDayData);
 
-    return [res];
-  };
-
-  /** QueryResult for MTTR  */
-  const mttrData =
-    !!daysData && daysData.timeSeriesWithCurrentDayData
-      ? ({
-          metadata:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? daysData.timeSeriesWithCurrentDayData.metadata
-              : {},
-          types:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? daysData.timeSeriesWithCurrentDayData.types
-              : [],
-          records:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? giveRequiredKpi(
-                  daysData.timeSeriesWithCurrentDayData.records,
-                  "mttr"
-                )
-              : [],
-        } as QueryResult)
-      : { metadata: {}, records: [], types: [] };
-
-  /** QueryResult for MTTD  */
-  const mttdData =
-    !!daysData && daysData.timeSeriesWithCurrentDayData
-      ? ({
-          metadata:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? daysData.timeSeriesWithCurrentDayData.metadata
-              : {},
-          types:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? daysData.timeSeriesWithCurrentDayData.types
-              : [],
-          records:
-            !!daysData && daysData.timeSeriesWithCurrentDayData
-              ? giveRequiredKpi(
-                  daysData.timeSeriesWithCurrentDayData.records,
-                  "mttd"
-                )
-              : [],
-        } as QueryResult)
-      : { metadata: {}, records: [], types: [] };
-
-  /** Using above results and passing to utility function */
-  const TimeseriesMttr = convertQueryResultToTimeseries(mttrData);
-  const TimeseriesMttd = convertQueryResultToTimeseries(mttdData);
+  /** Passing Previous Data */
+  const {
+    timeseriesMttd: RelativeTimeseriesMttd,
+    timeseriesMttr: RelativeTimeseriesMttr,
+  } = giveTimeseriesData(!!daysData && daysData.timeSeriesWithPreviousDayData);
 
   return (
     <>
@@ -114,20 +54,44 @@ const QueryKpi: React.FC<AppCompProps> = () => {
       <br />
       <br />
       <br />
-      <Heading level={5}>Timeseries- MTTD</Heading>
-      <TimeseriesChart
-        data={TimeseriesMttd}
-        variant="area"
-        loading={daysData.isLoading}
-      />
+      <Heading level={6}>Current Days- Timeseries</Heading>
+      <br />
+      <Flex flexDirection="row" width="100%" justifyContent="space-around">
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={CurrentTimeseriesMttd}
+            variant="area"
+            loading={daysData.isLoading}
+          />
+        </Container>
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={CurrentTimeseriesMttr}
+            variant="area"
+            loading={daysData.isLoading}
+          />
+        </Container>
+      </Flex>
       <br />
       <br />
-      <Heading level={5}>Timeseries - MTTR </Heading>
-      <TimeseriesChart
-        data={TimeseriesMttr}
-        variant="area"
-        loading={daysData.isLoading}
-      />
+      <Heading level={6}>Relative Days- Timeseries</Heading>
+      <br />
+      <Flex flexDirection="row" width="100%" justifyContent="space-around">
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={RelativeTimeseriesMttd}
+            variant="area"
+            loading={daysData.isLoading}
+          />
+        </Container>
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={RelativeTimeseriesMttr}
+            variant="area"
+            loading={daysData.isLoading}
+          />
+        </Container>
+      </Flex>
     </>
   );
 };
