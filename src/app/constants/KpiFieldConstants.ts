@@ -1,6 +1,5 @@
 // This variables are used in tableColumns and useGetSummarizationData() hook, so that we will get the response from the hook with this below keys
 
-import type { QueryResult } from "@dynatrace-sdk/client-query";
 import type {
   RequiredDataResponse,
   ResponseWithMetricesData,
@@ -29,6 +28,6 @@ export const emptyResponse: RequiredDataResponse = {
   responseInPercentageWithPreviousDay: {} as ResponseWithPercentages,
   responseWithCurrentDayData: {} as ResponseWithMetricesData,
   responseWithPreviousDayData: {} as ResponseWithMetricesData,
-  timeSeriesWithCurrentDayData: {} as QueryResult,
-  timeSeriesWithPreviousDayData: {} as QueryResult,
+  timeSeriesWithCurrentDayData: { metadata: {}, records: [], types: [] },
+  timeSeriesWithPreviousDayData: { metadata: {}, records: [], types: [] },
 };

@@ -50,12 +50,40 @@ const useGetSummarizationData = ({
 
   // console.log({ mttdsummarizedData, mttrsummarizedData });
 
+  // const timeSeriesCalsMttd = useDqlQuery({
+  //   body: {
+  //     query: `
+  //     data json:"""${JSON.stringify(queryData)}"""
+  //     | fieldsAdd  timestamp =  toTimestamp(timestamp)
+  //     | makeTimeseries { max(mttdTime), min(mttdTime), avg(mttdTime) }, ${
+  //       shouldUseTimeFrame === true
+  //         ? `timeframe: toTimeframe("${timeLine}")`
+  //         : `from:${timeLine}`
+  //     }
+  //     `,
+  //   },
+  // });
+
+  // const timeSeriesCalsMttr = useDqlQuery({
+  //   body: {
+  //     query: `
+  //     data json:"""${JSON.stringify(queryData)}"""
+  //     | fieldsAdd  timestamp =  toTimestamp(timestamp)
+  //     | makeTimeseries { max(mttrTime), min(mttrTime), avg(mttrTime) }, ${
+  //       shouldUseTimeFrame === true
+  //         ? `timeframe: toTimeframe("${timeLine}")`
+  //         : `from:${timeLine}`
+  //     }
+  //     `,
+  //   },
+  // });
+
   const timeSeriesCals = useDqlQuery({
     body: {
       query: `
       data json:"""${JSON.stringify(queryData)}"""
       | fieldsAdd  timestamp =  toTimestamp(timestamp)
-      | makeTimeseries { max(mttrTime), min(mttrTime), avg(mttrTime), max(mttdTime), min(mttdTime), avg(mttdTime) }, ${
+      | makeTimeseries { max(mttdTime), min(mttdTime), avg(mttdTime),max(mttrTime), min(mttrTime), avg(mttrTime) }, ${
         shouldUseTimeFrame === true
           ? `timeframe: toTimeframe("${timeLine}")`
           : `from:${timeLine}`
@@ -63,8 +91,6 @@ const useGetSummarizationData = ({
       `,
     },
   });
-
-  console.log({ timeLine, timeSeriesCals });
 
   const response = {
     /** MTTD Data */
@@ -148,7 +174,17 @@ const useGetSummarizationData = ({
     ),
 
     /** MakeTimeseries data */
-    timeSeriesData:
+    // timeSeriesData: {
+    //   mttd:
+    //     !!timeSeriesCalsMttd && timeSeriesCalsMttd.data
+    //       ? timeSeriesCalsMttd.data
+    //       : { metadata: {}, records: [], types: [] },
+    //   mttr:
+    //     !!timeSeriesCalsMttr && timeSeriesCalsMttr.data
+    //       ? timeSeriesCalsMttr.data
+    //       : { metadata: {}, records: [], types: [] },
+    // },
+    dataTimeseries:
       !!timeSeriesCals && timeSeriesCals.data
         ? timeSeriesCals.data
         : { metadata: {}, records: [], types: [] },

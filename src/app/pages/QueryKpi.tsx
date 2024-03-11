@@ -1,9 +1,9 @@
+import type { QueryResult, ResultRecord } from "@dynatrace-sdk/client-query";
 import {
   Flex,
   Heading,
   TimeseriesChart,
   convertQueryResultToTimeseries,
-  convertToTimeseries,
 } from "@dynatrace/strato-components-preview";
 import React, { useState } from "react";
 import type { AppCompProps } from "types";
@@ -12,7 +12,7 @@ import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { getBeforePastDays } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
-  const [selectTimeFrame, setSelectTimeFrame] = useState<string | null>("2");
+  const [selectTimeFrame, setSelectTimeFrame] = useState<string>("2");
 
   /** Getting Metrices for Last 2 Days */
   const daysData = useGetKPIMetrices({
@@ -27,35 +27,80 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   };
 
   // console.count();
-
   // console.log(daysData.isLoading);
-  // console.log(daysData.timeSeriesWithCurrentDayData);
+  // console.log(daysData);
 
-  // const currentDayTimeseries = convertQueryResultToTimeseries(
-  //   !!daysData.timeSeriesWithCurrentDayData
-  //     ? daysData.timeSeriesWithCurrentDayData
-  //     : { metadata: {}, records: [], types: [] }
-  // );
+  /** This function will return the ResultRecord[], which we are using to differentiate kpi data from one single timeseries data */
+  const giveRequiredKpi = (
+    records: (ResultRecord | null)[],
+    kpi: "mttr" | "mttd"
+  ): ResultRecord[] => {
+    const firstObj = records[0];
+    const res = {
+      [`avg(${kpi}Time)`]: !!firstObj
+        ? firstObj?.[`avg(${kpi}Time)`]
+        : ([] as number[]),
+      [`min(${kpi}Time)`]: !!firstObj
+        ? firstObj?.[`min(${kpi}Time)`]
+        : ([] as number[]),
+      [`max(${kpi}Time)`]: !!firstObj
+        ? firstObj?.[`max(${kpi}Time)`]
+        : ([] as number[]),
+      ["timeframe"]: !!firstObj ? firstObj?.["timeframe"] : ([] as number[]),
+      ["interval"]: !!firstObj ? firstObj?.["interval"] : "",
+    };
+    // console.log({ records, firstObj, res });
 
-  // const previousDayTimeseries = convertQueryResultToTimeseries(
-  //   !!daysData.timeSeriesWithPreviousDayData
-  //     ? daysData.timeSeriesWithPreviousDayData
-  //     : { metadata: {}, records: [], types: [] }
-  // );
+    return [res];
+  };
 
-  const { records, types } = daysData.timeSeriesWithCurrentDayData;
+  /** QueryResult for MTTR  */
+  const mttrData =
+    !!daysData && daysData.timeSeriesWithCurrentDayData
+      ? ({
+          metadata:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? daysData.timeSeriesWithCurrentDayData.metadata
+              : {},
+          types:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? daysData.timeSeriesWithCurrentDayData.types
+              : [],
+          records:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? giveRequiredKpi(
+                  daysData.timeSeriesWithCurrentDayData.records,
+                  "mttr"
+                )
+              : [],
+        } as QueryResult)
+      : { metadata: {}, records: [], types: [] };
 
-  const timeseries1 = convertToTimeseries(records, types, [
-    "res",
-    "dt.davis.event_ids",
-    "event.id",
-  ]);
+  /** QueryResult for MTTD  */
+  const mttdData =
+    !!daysData && daysData.timeSeriesWithCurrentDayData
+      ? ({
+          metadata:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? daysData.timeSeriesWithCurrentDayData.metadata
+              : {},
+          types:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? daysData.timeSeriesWithCurrentDayData.types
+              : [],
+          records:
+            !!daysData && daysData.timeSeriesWithCurrentDayData
+              ? giveRequiredKpi(
+                  daysData.timeSeriesWithCurrentDayData.records,
+                  "mttd"
+                )
+              : [],
+        } as QueryResult)
+      : { metadata: {}, records: [], types: [] };
 
-  const timeseries2 = convertQueryResultToTimeseries(
-    daysData.timeSeriesWithCurrentDayData
-  );
-
-  // console.log(timeseries1);
+  /** Using above results and passing to utility function */
+  const TimeseriesMttr = convertQueryResultToTimeseries(mttrData);
+  const TimeseriesMttd = convertQueryResultToTimeseries(mttdData);
 
   return (
     <>
@@ -69,16 +114,17 @@ const QueryKpi: React.FC<AppCompProps> = () => {
       <br />
       <br />
       <br />
-      <Heading level={5}>Timeseries</Heading>
+      <Heading level={5}>Timeseries- MTTD</Heading>
       <TimeseriesChart
-        data={timeseries1}
+        data={TimeseriesMttd}
         variant="area"
         loading={daysData.isLoading}
       />
       <br />
       <br />
+      <Heading level={5}>Timeseries - MTTR </Heading>
       <TimeseriesChart
-        data={timeseries2}
+        data={TimeseriesMttr}
         variant="area"
         loading={daysData.isLoading}
       />

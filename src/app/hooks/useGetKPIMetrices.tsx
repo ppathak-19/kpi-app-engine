@@ -257,12 +257,8 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseInPercentageWithPreviousDay,
     responseWithCurrentDayData,
     responseWithPreviousDayData,
-    timeSeriesWithCurrentDayData: !!q1
-      ? { metadata: {}, records: storeCurrentDay, types: q1.types }
-      : { metadata: {}, records: [], types: [] },
-    timeSeriesWithPreviousDayData: !!q2
-      ? { metadata: {}, records: storePreviousDay, types: q2.types }
-      : { metadata: {}, records: [], types: [] },
+    timeSeriesWithCurrentDayData: metricData1.dataTimeseries,
+    timeSeriesWithPreviousDayData: metricData2.dataTimeseries,
   };
   return finalResponse;
 };
