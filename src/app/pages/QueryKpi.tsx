@@ -9,26 +9,24 @@ import type { AppCompProps } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { giveTimeseriesData } from "../utils/giveTimeseriesData";
-import { getBeforePastDays } from "../utils/timeConverters";
+import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   const [selectTimeFrame, setSelectTimeFrame] = useState<string>("2");
 
+  const getTimeLine1 = getPastDaysRange(selectTimeFrame);
+
   /** Getting Metrices for Last 2 Days */
   const daysData = useGetKPIMetrices({
-    timeLine1: `now()-${selectTimeFrame}d`,
+    timeLine1: `now()-${getTimeLine1}d`,
     shouldUseTimeFrame1: false,
-    timeLine2: getBeforePastDays(Number(selectTimeFrame)),
+    timeLine2: getBeforePastDays(selectTimeFrame),
     shouldUseTimeFrame2: true,
   });
 
   const handleTimeFrameChange = (time: string) => {
     setSelectTimeFrame(time);
   };
-
-  // console.count();
-  // console.log(daysData.isLoading);
-  // console.log(daysData);
 
   /** Passing Current Day Data  */
   const {
