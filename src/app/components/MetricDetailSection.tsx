@@ -53,6 +53,34 @@ const MetricDetailSection = ({
     setSelectedTimeFrame(val);
   };
 
+  const daysPriorLabel =
+    selectedTimeFrame === "-w"
+      ? "Last week (Minutes)"
+      : selectedTimeFrame === "-m"
+      ? "Last month (Minutes)"
+      : `${selectedTimeFrame} days prior (Minutes)`;
+
+  const lastDaysLabel =
+    selectedTimeFrame === "-w"
+      ? "This week (Minutes)"
+      : selectedTimeFrame === "-m"
+      ? "This month (Minutes)"
+      : `Last ${selectedTimeFrame} days (Minutes)`;
+
+  const baseLineComparisonLabel =
+    selectedTimeFrame === "-w"
+      ? "Baseline comparison"
+      : selectedTimeFrame === "-m"
+      ? "Baseline comparison"
+      : `Baseline comparison: past ${selectedTimeFrame} days`;
+
+  const comparingRecentLabel =
+    selectedTimeFrame === "-w"
+      ? "Comparing this week with last week"
+      : selectedTimeFrame === "-m"
+      ? "Comparing this week with last week"
+      : `Comparing Recent ${selectedTimeFrame} Days with ${selectedTimeFrame} Days Prior`;
+
   return (
     <Flex flexDirection="column" width="100%">
       <Flex justifyContent="space-between">
@@ -82,13 +110,13 @@ const MetricDetailSection = ({
           ) : (
             <div style={{ margin: "1rem" }}>
               <InfoItem
-                title={`Last ${selectedTimeFrame} days (Minutes)`}
+                title={lastDaysLabel}
                 value={
                   daysData?.responseWithCurrentDayData[`${aggregatorValue}MTTD`]
                 }
               />
               <InfoItem
-                title={`${selectedTimeFrame} days prior (Minutes)`}
+                title={daysPriorLabel}
                 value={
                   daysData?.responseWithPreviousDayData[
                     `${aggregatorValue}MTTD`
@@ -96,7 +124,7 @@ const MetricDetailSection = ({
                 }
               />
               <InfoItem
-                title={`Baseline comparison: past ${selectedTimeFrame} days`}
+                title={baseLineComparisonLabel}
                 value={
                   daysData?.responseInPercentageWithBaseline[
                     `${aggregatorValue}MTTD`
@@ -104,7 +132,7 @@ const MetricDetailSection = ({
                 }
               />
               <InfoItem
-                title={`Comparing Recent ${selectedTimeFrame} Days with ${selectedTimeFrame} Days Prior`}
+                title={comparingRecentLabel}
                 value={
                   daysData?.responseInPercentageWithPreviousDay[
                     `${aggregatorValue}MTTD`
@@ -124,13 +152,13 @@ const MetricDetailSection = ({
           ) : (
             <div style={{ margin: "1rem" }}>
               <InfoItem
-                title={`Last ${selectedTimeFrame} days (Minutes)`}
+                title={lastDaysLabel}
                 value={
                   daysData?.responseWithCurrentDayData[`${aggregatorValue}MTTR`]
                 }
               />
               <InfoItem
-                title={`${selectedTimeFrame} days prior (Minutes)`}
+                title={daysPriorLabel}
                 value={
                   daysData?.responseWithPreviousDayData[
                     `${aggregatorValue}MTTR`
@@ -138,7 +166,7 @@ const MetricDetailSection = ({
                 }
               />
               <InfoItem
-                title={`Baseline comparison: past ${selectedTimeFrame} days`}
+                title={baseLineComparisonLabel}
                 value={
                   daysData?.responseInPercentageWithBaseline[
                     `${aggregatorValue}MTTR`
@@ -146,7 +174,7 @@ const MetricDetailSection = ({
                 }
               />
               <InfoItem
-                title={`Comparing Recent ${selectedTimeFrame} Days with ${selectedTimeFrame} Days Prior`}
+                title={comparingRecentLabel}
                 value={
                   daysData?.responseInPercentageWithPreviousDay[
                     `${aggregatorValue}MTTR`
