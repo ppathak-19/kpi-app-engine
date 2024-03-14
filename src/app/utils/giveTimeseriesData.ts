@@ -1,21 +1,28 @@
 import type { QueryResult, ResultRecord } from "@dynatrace-sdk/client-query";
 import { convertQueryResultToTimeseries } from "@dynatrace/strato-components-preview";
+import type { aggregationsType } from "types";
 
-/** This function will return the ResultRecord[], which we are using to differentiate kpi data from one single timeseries data */
-const giveRequiredKpi = (
-  records: (ResultRecord | null)[],
-  kpi: "mttr" | "mttd"
-): ResultRecord[] => {
+type giveTimeseriesDataParametersType = {
+  queryResult: QueryResult;
+  aggregation: aggregationsType;
+};
+
+type giveRequiredKpiParametersType = {
+  records: (ResultRecord | null)[];
+  kpi: "MTTR" | "MTTD";
+  aggregation: aggregationsType;
+};
+
+/** This function will return the ResultRecord[], which will return only aggregation provided. */
+const giveRequiredKpi = ({
+  aggregation,
+  kpi,
+  records,
+}: giveRequiredKpiParametersType): ResultRecord[] => {
   const firstObj = records[0];
   const res = {
-    [`avg(${kpi}Time)`]: !!firstObj
-      ? firstObj?.[`avg(${kpi}Time)`]
-      : ([] as number[]),
-    [`min(${kpi}Time)`]: !!firstObj
-      ? firstObj?.[`min(${kpi}Time)`]
-      : ([] as number[]),
-    [`max(${kpi}Time)`]: !!firstObj
-      ? firstObj?.[`max(${kpi}Time)`]
+    [`${aggregation}${kpi}`]: !!firstObj
+      ? firstObj?.[`${aggregation}${kpi}`]
       : ([] as number[]),
     ["timeframe"]: !!firstObj ? firstObj?.["timeframe"] : ([] as number[]),
     ["interval"]: !!firstObj ? firstObj?.["interval"] : "",
@@ -24,7 +31,10 @@ const giveRequiredKpi = (
   return [res];
 };
 
-export const giveTimeseriesData = (queryResult: QueryResult) => {
+export const giveTimeseriesData = ({
+  aggregation,
+  queryResult,
+}: giveTimeseriesDataParametersType) => {
   /** QueryResult for MTTR  */
   const mttrData =
     !!queryResult && queryResult
@@ -33,7 +43,11 @@ export const giveTimeseriesData = (queryResult: QueryResult) => {
           types: !!queryResult && queryResult ? queryResult.types : [],
           records:
             !!queryResult && queryResult
-              ? giveRequiredKpi(queryResult.records, "mttr")
+              ? giveRequiredKpi({
+                  records: queryResult.records,
+                  aggregation,
+                  kpi: "MTTR",
+                })
               : [],
         } as QueryResult)
       : { metadata: {}, records: [], types: [] };
@@ -46,7 +60,11 @@ export const giveTimeseriesData = (queryResult: QueryResult) => {
           types: !!queryResult && queryResult ? queryResult.types : [],
           records:
             !!queryResult && queryResult
-              ? giveRequiredKpi(queryResult.records, "mttd")
+              ? giveRequiredKpi({
+                  records: queryResult.records,
+                  aggregation,
+                  kpi: "MTTD",
+                })
               : [],
         } as QueryResult)
       : { metadata: {}, records: [], types: [] };

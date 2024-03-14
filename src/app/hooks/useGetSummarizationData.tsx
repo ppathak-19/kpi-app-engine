@@ -83,7 +83,7 @@ const useGetSummarizationData = ({
       query: `
       data json:"""${JSON.stringify(queryData)}"""
       | fieldsAdd  timestamp =  toTimestamp(timestamp)
-      | makeTimeseries { max(mttdTime), min(mttdTime), avg(mttdTime),max(mttrTime), min(mttrTime), avg(mttrTime) }, ${
+      | makeTimeseries { ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime) }, ${
         shouldUseTimeFrame === true
           ? `timeframe: toTimeframe("${timeLine}")`
           : `from:${timeLine}`

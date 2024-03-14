@@ -5,7 +5,7 @@ import {
   TimeseriesChart,
 } from "@dynatrace/strato-components-preview";
 import React, { useState } from "react";
-import type { AppCompProps } from "types";
+import type { AppCompProps, aggregationsType } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { giveTimeseriesData } from "../utils/giveTimeseriesData";
@@ -13,6 +13,8 @@ import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   const [selectTimeFrame, setSelectTimeFrame] = useState<string>("2");
+  const [clickedAggreation, setClickedAggregation] =
+    useState<aggregationsType>("min");
 
   const getTimeLine1 = getPastDaysRange(selectTimeFrame);
 
@@ -28,17 +30,18 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     setSelectTimeFrame(time);
   };
 
+  const handleAggregationChange = (clickedVal: aggregationsType) => {
+    setClickedAggregation(clickedVal);
+  };
+
   /** Passing Current Day Data  */
   const {
     timeseriesMttd: CurrentTimeseriesMttd,
     timeseriesMttr: CurrentTimeseriesMttr,
-  } = giveTimeseriesData(!!daysData && daysData.timeSeriesWithCurrentDayData);
-
-  /** Passing Previous Data */
-  const {
-    timeseriesMttd: RelativeTimeseriesMttd,
-    timeseriesMttr: RelativeTimeseriesMttr,
-  } = giveTimeseriesData(!!daysData && daysData.timeSeriesWithPreviousDayData);
+  } = giveTimeseriesData({
+    queryResult: !!daysData && daysData.timeSeriesWithCurrentDayData,
+    aggregation: clickedAggreation,
+  });
 
   return (
     <>
@@ -47,6 +50,8 @@ const QueryKpi: React.FC<AppCompProps> = () => {
           daysData={daysData}
           selectedTimeFrame={selectTimeFrame}
           setSelectedTimeFrame={handleTimeFrameChange}
+          clickedAggregation={clickedAggreation}
+          setAggregationForTimeSeries={handleAggregationChange}
         />
       </Flex>
       <br />
@@ -72,24 +77,24 @@ const QueryKpi: React.FC<AppCompProps> = () => {
       </Flex>
       <br />
       <br />
-      <Heading level={6}>Relative Days- Timeseries</Heading>
-      <br />
-      <Flex flexDirection="row" width="100%" justifyContent="space-around">
-        <Container variant="minimal" width="42%">
+      {/* <Heading level={6}>Relative Days- Timeseries</Heading>
+      <br /> */}
+      {/* <Flex flexDirection="row" width="100%" justifyContent="space-around">
+        <Container variant="minimal" width="40%">
           <TimeseriesChart
             data={RelativeTimeseriesMttd}
             variant="area"
             loading={daysData.isLoading}
           />
         </Container>
-        <Container variant="minimal" width="42%">
+        <Container variant="minimal" width="40%">
           <TimeseriesChart
             data={RelativeTimeseriesMttr}
             variant="area"
             loading={daysData.isLoading}
           />
         </Container>
-      </Flex>
+      </Flex> */}
     </>
   );
 };

@@ -4,15 +4,17 @@ import {
   Heading,
   SkeletonText,
 } from "@dynatrace/strato-components-preview";
-import React, { useState } from "react";
-import { RequiredDataResponse } from "types";
-import { CustomSelect } from "./ReusableComponents/CustomSelect";
+import React from "react";
+import type { RequiredDataResponse, aggregationsType } from "types";
 import { aggregatorOptions, timeFrameOptions } from "../constants/options";
+import { CustomSelect } from "./ReusableComponents/CustomSelect";
 
 interface MetricDetailSectionProps {
   daysData: RequiredDataResponse;
   selectedTimeFrame: string | null;
   setSelectedTimeFrame: (val: string) => void;
+  clickedAggregation: aggregationsType;
+  setAggregationForTimeSeries: (val: string) => void;
 }
 
 const InfoItem = ({ title, value }) => {
@@ -44,13 +46,19 @@ const MetricDetailSection = ({
   daysData,
   selectedTimeFrame,
   setSelectedTimeFrame,
+  clickedAggregation,
+  setAggregationForTimeSeries,
 }: MetricDetailSectionProps) => {
-  const [aggregatorValue, setAggregatorValue] = useState<string | null>(
-    "median"
-  );
+  // const [clickedAggregation, setAggregatorValue] = useState<string | null>(
+  //   "median"
+  // );
 
   const handleTimeFrameChange = (val: string) => {
     setSelectedTimeFrame(val);
+  };
+
+  const handleAggregationChange = (val: string) => {
+    setAggregationForTimeSeries(val);
   };
 
   const daysPriorLabel =
@@ -86,8 +94,8 @@ const MetricDetailSection = ({
       <Flex justifyContent="space-between">
         <CustomSelect
           label="Select Aggregation"
-          value={aggregatorValue}
-          onChange={setAggregatorValue}
+          value={clickedAggregation}
+          onChange={handleAggregationChange}
           options={aggregatorOptions}
         />
         <CustomSelect
@@ -112,14 +120,16 @@ const MetricDetailSection = ({
               <InfoItem
                 title={lastDaysLabel}
                 value={
-                  daysData?.responseWithCurrentDayData[`${aggregatorValue}MTTD`]
+                  daysData?.responseWithCurrentDayData[
+                    `${clickedAggregation}MTTD`
+                  ]
                 }
               />
               <InfoItem
                 title={daysPriorLabel}
                 value={
                   daysData?.responseWithPreviousDayData[
-                    `${aggregatorValue}MTTD`
+                    `${clickedAggregation}MTTD`
                   ]
                 }
               />
@@ -127,7 +137,7 @@ const MetricDetailSection = ({
                 title={baseLineComparisonLabel}
                 value={
                   daysData?.responseInPercentageWithBaseline[
-                    `${aggregatorValue}MTTD`
+                    `${clickedAggregation}MTTD`
                   ] + "%"
                 }
               />
@@ -135,7 +145,7 @@ const MetricDetailSection = ({
                 title={comparingRecentLabel}
                 value={
                   daysData?.responseInPercentageWithPreviousDay[
-                    `${aggregatorValue}MTTD`
+                    `${clickedAggregation}MTTD`
                   ] + "%"
                 }
               />
@@ -154,14 +164,16 @@ const MetricDetailSection = ({
               <InfoItem
                 title={lastDaysLabel}
                 value={
-                  daysData?.responseWithCurrentDayData[`${aggregatorValue}MTTR`]
+                  daysData?.responseWithCurrentDayData[
+                    `${clickedAggregation}MTTR`
+                  ]
                 }
               />
               <InfoItem
                 title={daysPriorLabel}
                 value={
                   daysData?.responseWithPreviousDayData[
-                    `${aggregatorValue}MTTR`
+                    `${clickedAggregation}MTTR`
                   ]
                 }
               />
@@ -169,7 +181,7 @@ const MetricDetailSection = ({
                 title={baseLineComparisonLabel}
                 value={
                   daysData?.responseInPercentageWithBaseline[
-                    `${aggregatorValue}MTTR`
+                    `${clickedAggregation}MTTR`
                   ] + "%"
                 }
               />
@@ -177,7 +189,7 @@ const MetricDetailSection = ({
                 title={comparingRecentLabel}
                 value={
                   daysData?.responseInPercentageWithPreviousDay[
-                    `${aggregatorValue}MTTR`
+                    `${clickedAggregation}MTTR`
                   ] + "%"
                 }
               />

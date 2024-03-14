@@ -85,3 +85,8 @@ export type MetricDetailsCardSection = {
   previousDayValue: string;
   comparisonWithPreviousDay: string;
 };
+
+/** Different types of aggregations in app */
+export type aggregationsType = "average" | "min" | "max";
+
+// export type aggregatorOptionsType = Record<aggregationsType, {value:string,label:string}>
