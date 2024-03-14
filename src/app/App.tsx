@@ -11,15 +11,18 @@ import Home from "./pages/Home";
 import { setAppState } from "./utils/appState";
 import { stateClient } from "@dynatrace-sdk/client-state";
 import { useMetricsContext } from "./hooks/context/MetricsContext";
+import { estimatedSalaries } from "./constants/options";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
   const [infoModalState, setInfoModalState] = useState(false);
   const [settingsModalState, setSettingsModalState] = useState(false);
+
   const { initialMttdValue, initialMttrValue, salaryValue, setMetricsData } =
     useMetricsContext();
 
-  const [modalCloseIndication, setModalCloseIndication] = useState(false);
+  const [modalCloseIndication, setModalCloseIndication] =
+    useState<boolean>(false);
 
   useEffect(() => {
     const setMetricsDatafunc = async () => {
@@ -28,13 +31,13 @@ const App: React.FC<AppCompProps> = () => {
           key: "kpi-metrics-value",
         });
         const salaryResponse = await stateClient.getAppState({
-          key: "salary",
+          key: "salary-data",
         });
+
         const prevStoredAppData = JSON.parse(metricResponse.value);
         const prevStoredSalaryData = JSON.parse(salaryResponse.value);
 
-        console.log(metricResponse, salaryResponse, "res");
-        setMetricsData(prevStoredAppData);
+        setMetricsData({ ...prevStoredAppData, ...prevStoredSalaryData });
 
         setAppState({
           key: "kpi-metrics-value",
@@ -42,7 +45,7 @@ const App: React.FC<AppCompProps> = () => {
         });
 
         setAppState({
-          key: "salary",
+          key: "salary-data",
           value: JSON.stringify(prevStoredSalaryData),
         });
       } catch (err) {
@@ -52,8 +55,11 @@ const App: React.FC<AppCompProps> = () => {
         });
 
         setAppState({
-          key: "salary",
-          value: JSON.stringify({ salaryValue }),
+          key: "salary-data",
+          value: JSON.stringify({
+            salaryValue,
+            estimatedSalaries: estimatedSalaries,
+          }),
         });
         console.log(err);
       } finally {
@@ -63,8 +69,6 @@ const App: React.FC<AppCompProps> = () => {
 
     setMetricsDatafunc();
   }, [modalCloseIndication]);
-
-  console.log(salaryValue, "salary");
 
   return (
     <Page>
@@ -99,14 +103,14 @@ const App: React.FC<AppCompProps> = () => {
             <KPIButton
               label="Save"
               onClick={async () => {
-                setModalCloseIndication(true);
-                setSettingsModalState(false);
-
                 showToast({
                   type: "success",
                   title: "Success",
                   message: <>Configurations Added Successfully.</>,
                 });
+
+                setModalCloseIndication(true);
+                setSettingsModalState(false);
 
                 await setAppState({
                   key: "kpi-metrics-value",
@@ -114,8 +118,11 @@ const App: React.FC<AppCompProps> = () => {
                 });
 
                 await setAppState({
-                  key: "salary",
-                  value: JSON.stringify({ salaryValue }),
+                  key: "salary-data",
+                  value: JSON.stringify({
+                    salaryValue,
+                    estimatedSalaries,
+                  }),
                 });
               }}
             />
@@ -141,12 +148,12 @@ const App: React.FC<AppCompProps> = () => {
             />
 
             <KPINumberInput
-              label="salary"
+              label="Salary ($)"
               value={salaryValue}
               onChange={(value: number) =>
                 setMetricsData({ salaryValue: value })
               }
-              placeholder="Enter salary"
+              placeholder="Enter salary-data"
             />
           </Flex>
         </KPIModal>

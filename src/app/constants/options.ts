@@ -13,3 +13,14 @@ export const timeFrameOptions = [
   { value: "-w", label: "This week" },
   { value: "-m", label: "This month" },
 ];
+
+export const estimatedSalaries = {
+  "Level 1 Support FTE": "$40,000",
+  "Specialist Staff Resource FTE": "$105,000",
+  "QA FTE": "$55,000",
+  "Developer FTE": "$78,000",
+  "Monitoring Tool FTE": "$60,000",
+  "Business User FTE": "$60,000",
+  "Call Center Agent FTE": "$30,000",
+  "Security Specialist FTE": "$77,778",
+};

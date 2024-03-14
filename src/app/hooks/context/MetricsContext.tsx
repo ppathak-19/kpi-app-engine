@@ -33,7 +33,12 @@ export const MetricsProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <MetricsContext.Provider value={{ ...metrics, setMetricsData }}>
+    <MetricsContext.Provider
+      value={{
+        ...metrics,
+        setMetricsData,
+      }}
+    >
       {children}
     </MetricsContext.Provider>
   );

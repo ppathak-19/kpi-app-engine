@@ -18,7 +18,7 @@ const Home: React.FC<HomeCompProps> = (props) => {
   const { setModalState } = props;
 
   const { initialMttdValue, initialMttrValue } = useMetricsContext();
-  const isUserInputtedData = initialMttdValue !== 0 && initialMttrValue !== 0;
+  const isUserInputtedData = initialMttdValue !== 0 || initialMttrValue !== 0;
 
   return (
     <Surface>
