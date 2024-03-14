@@ -9,6 +9,7 @@ export const timeFrameOptions = [
   { value: "2", label: "Past 2 Days" },
   { value: "7", label: "Past 7 Days" },
   { value: "30", label: "Past 30 Days" },
+  { value: "365", label: "Past 365 Days" },
   { value: "-w", label: "This week" },
   { value: "-m", label: "This month" },
 ];

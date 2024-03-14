@@ -16,7 +16,7 @@ const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
   const [infoModalState, setInfoModalState] = useState(false);
   const [settingsModalState, setSettingsModalState] = useState(false);
-  const { initialMttdValue, initialMttrValue, setMetricsData } =
+  const { initialMttdValue, initialMttrValue, salaryValue, setMetricsData } =
     useMetricsContext();
 
   const [modalCloseIndication, setModalCloseIndication] = useState(false);
@@ -24,18 +24,36 @@ const App: React.FC<AppCompProps> = () => {
   useEffect(() => {
     const setMetricsDatafunc = async () => {
       try {
-        const res = await stateClient.getAppState({ key: "data" });
-        const prevStoredAppData = JSON.parse(res.value);
+        const metricResponse = await stateClient.getAppState({
+          key: "kpi-metrics-value",
+        });
+        const salaryResponse = await stateClient.getAppState({
+          key: "salary",
+        });
+        const prevStoredAppData = JSON.parse(metricResponse.value);
+        const prevStoredSalaryData = JSON.parse(salaryResponse.value);
+
+        console.log(metricResponse, salaryResponse, "res");
         setMetricsData(prevStoredAppData);
 
         setAppState({
-          key: "data",
+          key: "kpi-metrics-value",
           value: JSON.stringify(prevStoredAppData),
+        });
+
+        setAppState({
+          key: "salary",
+          value: JSON.stringify(prevStoredSalaryData),
         });
       } catch (err) {
         setAppState({
-          key: "data",
+          key: "kpi-metrics-value",
           value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+        });
+
+        setAppState({
+          key: "salary",
+          value: JSON.stringify({ salaryValue }),
         });
         console.log(err);
       } finally {
@@ -45,6 +63,8 @@ const App: React.FC<AppCompProps> = () => {
 
     setMetricsDatafunc();
   }, [modalCloseIndication]);
+
+  console.log(salaryValue, "salary");
 
   return (
     <Page>
@@ -85,12 +105,17 @@ const App: React.FC<AppCompProps> = () => {
                 showToast({
                   type: "success",
                   title: "Success",
-                  message: <>Baseline Added Successfully.</>,
+                  message: <>Configurations Added Successfully.</>,
                 });
 
                 await setAppState({
-                  key: "data",
+                  key: "kpi-metrics-value",
                   value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+                });
+
+                await setAppState({
+                  key: "salary",
+                  value: JSON.stringify({ salaryValue }),
                 });
               }}
             />
@@ -113,6 +138,15 @@ const App: React.FC<AppCompProps> = () => {
                 setMetricsData({ initialMttrValue: value })
               }
               placeholder="Enter baseline for MTTR"
+            />
+
+            <KPINumberInput
+              label="salary"
+              value={salaryValue}
+              onChange={(value: number) =>
+                setMetricsData({ salaryValue: value })
+              }
+              placeholder="Enter salary"
             />
           </Flex>
         </KPIModal>

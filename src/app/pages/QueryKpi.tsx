@@ -33,6 +33,9 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     shouldUseTimeFrame2: true,
   });
 
+  // console.log(daysData, "days");
+  // console.log(getBeforePastDays(selectTimeFrame), "past days");
+
   /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */
   const handleTimeFrameChange = (time: string) => {
     setSelectTimeFrame(time);
