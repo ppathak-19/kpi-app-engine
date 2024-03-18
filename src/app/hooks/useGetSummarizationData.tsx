@@ -14,14 +14,12 @@ import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
 
 type SummarizationDataHookProps = {
   queryData: ResultRecord[];
-  shouldUseTimeFrame: boolean;
   timeLine: string;
 };
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
 const useGetSummarizationData = ({
   queryData,
-  shouldUseTimeFrame,
   timeLine,
 }: SummarizationDataHookProps) => {
   // console.log(queryData);
@@ -83,11 +81,7 @@ const useGetSummarizationData = ({
       query: `
       data json:"""${JSON.stringify(queryData)}"""
       | fieldsAdd  timestamp =  toTimestamp(timestamp)
-      | makeTimeseries { ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime) }, ${
-        shouldUseTimeFrame === true
-          ? `timeframe: toTimeframe("${timeLine}")`
-          : `from:${timeLine}`
-      }
+      | makeTimeseries { ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime) }, ${`timeframe: toTimeframe("${timeLine}")`}
       `,
     },
   });
