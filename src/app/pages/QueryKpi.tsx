@@ -56,6 +56,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     <>
       <Flex>
         {/* First Container of app */}
+
         <MetricDetailSection
           daysData={daysData}
           selectedTimeFrame={selectTimeFrame}

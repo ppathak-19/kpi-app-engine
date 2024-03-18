@@ -11,31 +11,76 @@ import Home from "./pages/Home";
 import { setAppState } from "./utils/appState";
 import { stateClient } from "@dynatrace-sdk/client-state";
 import { useMetricsContext } from "./hooks/context/MetricsContext";
+import { estimatedSalaries } from "./constants/options";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
   const [infoModalState, setInfoModalState] = useState(false);
   const [settingsModalState, setSettingsModalState] = useState(false);
-  const { initialMttdValue, initialMttrValue, setMetricsData } =
+
+  const { initialMttdValue, initialMttrValue, salaryValue, setMetricsData } =
     useMetricsContext();
 
-  const [modalCloseIndication, setModalCloseIndication] = useState(false);
+  const [userInputValues, setUserInputValues] = useState({
+    mttd: 0,
+    mttr: 0,
+    salaryInput: 0,
+  });
+
+  const [modalCloseIndication, setModalCloseIndication] =
+    useState<boolean>(false);
 
   useEffect(() => {
+    setUserInputValues({
+      mttd: initialMttdValue,
+      mttr: initialMttrValue,
+      salaryInput: salaryValue,
+    });
+  }, [initialMttdValue, initialMttrValue, salaryValue]);
+
+  useEffect(() => {
+    setMetricsData({
+      initialMttdValue: userInputValues.mttd,
+      initialMttrValue: userInputValues.mttr,
+      salaryValue: userInputValues.salaryInput,
+    });
     const setMetricsDatafunc = async () => {
       try {
-        const res = await stateClient.getAppState({ key: "data" });
-        const prevStoredAppData = JSON.parse(res.value);
-        setMetricsData(prevStoredAppData);
+        const metricResponse = await stateClient.getAppState({
+          key: "kpi-metrics-value",
+        });
+        const salaryResponse = await stateClient.getAppState({
+          key: "salary-data",
+        });
+
+        const prevStoredAppData = JSON.parse(metricResponse.value);
+        const prevStoredSalaryData = JSON.parse(salaryResponse.value);
+
+        console.log(prevStoredSalaryData, "appdata");
+
+        setMetricsData({ ...prevStoredAppData, ...prevStoredSalaryData });
 
         setAppState({
-          key: "data",
+          key: "kpi-metrics-value",
           value: JSON.stringify(prevStoredAppData),
+        });
+
+        setAppState({
+          key: "salary-data",
+          value: JSON.stringify(prevStoredSalaryData),
         });
       } catch (err) {
         setAppState({
-          key: "data",
+          key: "kpi-metrics-value",
           value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+        });
+
+        setAppState({
+          key: "salary-data",
+          value: JSON.stringify({
+            salaryValue,
+            estimatedSalaries: estimatedSalaries,
+          }),
         });
         console.log(err);
       } finally {
@@ -45,6 +90,14 @@ const App: React.FC<AppCompProps> = () => {
 
     setMetricsDatafunc();
   }, [modalCloseIndication]);
+
+  console.log(
+    initialMttdValue,
+    initialMttrValue,
+    salaryValue,
+    userInputValues,
+    "val"
+  );
 
   return (
     <Page>
@@ -79,18 +132,29 @@ const App: React.FC<AppCompProps> = () => {
             <KPIButton
               label="Save"
               onClick={async () => {
-                setModalCloseIndication(true);
-                setSettingsModalState(false);
-
                 showToast({
                   type: "success",
                   title: "Success",
-                  message: <>Baseline Added Successfully.</>,
+                  message: <>Configurations Added Successfully.</>,
+                });
+
+                setModalCloseIndication(true);
+                setSettingsModalState(false);
+
+                await setAppState({
+                  key: "kpi-metrics-value",
+                  value: JSON.stringify({
+                    initialMttdValue: userInputValues.mttd,
+                    initialMttrValue: userInputValues.mttr,
+                  }),
                 });
 
                 await setAppState({
-                  key: "data",
-                  value: JSON.stringify({ initialMttdValue, initialMttrValue }),
+                  key: "salary-data",
+                  value: JSON.stringify({
+                    salaryValue: userInputValues.salaryInput,
+                    estimatedSalaries,
+                  }),
                 });
               }}
             />
@@ -100,19 +164,37 @@ const App: React.FC<AppCompProps> = () => {
           <Flex flexDirection="column" gap={12}>
             <KPINumberInput
               label="Baseline MTTD"
-              value={initialMttdValue}
-              onChange={(value: number) =>
-                setMetricsData({ initialMttdValue: value })
+              value={userInputValues.mttd}
+              onChange={
+                (value: number) =>
+                  setUserInputValues((prev) => ({ ...prev, mttd: value }))
+                // setMetricsData({ initialMttdValue: value })
               }
               placeholder="Enter baseline for MTTD"
             />
             <KPINumberInput
               label="Baseline MTTR"
-              value={initialMttrValue}
-              onChange={(value: number) =>
-                setMetricsData({ initialMttrValue: value })
+              value={userInputValues.mttr}
+              onChange={
+                (value: number) =>
+                  setUserInputValues((prev) => ({ ...prev, mttr: value }))
+                // setMetricsData({ initialMttrValue: value })
               }
               placeholder="Enter baseline for MTTR"
+            />
+
+            <KPINumberInput
+              label="Salary ($)"
+              value={userInputValues.salaryInput}
+              onChange={
+                (value: number) =>
+                  setUserInputValues((prev) => ({
+                    ...prev,
+                    salaryInput: value,
+                  }))
+                // setMetricsData({ salaryValue: value })
+              }
+              placeholder="Enter salary-data"
             />
           </Flex>
         </KPIModal>
