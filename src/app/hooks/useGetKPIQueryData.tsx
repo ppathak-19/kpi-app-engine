@@ -10,27 +10,18 @@ const useGetKPIQueryData = (
   queryResponseWithTimeLine2: QueryResult | undefined;
   isLoading: boolean;
 } => {
-  const { timeLine1, shouldUseTimeFrame1, timeLine2, shouldUseTimeFrame2 } =
-    props;
+  const { timeLine1, timeLine2 } = props;
 
   const queryData1 = useDqlQuery({
     body: {
       query: `// fetching events in given timeline/timeframe
-      fetch events, ${
-        shouldUseTimeFrame1 === true
-          ? `timeframe:"${timeLine1}"`
-          : `from: ${timeLine1}`
-      }
+      fetch events, ${`timeframe:"${timeLine1}"`}
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
       | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp
       | fieldsAdd res = lookup([
-        fetch events, ${
-          shouldUseTimeFrame1 === true
-            ? `timeframe:"${timeLine1}"`
-            : `from: ${timeLine1}`
-        }
+        fetch events, ${`timeframe:"${timeLine1}"`}
           | filter event.kind == "DAVIS_EVENT"
           |  sort timestamp asc
           | fields event.id, event.kind, event.start]
@@ -46,21 +37,13 @@ const useGetKPIQueryData = (
   const queryData2 = useDqlQuery({
     body: {
       query: `// fetching events in given timeline/timeframe
-      fetch events, ${
-        shouldUseTimeFrame2 === true
-          ? `timeframe:"${timeLine2}"`
-          : `from: ${timeLine2}`
-      }
+      fetch events, ${`timeframe:"${timeLine2}"`}
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
       | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp
       | fieldsAdd res = lookup([
-        fetch events, ${
-          shouldUseTimeFrame2 === true
-            ? `timeframe:"${timeLine2}"`
-            : `from: ${timeLine2}`
-        }
+        fetch events, ${`timeframe:"${timeLine2}"`}
           | filter event.kind == "DAVIS_EVENT"
           |  sort timestamp asc
           | fields event.id, event.kind, event.start]

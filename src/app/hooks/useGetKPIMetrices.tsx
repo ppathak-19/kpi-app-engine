@@ -30,8 +30,7 @@ import useGetSummarizationData from "./useGetSummarizationData";
 
 /** This Hook Gives the Required Data for Table */
 const useGetKPIMetrices = (props: QueryProps) => {
-  const { shouldUseTimeFrame1, shouldUseTimeFrame2, timeLine1, timeLine2 } =
-    props;
+  const { timeLine1, timeLine2 } = props;
 
   const {
     queryResponseWithTimeLine1: q1,
@@ -40,8 +39,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   } = useGetKPIQueryData({
     timeLine1,
     timeLine2,
-    shouldUseTimeFrame1,
-    shouldUseTimeFrame2,
   });
 
   /** State For Storing all data i.e, current day & previous day */
@@ -118,14 +115,12 @@ const useGetKPIMetrices = (props: QueryProps) => {
   //* passing current days mttd,mttr values so we get avg,min,etc.. for current days data
   const metricData1 = useGetSummarizationData({
     queryData: storeCurrentDay,
-    shouldUseTimeFrame: false,
     timeLine: timeLine1,
   });
 
   //* passing previous days mttd,mttr values so we get avg,min,etc.. for previous days data
   const metricData2 = useGetSummarizationData({
     queryData: storePreviousDay,
-    shouldUseTimeFrame: true,
     timeLine: timeLine2,
   });
 

@@ -27,10 +27,8 @@ const QueryKpi: React.FC<AppCompProps> = () => {
 
   /** Getting Metrices for Last 2 Days */
   const daysData = useGetKPIMetrices({
-    timeLine1: `now()-${getTimeLine1}d`,
-    shouldUseTimeFrame1: false,
+    timeLine1: `${getTimeLine1}`,
     timeLine2: getBeforePastDays(selectTimeFrame),
-    shouldUseTimeFrame2: true,
   });
 
   /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */

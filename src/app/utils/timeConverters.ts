@@ -149,6 +149,18 @@ export function getBeforePastDays(numberOfDays: string) {
   }
 }
 
+const getTimeLineRange = (days: number) => {
+  const currentDate = new Date();
+  const pastDate = new Date(currentDate);
+
+  pastDate.setDate(currentDate.getDate() - days);
+
+  const formattedPastDate = formatDate(pastDate);
+  const formattedCurrentDate = formatDate(currentDate);
+
+  return `${formattedPastDate}/${formattedCurrentDate}`;
+};
+
 export const getPastDaysRange = (range: string) => {
   const currentDate = new Date();
 
@@ -163,10 +175,12 @@ export const getPastDaysRange = (range: string) => {
       (Number(currentDate) - Number(pastSundayDate)) / (1000 * 60 * 60 * 24)
     );
 
-    return daysDifference;
+    return getTimeLineRange(Number(daysDifference));
   } else if (range === "-m") {
-    return currentDate.getDate();
+    const currentDate = new Date();
+
+    return getTimeLineRange(currentDate.getDate() + 1);
   } else {
-    return range;
+    return getTimeLineRange(Number(range));
   }
 };
