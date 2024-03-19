@@ -1,3 +1,4 @@
+import { Button } from "@dynatrace/strato-components-preview";
 import {
   Flex,
   Surface,
@@ -6,9 +7,8 @@ import { Tooltip } from "@dynatrace/strato-components-preview/overlays";
 import { Text } from "@dynatrace/strato-components-preview/typography";
 import { WarningIcon } from "@dynatrace/strato-icons";
 import React from "react";
+import { useAppContext } from "../hooks/Context-API/AppContext";
 import QueryKpi from "./QueryKpi";
-import { useMetricsContext } from "../hooks/context/MetricsContext";
-import { Button } from "@dynatrace/strato-components-preview";
 
 type HomeCompProps = {
   setModalState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -17,8 +17,12 @@ type HomeCompProps = {
 const Home: React.FC<HomeCompProps> = (props) => {
   const { setModalState } = props;
 
-  const { initialMttdValue, initialMttrValue } = useMetricsContext();
-  const isUserInputtedData = initialMttdValue !== 0 || initialMttrValue !== 0;
+  const { state } = useAppContext();
+  const isUserInputtedData =
+    !!state.baseline.mttd &&
+    state.baseline.mttd !== 0 &&
+    !!state.baseline.mttr &&
+    state.baseline.mttr !== 0;
 
   return (
     <Surface>

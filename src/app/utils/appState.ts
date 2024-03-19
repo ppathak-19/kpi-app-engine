@@ -6,7 +6,7 @@ type AppStateTypes = {
   validUntilTime?: string | null | undefined;
 };
 
-export const getAppState = async (key: string) => {
+export const getPersistedAppState = async (key: string) => {
   const { value } = await stateClient.getAppState({
     key,
   });
@@ -16,11 +16,23 @@ export const getAppState = async (key: string) => {
   return dataAfterParsing;
 };
 
-export const setAppState = async (args: AppStateTypes) => {
+export const setAppStatePersisted = async (args: AppStateTypes) => {
   const data = await stateClient.setAppState({
     key: args.key,
-    body: { value: args.value, validUntilTime: "now+5d" },
+    body: { value: args.value },
   });
 
   return data;
+};
+
+export const deleteAllPersistedStates = async () => {
+  return await stateClient.deleteAppStates();
+};
+
+export const getListofKeysUsedInApp = async () => {
+  const appStateKeys: Array<{ key: string }> = await stateClient.getAppStates(
+    {}
+  );
+  // console.log({ appStateKeys });
+  return appStateKeys;
 };

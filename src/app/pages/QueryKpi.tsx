@@ -8,10 +8,10 @@ import Colors from "@dynatrace/strato-design-tokens/colors";
 import React, { useState } from "react";
 import type { AppCompProps, aggregationsType } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
+import { useAppContext } from "../hooks/Context-API/AppContext";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { giveTimeseriesData } from "../utils/giveTimeseriesData";
 import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
-import { useMetricsContext } from "../hooks/context/MetricsContext";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** States For Two Dropdowns for the app */
@@ -20,7 +20,10 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     useState<aggregationsType>("min");
 
   /** taking values from context, to give thresholds to timeseries comp */
-  const { initialMttdValue, initialMttrValue } = useMetricsContext();
+  // const { initialMttdValue, initialMttrValue } = useMetricsContext();
+  const {
+    state: { baseline },
+  } = useAppContext();
 
   /** getting timeline1 */
   const getTimeLine1 = getPastDaysRange(selectTimeFrame);
@@ -77,7 +80,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             loading={daysData.isLoading}
           >
             <TimeseriesChart.Threshold
-              data={{ value: initialMttdValue }}
+              data={{ value: baseline.mttd }}
               label="Baseline MTTD"
               color={Colors.Charts.Threshold.Bad.Default}
             />
@@ -93,7 +96,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             loading={daysData.isLoading}
           >
             <TimeseriesChart.Threshold
-              data={{ value: initialMttrValue }}
+              data={{ value: baseline.mttr }}
               label="Baseline MTTR"
               color={Colors.Charts.Threshold.Bad.Default}
             />
