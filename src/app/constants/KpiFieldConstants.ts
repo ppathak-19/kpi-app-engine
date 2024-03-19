@@ -29,5 +29,4 @@ export const emptyResponse: RequiredDataResponse = {
   responseWithCurrentDayData: {} as ResponseWithMetricesData,
   responseWithPreviousDayData: {} as ResponseWithMetricesData,
   timeSeriesWithCurrentDayData: { metadata: {}, records: [], types: [] },
-  timeSeriesWithPreviousDayData: { metadata: {}, records: [], types: [] },
 };

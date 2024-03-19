@@ -22,12 +22,9 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   /** taking values from context, to give thresholds to timeseries comp */
   const { initialMttdValue, initialMttrValue } = useMetricsContext();
 
-  /** getting timeline1 */
-  const getTimeLine1 = getPastDaysRange(selectTimeFrame);
-
-  /** Getting Metrices for Last 2 Days */
+  /** Getting Metrices for selected time frame */
   const daysData = useGetKPIMetrices({
-    timeLine1: `${getTimeLine1}`,
+    timeLine1: getPastDaysRange(selectTimeFrame),
     timeLine2: getBeforePastDays(selectTimeFrame),
   });
 

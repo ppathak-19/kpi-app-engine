@@ -124,11 +124,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
     timeLine: timeLine2,
   });
 
-  // console.log({
-  //   metricData1,
-  //   metricData2,
-  // });
-
   /** Taking baseline values from useContext  */
   const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
     useMetricsContext();
@@ -140,21 +135,11 @@ const useGetKPIMetrices = (props: QueryProps) => {
     [averageMTTD]: !!metricData1 ? metricData1.averageMTTD : "0",
     [medianMTTD]: !!metricData1 ? metricData1.medianMTTD : "0",
 
-    // minMTTDInNumber: !!metricData1 ? metricData1.minMTTDInNum : 0,
-    // maxMTTDInNum: !!metricData1 ? metricData1.maxMTTDInNum : 0,
-    // averageMTTDInNum: !!metricData1 ? metricData1.averageMTTDInNum : 0,
-    // medianMTTDInNum: !!metricData1 ? metricData1.medianMTTDInNum : 0,
-
     /** MTTR Data */
     [minMTTR]: !!metricData1 ? metricData1.minMTTR : "0",
     [maxMTTR]: !!metricData1 ? metricData1.maxMTTR : "0",
     [averageMTTR]: !!metricData1 ? metricData1.averageMTTR : "0",
     [medianMTTR]: !!metricData1 ? metricData1.medianMTTR : "0",
-
-    // minMTTRInNumber: !!metricData1 ? metricData1.minMTTRInNum : 0,
-    // maxMTTRInNum: !!metricData1 ? metricData1.maxMTTRInNum : 0,
-    // averageMTTRInNum: !!metricData1 ? metricData1.averageMTTRInNum : 0,
-    // medianMTTRInNum: !!metricData1 ? metricData1.medianMTTRInNum : 0,
   };
 
   const responseWithPreviousDayData: ResponseWithMetricesData = {
@@ -164,25 +149,14 @@ const useGetKPIMetrices = (props: QueryProps) => {
     [averageMTTD]: !!metricData2 ? metricData2.averageMTTD : "0",
     [medianMTTD]: !!metricData2 ? metricData2.medianMTTD : "0",
 
-    // minMTTDInNumber: !!metricData2 ? metricData2.minMTTDInNum : 0,
-    // maxMTTDInNum: !!metricData2 ? metricData2.maxMTTDInNum : 0,
-    // averageMTTDInNum: !!metricData2 ? metricData2.averageMTTDInNum : 0,
-    // medianMTTDInNum: !!metricData2 ? metricData2.medianMTTDInNum : 0,
-
     /** MTTR Data */
     [minMTTR]: !!metricData2 ? metricData2.minMTTR : "0",
     [maxMTTR]: !!metricData2 ? metricData2.maxMTTR : "0",
     [averageMTTR]: !!metricData2 ? metricData2.averageMTTR : "0",
     [medianMTTR]: !!metricData2 ? metricData2.medianMTTR : "0",
-
-    // minMTTRInNumber: !!metricData2 ? metricData2.minMTTRInNum : 0,
-    // maxMTTRInNum: !!metricData2 ? metricData2.maxMTTRInNum : 0,
-    // averageMTTRInNum: !!metricData2 ? metricData2.averageMTTRInNum : 0,
-    // medianMTTRInNum: !!metricData2 ? metricData2.medianMTTRInNum : 0,
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
-  // if metricData is 5, baseline is 10 -> (5/10) * 100 => 50%
   const responseInPercentageWithBaseline: ResponseWithPercentages = {
     [minMTTD]: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
     [maxMTTD]: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
@@ -257,7 +231,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseWithCurrentDayData,
     responseWithPreviousDayData,
     timeSeriesWithCurrentDayData: metricData1.dataTimeseries,
-    timeSeriesWithPreviousDayData: metricData2.dataTimeseries,
   };
   return finalResponse;
 };

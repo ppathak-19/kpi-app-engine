@@ -67,7 +67,6 @@ export type RequiredDataResponse = {
   responseWithCurrentDayData: ResponseWithMetricesData;
   responseWithPreviousDayData: ResponseWithMetricesData;
   timeSeriesWithCurrentDayData: QueryResult;
-  timeSeriesWithPreviousDayData: QueryResult;
 } & OtherType;
 
 /** Query Props */
