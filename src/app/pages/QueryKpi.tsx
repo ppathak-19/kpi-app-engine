@@ -8,6 +8,8 @@ import Colors from "@dynatrace/strato-design-tokens/colors";
 import React, { useState } from "react";
 import type { AppCompProps, aggregationsType } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
+import { CustomSelect } from "../components/ReusableComponents/CustomSelect";
+import { aggregatorOptions, timeFrameOptions } from "../constants/options";
 import { useAppContext } from "../hooks/Context-API/AppContext";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { giveTimeseriesData } from "../utils/giveTimeseriesData";
@@ -15,33 +17,29 @@ import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** States For Two Dropdowns for the app */
-  const [selectTimeFrame, setSelectTimeFrame] = useState<string>("2");
-  const [clickedAggreation, setClickedAggregation] =
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("2");
+  const [selectedAggregation, setSelectedAggregation] =
     useState<aggregationsType>("min");
 
   /** taking values from context, to give thresholds to timeseries comp */
-  // const { initialMttdValue, initialMttrValue } = useMetricsContext();
   const {
     state: { baseline },
   } = useAppContext();
 
-  /** getting timeline1 */
-  const getTimeLine1 = getPastDaysRange(selectTimeFrame);
-
-  /** Getting Metrices for Last 2 Days */
+  /** Getting Metrices Selected Timeframe */
   const daysData = useGetKPIMetrices({
-    timeLine1: `${getTimeLine1}`,
-    timeLine2: getBeforePastDays(selectTimeFrame),
+    timeLine1: getPastDaysRange(selectedTimeFrame),
+    timeLine2: getBeforePastDays(selectedTimeFrame),
   });
 
   /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */
   const handleTimeFrameChange = (time: string) => {
-    setSelectTimeFrame(time);
+    setSelectedTimeFrame(time);
   };
 
   /** taking value from `MetricsDetailSection` and setting selected aggregation value to state */
   const handleAggregationChange = (clickedVal: aggregationsType) => {
-    setClickedAggregation(clickedVal);
+    setSelectedAggregation(clickedVal);
   };
 
   /** Passing Current Day Data  */
@@ -50,21 +48,36 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     timeseriesMttr: CurrentTimeseriesMttr,
   } = giveTimeseriesData({
     queryResult: !!daysData && daysData.timeSeriesWithCurrentDayData,
-    aggregation: clickedAggreation,
+    aggregation: selectedAggregation,
   });
 
   return (
     <>
-      <Flex>
-        {/* First Container of app */}
+      <Flex flexDirection="column">
+        {/* Custom Selects for the app */}
+        <Flex justifyContent="space-between">
+          <CustomSelect
+            label="Select Aggregation"
+            value={selectedAggregation}
+            onChange={handleAggregationChange}
+            options={aggregatorOptions}
+          />
+          <CustomSelect
+            label="Select Timeframe"
+            value={selectedTimeFrame}
+            onChange={handleTimeFrameChange}
+            options={timeFrameOptions}
+          />
+        </Flex>
 
-        <MetricDetailSection
-          daysData={daysData}
-          selectedTimeFrame={selectTimeFrame}
-          setSelectedTimeFrame={handleTimeFrameChange}
-          clickedAggregation={clickedAggreation}
-          setAggregationForTimeSeries={handleAggregationChange}
-        />
+        {/* First Container of app */}
+        <Flex flexDirection="column">
+          <MetricDetailSection
+            daysData={daysData}
+            selectedTimeFrame={selectedTimeFrame}
+            clickedAggregation={selectedAggregation}
+          />
+        </Flex>
       </Flex>
       <br />
       <br />

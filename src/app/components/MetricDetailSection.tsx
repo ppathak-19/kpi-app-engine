@@ -5,17 +5,13 @@ import {
   SkeletonText,
 } from "@dynatrace/strato-components-preview";
 import React from "react";
-import type { RequiredDataResponse, aggregationsType } from "types";
-import { aggregatorOptions, timeFrameOptions } from "../constants/options";
-import { CustomSelect } from "./ReusableComponents/CustomSelect";
+import type { RequiredDataResponse } from "types";
 
-interface MetricDetailSectionProps {
+type MetricDetailSectionProps = {
   daysData: RequiredDataResponse;
-  selectedTimeFrame: string | null;
-  setSelectedTimeFrame: (val: string) => void;
-  clickedAggregation: aggregationsType;
-  setAggregationForTimeSeries: (val: string) => void;
-}
+  selectedTimeFrame: string;
+  clickedAggregation: string;
+};
 
 const InfoItem = ({ title, value }) => {
   const isPercentage = value?.includes("%") && value.includes("-");
@@ -45,22 +41,8 @@ const InfoItem = ({ title, value }) => {
 const MetricDetailSection = ({
   daysData,
   selectedTimeFrame,
-  setSelectedTimeFrame,
   clickedAggregation,
-  setAggregationForTimeSeries,
 }: MetricDetailSectionProps) => {
-  // const [clickedAggregation, setAggregatorValue] = useState<string | null>(
-  //   "median"
-  // );
-
-  const handleTimeFrameChange = (val: string) => {
-    setSelectedTimeFrame(val);
-  };
-
-  const handleAggregationChange = (val: string) => {
-    setAggregationForTimeSeries(val);
-  };
-
   const daysPriorLabel =
     selectedTimeFrame === "-w"
       ? "Last week (Minutes)"
@@ -90,22 +72,7 @@ const MetricDetailSection = ({
       : `Comparing Recent ${selectedTimeFrame} Days with ${selectedTimeFrame} Days Prior`;
 
   return (
-    <Flex flexDirection="column" width="100%">
-      <Flex justifyContent="space-between">
-        <CustomSelect
-          label="Select Aggregation"
-          value={clickedAggregation}
-          onChange={handleAggregationChange}
-          options={aggregatorOptions}
-        />
-        <CustomSelect
-          label="Select Timeframe"
-          value={selectedTimeFrame}
-          onChange={handleTimeFrameChange}
-          options={timeFrameOptions}
-        />
-      </Flex>
-
+    <Flex>
       {/* Sections  */}
 
       <Flex flexDirection="row" width="100%">
