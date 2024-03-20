@@ -26,26 +26,6 @@ const useGetSummarizationData = ({
   const mttdArrayList = queryData.map((each) => each.mttdTime);
   const mttrArrayList = queryData.map((each) => each.mttrTime);
 
-  /** Calculating the MTTD Metrices */
-  // const mttdsummarizedData = useDqlQuery({
-  //   body: {
-  //     query: `
-  //     data record(a = array(${mttdArrayList}))
-  //     | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
-  //           `,
-  //   },
-  // });
-
-  /** Calculating the MTTR Metrices */
-  // const mttrsummarizedData = useDqlQuery({
-  //   body: {
-  //     query: `
-  //     data record(a = array(${mttrArrayList}))
-  //     | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a)
-  //           `,
-  //   },
-  // });
-
   /** returns a array of data. 0 index -> MTTD Metrices, 1st index -> MTTR Metrices */
   const summarizationData = useDqlQuery({
     body: {

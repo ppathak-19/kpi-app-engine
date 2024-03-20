@@ -18,6 +18,8 @@ import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** States For Two Dropdowns for the app */
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("2");
+  const [selectedEventCategory, setSelectedEventCategory] =
+    useState<string>("");
   const [selectedAggregation, setSelectedAggregation] =
     useState<aggregationsType>("min");
 
@@ -30,11 +32,16 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   const daysData = useGetKPIMetrices({
     timeLine1: getPastDaysRange(selectedTimeFrame),
     timeLine2: getBeforePastDays(selectedTimeFrame),
+    selectedEventCategory,
   });
 
   /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */
   const handleTimeFrameChange = (time: string) => {
     setSelectedTimeFrame(time);
+  };
+
+  const handleEventTypeChange = (type: string) => {
+    setSelectedEventCategory(type);
   };
 
   /** taking value from `MetricsDetailSection` and setting selected aggregation value to state */
@@ -51,6 +58,8 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     aggregation: selectedAggregation,
   });
 
+  console.log(timeFrameOptions, "options");
+
   return (
     <>
       <Flex flexDirection="column">
@@ -61,6 +70,12 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             value={selectedAggregation}
             onChange={handleAggregationChange}
             options={aggregatorOptions}
+          />
+          <CustomSelect
+            label="Select Event Type"
+            value={selectedEventCategory}
+            onChange={handleEventTypeChange}
+            options={daysData.categoryTypes}
           />
           <CustomSelect
             label="Select Timeframe"
