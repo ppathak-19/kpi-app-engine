@@ -24,7 +24,7 @@ import {
   convertUTCToDate,
   formatProblemTimeWithDiff,
 } from "../utils/timeConverters";
-import { useMetricsContext } from "./context/MetricsContext";
+import { useAppContext } from "./Context-API/AppContext";
 import useGetKPIQueryData from "./useGetKPIQueryData";
 import useGetSummarizationData from "./useGetSummarizationData";
 
@@ -125,8 +125,11 @@ const useGetKPIMetrices = (props: QueryProps) => {
   });
 
   /** Taking baseline values from useContext  */
-  const { initialMttdValue: baselineMTTD, initialMttrValue: baselineMTTR } =
-    useMetricsContext();
+  const {
+    state: { baseline },
+  } = useAppContext();
+  const baselineMTTD = baseline.mttd;
+  const baselineMTTR = baseline.mttr;
 
   const responseWithCurrentDayData: ResponseWithMetricesData = {
     /** MTTD Data */
@@ -157,6 +160,9 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
+  // if metricData is 5, baseline is 10 -> [1 - (5/10)] * 100 =>
+  // [1 - (1/2)] * 100
+  // (1/2) * 100 => 50%
   const responseInPercentageWithBaseline: ResponseWithPercentages = {
     [minMTTD]: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
     [maxMTTD]: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
@@ -181,7 +187,9 @@ const useGetKPIMetrices = (props: QueryProps) => {
     ),
   };
 
-  /** To cal % with respect to current days & previous day -> divide previous day by current day */
+  /** To cal % with respect to current days & relative day  */
+  // if relative is 10, current is 100 -> [(10/100)-1] * 100
+  // [(-9/10)] * 100 => -90%
   const responseInPercentageWithPreviousDay: ResponseWithPercentages = {
     [minMTTD]: calculateImprovementWithPreviousdata(
       metricData2.minMTTDInNum,

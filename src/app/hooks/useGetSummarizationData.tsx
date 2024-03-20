@@ -27,22 +27,34 @@ const useGetSummarizationData = ({
   const mttrArrayList = queryData.map((each) => each.mttrTime);
 
   /** Calculating the MTTD Metrices */
-  const mttdsummarizedData = useDqlQuery({
+  // const mttdsummarizedData = useDqlQuery({
+  //   body: {
+  //     query: `
+  //     data record(a = array(${mttdArrayList}))
+  //     | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
+  //           `,
+  //   },
+  // });
+
+  /** Calculating the MTTR Metrices */
+  // const mttrsummarizedData = useDqlQuery({
+  //   body: {
+  //     query: `
+  //     data record(a = array(${mttrArrayList}))
+  //     | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a)
+  //           `,
+  //   },
+  // });
+
+  /** returns a array of data. 0 index -> MTTD Metrices, 1st index -> MTTR Metrices */
+  const summarizationData = useDqlQuery({
     body: {
       query: `
       data record(a = array(${mttdArrayList}))
       | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
-            `,
-    },
-  });
-
-  /** Calculating the MTTR Metrices */
-  const mttrsummarizedData = useDqlQuery({
-    body: {
-      query: `
-      data record(a = array(${mttrArrayList}))
-      | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a)
-            `,
+      | append [   data record(a = array(${mttrArrayList}))
+        | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a) ]
+      `,
     },
   });
 
@@ -89,82 +101,79 @@ const useGetSummarizationData = ({
   const response = {
     /** MTTD Data */
     [maxMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
+        (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
       ),
     [minMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
+        (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
       ),
     [medianMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
+        (summarizationData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
       ),
     [averageMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
+        (summarizationData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
       ),
 
     /** MTTR Data */
     [maxMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
+        (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
       ),
     [minMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
+        (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
       ),
     [medianMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
+        (summarizationData.data?.records[1]?.[`${medianMTTR}`] as number) || 0
       ),
     [averageMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
+        (summarizationData.data?.records[1]?.[`${averageMTTR}`] as number) || 0
       ),
 
     /** Loading Indicator */
-    isLoading:
-      mttdsummarizedData.isLoading &&
-      mttrsummarizedData.isLoading &&
-      timeSeriesCals.isLoading,
+    isLoading: summarizationData.isLoading && timeSeriesCals.isLoading,
 
     /** Error Indicator */
-    isError: mttdsummarizedData.isError && mttrsummarizedData.isError,
+    isError: summarizationData.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
     minMTTDInNum: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
+      (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
     ),
     maxMTTDInNum: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
+      (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
     ),
     averageMTTDInNum: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
+      (summarizationData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
     ),
     medianMTTDInNum: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
+      (summarizationData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
     ),
 
     minMTTRInNum: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
+      (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
     ),
     maxMTTRInNum: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
+      (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
     ),
     averageMTTRInNum: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
+      (summarizationData.data?.records[1]?.[`${averageMTTR}`] as number) || 0
     ),
     medianMTTRInNum: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
+      (summarizationData.data?.records[1]?.[`${medianMTTR}`] as number) || 0
     ),
 
     /** MakeTimeseries data */

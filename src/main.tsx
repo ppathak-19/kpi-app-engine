@@ -3,15 +3,15 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import App from "./app/App";
-import { MetricsProvider } from "./app/hooks/context/MetricsContext";
+import AppContextProvider from "./app/hooks/Context-API/AppContext";
 
 ReactDOM.render(
   <AppRoot>
     <BrowserRouter basename="ui">
-      <MetricsProvider>
+      <AppContextProvider>
         <App />
         <ToastContainer />
-      </MetricsProvider>
+      </AppContextProvider>
     </BrowserRouter>
   </AppRoot>,
   document.getElementById("root")
