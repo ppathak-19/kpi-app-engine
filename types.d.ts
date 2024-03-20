@@ -1,38 +1,7 @@
-import {
-  type EntityStub,
-  type EvidenceEvidenceType,
-} from "@dynatrace-sdk/client-classic-environment-v2";
+import type { QueryResult } from "@dynatrace-sdk/client-query";
 
 // eslint-disable-next-line @typescript-eslint/ban-types
 export type AppCompProps = {};
-
-export type TableDataType = {
-  problemId: string;
-  displayName: string;
-  problemStartTime: string;
-  problemEndTime: string;
-  mttd: string;
-  mttr: string;
-};
-
-export type EvidenceArrayType = {
-  startTime: Date;
-  displayName: string;
-  entity: EntityStub;
-  evidenceType: EvidenceEvidenceType;
-  groupingEntity?: EntityStub | undefined;
-  rootCauseRelevant: boolean;
-};
-
-export type ProblemEvidenceLineChartType = {
-  name: string;
-  unit: string;
-  datapoints: {
-    start: Date;
-    end: Date;
-    value: string;
-  }[];
-};
 
 /** Application Routing Type */
 export type appRoutesType = {
@@ -41,31 +10,58 @@ export type appRoutesType = {
   label: string;
 };
 
-export type RequiredDataResponse = {
-  maxMTTD: string;
-  minMTTD: string;
-  medianMTTD: string;
-  averageMTTD: string;
-  maxMTTR: string;
-  minMTTR: string;
-  medianMTTR: string;
-  averageMTTR: string;
-  isLoading: boolean;
-  isError: ErrorResponse | undefined;
-  minMTTDInMin: number;
-  maxMTTDInMin: number;
-  averageMTTDInMin: number;
-  medianMTTDInMin: number;
-  minMTTRInMin: number;
-  maxMTTRInMin: number;
-  averageMTTRInMin: number;
-  medianMTTRInMin: number;
+export type OtherType = {
+  isLoading?: boolean;
+  isError?: boolean;
 };
+
+export type KPIaggregationTypes =
+  | "minMTTD"
+  | "maxMTTD"
+  | "medianMTTD"
+  | "averageMTTD"
+  | "minMTTR"
+  | "maxMTTR"
+  | "medianMTTR"
+  | "averageMTTR";
+
+export type ResponseWithPercentages = Record<KPIaggregationTypes, number>;
+
+export type ResponseWithMetricesData = Record<KPIaggregationTypes, string>;
+
+export type CategoryType = (ResultRecordValue | undefined)[];
+
+export type RequiredDataResponse = {
+  categoryTypes: CategoryType;
+  responseInPercentageWithBaseline: ResponseWithPercentages;
+  responseInPercentageWithPreviousDay: ResponseWithPercentages;
+  responseWithCurrentDayData: ResponseWithMetricesData;
+  responseWithPreviousDayData: ResponseWithMetricesData;
+  timeSeriesWithCurrentDayData: QueryResult;
+  timeSeriesWithPreviousDayData: QueryResult;
+  refetch: {
+    refetchMainQuery: (...args) => Promise<QueryResult | undefined>;
+    refetchSummarizationQuery1: (...args) => Promise<QueryResult | undefined>;
+    refetchSummarizationQuery2: (...args) => Promise<QueryResult | undefined>;
+  };
+} & OtherType;
 
 /** Query Props */
 export type QueryProps = {
   timeLine1: "now()-7d" | "now()-2d" | "now()-30d" | string;
-  shouldUseTimeFrame1: boolean;
   timeLine2: "now()-7d" | "now()-2d" | "now()-30d" | string;
-  shouldUseTimeFrame2: boolean;
+  selectedEventCategory?: "" | string;
 };
+
+/** Metric details */
+export type MetricDetailsCardSection = {
+  currentDayValue: string;
+  baselinePercentage: string;
+  previousDayValue: string;
+  comparisonWithPreviousDay: string;
+};
+
+/** Different types of aggregations in app */
+export type aggregationsType = "average" | "min" | "max";
+
+// export type aggregatorOptionsType = Record<aggregationsType, {value:string,label:string}>

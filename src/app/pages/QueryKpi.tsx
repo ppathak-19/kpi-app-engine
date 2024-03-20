@@ -1,94 +1,151 @@
 import {
-  DataTable,
+  Container,
   Flex,
   Heading,
-  Surface,
-  TitleBar,
+  TimeseriesChart,
 } from "@dynatrace/strato-components-preview";
-import React from "react";
-import type { AppCompProps } from "types";
-import { queryKPITableColumnV2 } from "../constants/problemTableColumns";
+// import { RefreshIcon } from "@dynatrace/strato-icons";
+import Colors from "@dynatrace/strato-design-tokens/colors";
+import React, { useState } from "react";
+import type { AppCompProps, aggregationsType } from "types";
+import MetricDetailSection from "../components/MetricDetailSection";
+import { CustomSelect } from "../components/ReusableComponents/CustomSelect";
+import { aggregatorOptions, timeFrameOptions } from "../constants/options";
+import { useAppContext } from "../hooks/Context-API/AppContext";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
-import { getBeforePastDays } from "../utils/timeConverters";
+import { giveTimeseriesData } from "../utils/giveTimeseriesData";
+import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
-  /** Getting Metrices for Last 2 Days */
-  const last2DaysData = useGetKPIMetrices({
-    timeLine1: "now()-2d",
-    shouldUseTimeFrame1: false,
-    timeLine2: getBeforePastDays(2),
-    shouldUseTimeFrame2: true,
+  /** States For Two Dropdowns for the app */
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("2");
+  const [selectedEventCategory, setSelectedEventCategory] =
+    useState<string>("");
+  const [selectedAggregation, setSelectedAggregation] =
+    useState<aggregationsType>("min");
+
+  /** taking values from context, to give thresholds to timeseries comp */
+  const {
+    state: { baseline },
+  } = useAppContext();
+
+  /** Getting Metrices Selected Timeframe */
+  const daysData = useGetKPIMetrices({
+    timeLine1: getPastDaysRange(selectedTimeFrame),
+    timeLine2: getBeforePastDays(selectedTimeFrame),
+    selectedEventCategory,
   });
 
-  // console.log({ last2DaysData });
+  /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */
+  const handleTimeFrameChange = (time: string) => {
+    setSelectedTimeFrame(time);
+  };
 
-  /** Getting Metrices for Last 7 Days */
-  const last7DaysData = useGetKPIMetrices({
-    timeLine1: "now()-7d",
-    shouldUseTimeFrame1: false,
-    timeLine2: getBeforePastDays(7),
-    shouldUseTimeFrame2: true,
+  const handleEventTypeChange = (type: string) => {
+    setSelectedEventCategory(type);
+  };
+
+  /** taking value from `MetricsDetailSection` and setting selected aggregation value to state */
+  const handleAggregationChange = (clickedVal: aggregationsType) => {
+    setSelectedAggregation(clickedVal);
+  };
+
+  /** Passing Current Day Data  */
+  const {
+    timeseriesMttd: CurrentTimeseriesMttd,
+    timeseriesMttr: CurrentTimeseriesMttr,
+  } = giveTimeseriesData({
+    queryResult: !!daysData && daysData.timeSeriesWithCurrentDayData,
+    aggregation: selectedAggregation,
   });
 
-  /** Getting Metrices for Previous Month */
-  // const last30DaysData = useGetKPIMetrices({
-  //   timeline: getLastMonth(),
-  //   shouldUseTimeFrame: true,
-  // });
+  console.count();
 
   return (
-    <Surface>
-      <TitleBar>
-        <TitleBar.Title>KPI With MTTD, MTTR</TitleBar.Title>
-      </TitleBar>
-      <Flex flexDirection="column" padding={20}>
-        <Heading level={4}>Last 2 Days Data</Heading>
-        <DataTable
-          resizable
-          fullWidth
-          columns={queryKPITableColumnV2}
-          loading={last2DaysData.isLoading}
-          data={!!last2DaysData ? [last2DaysData] : []}
-          variant={{
-            rowDensity: "comfortable",
-            rowSeparation: "zebraStripes",
-            verticalDividers: true,
-          }}
-        />
+    <>
+      <button
+        onClick={() => {
+          console.log("refetching the data.....");
+          daysData.refetch.refetchMainQuery();
+          daysData.refetch.refetchSummarizationQuery1();
+          daysData.refetch.refetchSummarizationQuery2();
+        }}
+      >
+        refetch
+      </button>
+      <Flex flexDirection="column">
+        {/* Custom Selects for the app */}
+        <Flex justifyContent="space-between">
+          <CustomSelect
+            label="Select Aggregation"
+            value={selectedAggregation}
+            onChange={handleAggregationChange}
+            options={aggregatorOptions}
+          />
+          <CustomSelect
+            label="Select Event Type"
+            value={selectedEventCategory}
+            onChange={handleEventTypeChange}
+            options={daysData.categoryTypes}
+          />
+          <CustomSelect
+            label="Select Timeframe"
+            value={selectedTimeFrame}
+            onChange={handleTimeFrameChange}
+            options={timeFrameOptions}
+          />
+        </Flex>
+
+        {/* First Container of app */}
+        <Flex flexDirection="column">
+          <MetricDetailSection
+            daysData={daysData}
+            selectedTimeFrame={selectedTimeFrame}
+            clickedAggregation={selectedAggregation}
+          />
+        </Flex>
       </Flex>
       <br />
-      <Flex flexDirection="column" padding={20}>
-        <Heading level={4}>Last 7 Days Data</Heading>
-        <DataTable
-          resizable
-          fullWidth
-          columns={queryKPITableColumnV2}
-          loading={last7DaysData.isLoading}
-          data={!!last7DaysData ? [last7DaysData] : []}
-          variant={{
-            rowDensity: "comfortable",
-            rowSeparation: "zebraStripes",
-            verticalDividers: true,
-          }}
-        />
-      </Flex>
       <br />
-      {/*  <Flex flexDirection="column" padding={20}>
-        <Heading level={2}>Previous Month Data</Heading>
-        <DataTable
-          resizable
-          fullWidth
-          columns={queryKPITableColumnV2}
-          loading={last30DaysData.isLoading}
-          data={!!last30DaysData ? [last30DaysData] : []}
-          variant={{
-            rowDensity: "comfortable",
-            rowSeparation: "zebraStripes",
-            verticalDividers: true,
-          }}
-        />
-      </Flex> */}
-    </Surface>
+      <br />
+      {/* Second part of app */}
+      <Heading level={6}>Current Days- Timeseries</Heading>
+      <br />
+      <Flex flexDirection="row" width="100%" justifyContent="space-around">
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={CurrentTimeseriesMttd}
+            variant="area"
+            loading={daysData.isLoading}
+          >
+            <TimeseriesChart.Threshold
+              data={{ value: baseline.mttd }}
+              label="Baseline MTTD"
+              color={Colors.Charts.Threshold.Bad.Default}
+            />
+            <TimeseriesChart.YAxis
+              formatter={(value) => `${Math.round(value)} mins`}
+            />
+          </TimeseriesChart>
+        </Container>
+        <Container variant="minimal" width="42%">
+          <TimeseriesChart
+            data={CurrentTimeseriesMttr}
+            variant="area"
+            loading={daysData.isLoading}
+          >
+            <TimeseriesChart.Threshold
+              data={{ value: baseline.mttr }}
+              label="Baseline MTTR"
+              color={Colors.Charts.Threshold.Bad.Default}
+            />
+            <TimeseriesChart.YAxis
+              formatter={(value) => `${Math.round(value)} mins`}
+            />
+          </TimeseriesChart>
+        </Container>
+      </Flex>
+    </>
   );
 };
 

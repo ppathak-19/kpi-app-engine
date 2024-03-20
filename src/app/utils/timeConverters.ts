@@ -51,8 +51,8 @@ export function convertKpiQueryMin_to_Time(minute: number) {
   hour = hour % 24;
 
   const finalDays = day > 0 ? `${day} Days` : "";
-  const finalHours = hour > 0 ? `${Math.floor(hour)} Hours` : "";
-  const finalMinutes = minute >= 0 ? `${Math.floor(minute)} minutes` : "";
+  const finalHours = hour > 0 ? `${Math.floor(hour)} Hrs` : "";
+  const finalMinutes = minute >= 0 ? `${Math.floor(minute)} min` : "";
 
   const formattedTime = `${finalDays} ${finalHours} ${finalMinutes}`;
   return formattedTime;
@@ -70,7 +70,7 @@ export function formatDate(date: Date) {
 }
 
 // get past months start and end date
-export function getLastMonth(monthsBefore) {
+export function getLastMonth(monthsBefore: number) {
   const now = new Date();
 
   const targetMonth = new Date(
@@ -99,20 +99,88 @@ export function getLastMonth(monthsBefore) {
 }
 
 // gets days before past days
-export function getBeforePastDays(numberOfDays) {
+export function getBeforePastDays(numberOfDays: string) {
   const currentDate = new Date();
   const twoDaysAgo = new Date(currentDate);
-  twoDaysAgo.setDate(currentDate.getDate() - (numberOfDays + numberOfDays));
-  const twoDaysAfter = new Date(currentDate);
-  twoDaysAfter.setDate(currentDate.getDate() - numberOfDays);
 
-  const startDate = twoDaysAgo.toString();
-  const endDate = twoDaysAfter.toString();
+  if (numberOfDays === "-w") {
+    // past week timeframe
+    const pastSunday = new Date(currentDate);
+    pastSunday.setDate(currentDate.getDate() - currentDate.getDay());
+    const pastMonday = new Date(pastSunday);
+    pastMonday.setDate(pastSunday.getDate() - 6);
 
-  const formattedStartDate = formatDate(new Date(startDate));
-  const formattedEndDate = formatDate(new Date(endDate));
+    const formattedPastMonday = formatDate(pastMonday);
+    const formattedPastSunday = formatDate(pastSunday);
 
-  const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+    return `${formattedPastMonday}/${formattedPastSunday}`;
+  } else if (numberOfDays === "-m") {
+    // past month timeframe
+    const pastMonthStart = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
+    );
+    const pastMonthEnd = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth(),
+      0
+    );
 
-  return timeframe;
+    const formattedPastMonthStart = formatDate(pastMonthStart);
+    const formattedPastMonthEnd = formatDate(pastMonthEnd);
+
+    return `${formattedPastMonthStart}/${formattedPastMonthEnd}`;
+  } else {
+    const getIntDays = Number(numberOfDays);
+    twoDaysAgo.setDate(currentDate.getDate() - (getIntDays + getIntDays));
+    const twoDaysAfter = new Date(currentDate);
+    twoDaysAfter.setDate(currentDate.getDate() - getIntDays);
+
+    const startDate = twoDaysAgo.toString();
+    const endDate = twoDaysAfter.toString();
+
+    const formattedStartDate = formatDate(new Date(startDate));
+    const formattedEndDate = formatDate(new Date(endDate));
+
+    const timeframe = `${formattedStartDate}/${formattedEndDate}`;
+
+    return timeframe;
+  }
 }
+
+const getTimeLineRange = (days: number) => {
+  const currentDate = new Date();
+  const pastDate = new Date(currentDate);
+
+  pastDate.setDate(currentDate.getDate() - days);
+
+  const formattedPastDate = formatDate(pastDate);
+  const formattedCurrentDate = formatDate(currentDate);
+
+  return `${formattedPastDate}/${formattedCurrentDate}`;
+};
+
+export const getPastDaysRange = (range: string) => {
+  const currentDate = new Date();
+
+  if (range === "-w") {
+    const currentDayOfWeek = currentDate.getDay();
+    const daysToSubtract = currentDayOfWeek === 0 ? 7 : currentDayOfWeek;
+
+    const pastSundayDate = new Date(currentDate);
+    pastSundayDate.setDate(currentDate.getDate() - daysToSubtract);
+
+    const daysDifference = Math.floor(
+      (Number(currentDate) - Number(pastSundayDate)) / (1000 * 60 * 60 * 24)
+    );
+
+    return getTimeLineRange(Number(daysDifference));
+  } else if (range === "-m") {
+    const currentDate = new Date();
+
+    return getTimeLineRange(currentDate.getDate() + 1);
+  } else {
+    return getTimeLineRange(Number(range));
+  }
+};

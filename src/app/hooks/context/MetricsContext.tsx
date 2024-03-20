@@ -3,12 +3,14 @@ import React, { createContext, useContext, useState } from "react";
 type MetricsContextType = {
   initialMttdValue: number;
   initialMttrValue: number;
+  salaryValue: number;
   setMetricsData: (values: Partial<MetricsContextType>) => void;
 };
 
 const defaultMetricsContext: MetricsContextType = {
   initialMttdValue: 0,
   initialMttrValue: 0,
+  salaryValue: 0,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   setMetricsData: () => {},
 };
@@ -31,7 +33,12 @@ export const MetricsProvider: React.FC = ({ children }) => {
   };
 
   return (
-    <MetricsContext.Provider value={{ ...metrics, setMetricsData }}>
+    <MetricsContext.Provider
+      value={{
+        ...metrics,
+        setMetricsData,
+      }}
+    >
       {children}
     </MetricsContext.Provider>
   );

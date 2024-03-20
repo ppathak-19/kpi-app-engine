@@ -1,3 +1,4 @@
+import type { ResultRecord } from "@dynatrace-sdk/client-query";
 import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   averageMTTD,
@@ -11,122 +12,134 @@ import {
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
 
+type SummarizationDataHookProps = {
+  queryData: ResultRecord[];
+  timeLine: string;
+};
+
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
-const useGetSummarizationData = (mttdData: number[], mttrData: number[]) => {
-  /** Calculating the MTTD Metrices */
-  const mttdsummarizedData = useDqlQuery({
+const useGetSummarizationData = ({
+  queryData,
+  timeLine,
+}: SummarizationDataHookProps) => {
+  // console.log(queryData);
+  const mttdArrayList = queryData.map((each) => each.mttdTime);
+  const mttrArrayList = queryData.map((each) => each.mttrTime);
+
+  /** returns a array of data. 0 index -> MTTD Metrices, 1st index -> MTTR Metrices */
+  // here we are using `append` cmd to combine two queries and return two results -> arr[0,1]
+  const summarizationData = useDqlQuery({
     body: {
       query: `
-      data record(a = array(${mttdData}))
+      data record(a = array(${mttdArrayList}))
       | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
-            `,
+      | append [   data record(a = array(${mttrArrayList}))
+        | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a) ]
+      `,
     },
   });
 
-  /** Calculating the MTTR Metrices */
-  const mttrsummarizedData = useDqlQuery({
+  /** passing the query records to data json and getting results as we required */
+  const timeSeriesCals = useDqlQuery({
     body: {
       query: `
-      data record(a = array(${mttrData}))
-      | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a)
-            `,
+      data json:"""${JSON.stringify(queryData)}"""
+      | fieldsAdd  timestamp =  toTimestamp(timestamp) //converting into required timestamp
+      | makeTimeseries {
+        ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${medianMTTD} = median(mttdTime), // MTTD series
+        ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime), ${medianMTTR} = median(mttrTime) // MTTR series
+      }, 
+        timeframe: toTimeframe("${timeLine}") //converting into required timeframe
+      `,
     },
   });
-
-  // console.log({ mttdsummarizedData, mttrsummarizedData });
 
   const response = {
     /** MTTD Data */
     [maxMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number
+        (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
       ),
     [minMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number
+        (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
       ),
     [medianMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number
+        (summarizationData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
       ),
     [averageMTTD]:
-      !!mttdsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number
+        (summarizationData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
       ),
 
     /** MTTR Data */
     [maxMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number
+        (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
       ),
     [minMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number
+        (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
       ),
     [medianMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number
+        (summarizationData.data?.records[1]?.[`${medianMTTR}`] as number) || 0
       ),
     [averageMTTR]:
-      !!mttrsummarizedData &&
+      !!summarizationData &&
       convertKpiQueryMin_to_Time(
-        mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number
+        (summarizationData.data?.records[1]?.[`${averageMTTR}`] as number) || 0
       ),
 
     /** Loading Indicator */
-    isLoading: mttdsummarizedData.isLoading && mttrsummarizedData.isLoading,
+    isLoading: summarizationData.isLoading || timeSeriesCals.isLoading,
 
     /** Error Indicator */
-    isError: mttdsummarizedData.errorDetails && mttrsummarizedData.errorDetails,
+    isError: summarizationData.isError || timeSeriesCals.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
-    minMTTDInMin: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${minMTTD}`] as number) || 0
+    minMTTDInNum: Math.floor(
+      (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
     ),
-    maxMTTDInMin: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
+    maxMTTDInNum: Math.floor(
+      (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
     ),
-    averageMTTDInMin: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
+    averageMTTDInNum: Math.floor(
+      (summarizationData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
     ),
-    medianMTTDInMin: Math.floor(
-      (mttdsummarizedData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
+    medianMTTDInNum: Math.floor(
+      (summarizationData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
     ),
 
-    minMTTRInMin: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${minMTTR}`] as number) || 0
+    minMTTRInNum: Math.floor(
+      (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
     ),
-    maxMTTRInMin: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${maxMTTR}`] as number) || 0
+    maxMTTRInNum: Math.floor(
+      (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
     ),
-    averageMTTRInMin: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${averageMTTR}`] as number) || 0
+    averageMTTRInNum: Math.floor(
+      (summarizationData.data?.records[1]?.[`${averageMTTR}`] as number) || 0
     ),
-    medianMTTRInMin: Math.floor(
-      (mttrsummarizedData.data?.records[0]?.[`${medianMTTR}`] as number) || 0
+    medianMTTRInNum: Math.floor(
+      (summarizationData.data?.records[1]?.[`${medianMTTR}`] as number) || 0
     ),
+
+    dataTimeseries:
+      !!timeSeriesCals && timeSeriesCals.data
+        ? timeSeriesCals.data
+        : { metadata: {}, records: [], types: [] },
+
+    /** Refetching */
+    refetch: summarizationData.refetch && timeSeriesCals.refetch,
   };
-
-  // const responseInPercentage = {
-  //   [minMTTD]: calculatePercentage(response.minMTTDInMin, baselineMTTD),
-  //   [maxMTTD]: calculatePercentage(response.maxMTTDInMin, baselineMTTD),
-  //   [averageMTTD]: calculatePercentage(response.averageMTTRInMin, baselineMTTD),
-  //   [medianMTTD]: calculatePercentage(response.medianMTTDInMin, baselineMTTD),
-
-  //   [minMTTR]: calculatePercentage(response.minMTTRInMin, baselineMTTR),
-  //   [maxMTTR]: calculatePercentage(response.maxMTTRInMin, baselineMTTR),
-  //   [averageMTTR]: calculatePercentage(response.averageMTTRInMin, baselineMTTR),
-  //   [medianMTTR]: calculatePercentage(response.medianMTTRInMin, baselineMTTR),
-  // };
-
-  // console.log({ responseInPercentage });
 
   return response;
 };
