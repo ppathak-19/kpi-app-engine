@@ -132,17 +132,6 @@ const useGetSummarizationData = ({
       (summarizationData.data?.records[1]?.[`${medianMTTR}`] as number) || 0
     ),
 
-    /** MakeTimeseries data */
-    // timeSeriesData: {
-    //   mttd:
-    //     !!timeSeriesCalsMttd && timeSeriesCalsMttd.data
-    //       ? timeSeriesCalsMttd.data
-    //       : { metadata: {}, records: [], types: [] },
-    //   mttr:
-    //     !!timeSeriesCalsMttr && timeSeriesCalsMttr.data
-    //       ? timeSeriesCalsMttr.data
-    //       : { metadata: {}, records: [], types: [] },
-    // },
     dataTimeseries:
       !!timeSeriesCals && timeSeriesCals.data
         ? timeSeriesCals.data
