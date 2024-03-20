@@ -33,6 +33,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     queryResponseWithTimeLine1: q1,
     queryResponseWithTimeLine2: q2,
     isLoading: mainQueryLoading,
+    refetch,
   } = useGetKPIQueryData({
     timeLine1,
     timeLine2,
@@ -177,9 +178,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
-  // if metricData is 5, baseline is 10 -> [1 - (5/10)] * 100 =>
-  // [1 - (1/2)] * 100
-  // (1/2) * 100 => 50%
   const responseInPercentageWithBaseline: ResponseWithPercentages = {
     [minMTTD]: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
     [maxMTTD]: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
@@ -205,8 +203,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** To cal % with respect to current days & relative day  */
-  // if relative is 10, current is 100 -> [(10/100)-1] * 100
-  // [(-9/10)] * 100 => -90%
   const responseInPercentageWithPreviousDay: ResponseWithPercentages = {
     [minMTTD]: calculatePercentage(
       metricData1.minMTTDInNum,
@@ -257,6 +253,11 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseWithPreviousDayData,
     timeSeriesWithCurrentDayData: metricData1.dataTimeseries,
     timeSeriesWithPreviousDayData: metricData2.dataTimeseries,
+    refetch: {
+      refetchMainQuery: refetch,
+      refetchSummarizationQuery1: metricData1.refetch,
+      refetchSummarizationQuery2: metricData2.refetch,
+    },
   };
   return finalResponse;
 };

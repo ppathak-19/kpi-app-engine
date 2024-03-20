@@ -36,6 +36,11 @@ export type RequiredDataResponse = {
   responseWithPreviousDayData: ResponseWithMetricesData;
   timeSeriesWithCurrentDayData: QueryResult;
   timeSeriesWithPreviousDayData: QueryResult;
+  refetch: {
+    refetchMainQuery: (...args) => Promise<QueryResult | undefined>;
+    refetchSummarizationQuery1: (...args) => Promise<QueryResult | undefined>;
+    refetchSummarizationQuery2: (...args) => Promise<QueryResult | undefined>;
+  };
 } & OtherType;
 
 /** Query Props */

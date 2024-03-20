@@ -100,10 +100,10 @@ const useGetSummarizationData = ({
       ),
 
     /** Loading Indicator */
-    isLoading: summarizationData.isLoading && timeSeriesCals.isLoading,
+    isLoading: summarizationData.isLoading || timeSeriesCals.isLoading,
 
     /** Error Indicator */
-    isError: summarizationData.isError,
+    isError: summarizationData.isError || timeSeriesCals.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
     minMTTDInNum: Math.floor(
@@ -147,6 +147,9 @@ const useGetSummarizationData = ({
       !!timeSeriesCals && timeSeriesCals.data
         ? timeSeriesCals.data
         : { metadata: {}, records: [], types: [] },
+
+    /** Refetching */
+    refetch: summarizationData.refetch && timeSeriesCals.refetch,
   };
 
   return response;

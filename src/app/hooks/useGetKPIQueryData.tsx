@@ -10,6 +10,7 @@ const useGetKPIQueryData = (
   queryResponseWithTimeLine1: QueryResult | undefined;
   queryResponseWithTimeLine2: QueryResult | undefined;
   isLoading: boolean;
+  refetch: (...args) => Promise<QueryResult | undefined>;
 } => {
   const { timeLine1, timeLine2 } = props;
 
@@ -29,6 +30,7 @@ const useGetKPIQueryData = (
     queryResponseWithTimeLine1: queryData1.data,
     queryResponseWithTimeLine2: queryData2.data,
     isLoading: queryData1.isLoading || queryData2.isLoading,
+    refetch: queryData1.refetch && queryData2.refetch,
   };
 
   return response;
