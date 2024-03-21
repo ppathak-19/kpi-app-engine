@@ -27,6 +27,7 @@ const useGetSummarizationData = ({
   const mttrArrayList = queryData.map((each) => each.mttrTime);
 
   /** returns a array of data. 0 index -> MTTD Metrices, 1st index -> MTTR Metrices */
+  // here we are using `append` cmd to combine two queries and return two results -> arr[0,1]
   const summarizationData = useDqlQuery({
     body: {
       query: `
@@ -38,42 +39,17 @@ const useGetSummarizationData = ({
     },
   });
 
-  // console.log({ mttdsummarizedData, mttrsummarizedData });
-
-  // const timeSeriesCalsMttd = useDqlQuery({
-  //   body: {
-  //     query: `
-  //     data json:"""${JSON.stringify(queryData)}"""
-  //     | fieldsAdd  timestamp =  toTimestamp(timestamp)
-  //     | makeTimeseries { max(mttdTime), min(mttdTime), avg(mttdTime) }, ${
-  //       shouldUseTimeFrame === true
-  //         ? `timeframe: toTimeframe("${timeLine}")`
-  //         : `from:${timeLine}`
-  //     }
-  //     `,
-  //   },
-  // });
-
-  // const timeSeriesCalsMttr = useDqlQuery({
-  //   body: {
-  //     query: `
-  //     data json:"""${JSON.stringify(queryData)}"""
-  //     | fieldsAdd  timestamp =  toTimestamp(timestamp)
-  //     | makeTimeseries { max(mttrTime), min(mttrTime), avg(mttrTime) }, ${
-  //       shouldUseTimeFrame === true
-  //         ? `timeframe: toTimeframe("${timeLine}")`
-  //         : `from:${timeLine}`
-  //     }
-  //     `,
-  //   },
-  // });
-
+  /** passing the query records to data json and getting results as we required */
   const timeSeriesCals = useDqlQuery({
     body: {
       query: `
       data json:"""${JSON.stringify(queryData)}"""
-      | fieldsAdd  timestamp =  toTimestamp(timestamp)
-      | makeTimeseries { ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime) }, ${`timeframe: toTimeframe("${timeLine}")`}
+      | fieldsAdd  timestamp =  toTimestamp(timestamp) //converting into required timestamp
+      | makeTimeseries {
+        ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${medianMTTD} = median(mttdTime), // MTTD series
+        ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime), ${medianMTTR} = median(mttrTime) // MTTR series
+      }, 
+        timeframe: toTimeframe("${timeLine}") //converting into required timeframe
       `,
     },
   });
@@ -124,10 +100,10 @@ const useGetSummarizationData = ({
       ),
 
     /** Loading Indicator */
-    isLoading: summarizationData.isLoading && timeSeriesCals.isLoading,
+    isLoading: summarizationData.isLoading || timeSeriesCals.isLoading,
 
     /** Error Indicator */
-    isError: summarizationData.isError,
+    isError: summarizationData.isError || timeSeriesCals.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
     minMTTDInNum: Math.floor(
@@ -171,6 +147,9 @@ const useGetSummarizationData = ({
       !!timeSeriesCals && timeSeriesCals.data
         ? timeSeriesCals.data
         : { metadata: {}, records: [], types: [] },
+
+    /** Refetching */
+    refetch: summarizationData.refetch && timeSeriesCals.refetch,
   };
 
   return response;

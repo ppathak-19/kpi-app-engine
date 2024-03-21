@@ -16,10 +16,7 @@ import {
   minMTTD,
   minMTTR,
 } from "../constants/KpiFieldConstants";
-import {
-  calculateImprovementWithPreviousdata,
-  calculatePercentage,
-} from "../utils/calculations";
+import { calculatePercentage } from "../utils/calculations";
 import {
   convertUTCToDate,
   formatProblemTimeWithDiff,
@@ -37,6 +34,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     queryResponseWithTimeLine1: q1,
     queryResponseWithTimeLine2: q2,
     isLoading: mainQueryLoading,
+    refetch,
   } = useGetKPIQueryData({
     timeLine1,
     timeLine2,
@@ -149,9 +147,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
-  // if metricData is 5, baseline is 10 -> [1 - (5/10)] * 100 =>
-  // [1 - (1/2)] * 100
-  // (1/2) * 100 => 50%
   const responseInPercentageWithBaseline: ResponseWithPercentages = {
     [minMTTD]: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
     [maxMTTD]: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
@@ -177,41 +172,39 @@ const useGetKPIMetrices = (props: QueryProps) => {
   };
 
   /** To cal % with respect to current days & relative day  */
-  // if relative is 10, current is 100 -> [(10/100)-1] * 100
-  // [(-9/10)] * 100 => -90%
   const responseInPercentageWithPreviousDay: ResponseWithPercentages = {
-    [minMTTD]: calculateImprovementWithPreviousdata(
-      metricData2.minMTTDInNum,
-      metricData1.minMTTDInNum
+    [minMTTD]: calculatePercentage(
+      metricData1.minMTTDInNum,
+      metricData2.minMTTDInNum
     ),
-    [maxMTTD]: calculateImprovementWithPreviousdata(
-      metricData2.maxMTTDInNum,
-      metricData1.maxMTTDInNum
+    [maxMTTD]: calculatePercentage(
+      metricData1.maxMTTDInNum,
+      metricData2.maxMTTDInNum
     ),
-    [averageMTTD]: calculateImprovementWithPreviousdata(
-      metricData2.averageMTTDInNum,
-      metricData1.averageMTTDInNum
+    [averageMTTD]: calculatePercentage(
+      metricData1.averageMTTDInNum,
+      metricData2.averageMTTDInNum
     ),
-    [medianMTTD]: calculateImprovementWithPreviousdata(
-      metricData2.medianMTTDInNum,
-      metricData1.medianMTTDInNum
+    [medianMTTD]: calculatePercentage(
+      metricData1.medianMTTDInNum,
+      metricData2.medianMTTDInNum
     ),
 
-    [minMTTR]: calculateImprovementWithPreviousdata(
-      metricData2.minMTTRInNum,
-      metricData1.minMTTRInNum
+    [minMTTR]: calculatePercentage(
+      metricData1.minMTTRInNum,
+      metricData2.minMTTRInNum
     ),
-    [maxMTTR]: calculateImprovementWithPreviousdata(
-      metricData2.maxMTTRInNum,
-      metricData1.maxMTTRInNum
+    [maxMTTR]: calculatePercentage(
+      metricData1.maxMTTRInNum,
+      metricData2.maxMTTRInNum
     ),
-    [averageMTTR]: calculateImprovementWithPreviousdata(
-      metricData2.averageMTTRInNum,
-      metricData1.averageMTTRInNum
+    [averageMTTR]: calculatePercentage(
+      metricData1.averageMTTRInNum,
+      metricData2.averageMTTRInNum
     ),
-    [medianMTTR]: calculateImprovementWithPreviousdata(
-      metricData2.medianMTTRInNum,
-      metricData1.medianMTTRInNum
+    [medianMTTR]: calculatePercentage(
+      metricData1.medianMTTRInNum,
+      metricData2.medianMTTRInNum
     ),
   };
 
@@ -229,6 +222,12 @@ const useGetKPIMetrices = (props: QueryProps) => {
     responseWithCurrentDayData,
     responseWithPreviousDayData,
     timeSeriesWithCurrentDayData: metricData1.dataTimeseries,
+    timeSeriesWithPreviousDayData: metricData2.dataTimeseries,
+    refetch: {
+      refetchMainQuery: refetch,
+      refetchSummarizationQuery1: metricData1.refetch,
+      refetchSummarizationQuery2: metricData2.refetch,
+    },
   };
   return finalResponse;
 };

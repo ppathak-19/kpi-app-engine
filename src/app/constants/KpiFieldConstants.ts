@@ -31,4 +31,10 @@ export const emptyResponse: RequiredDataResponse = {
   responseWithCurrentDayData: {} as ResponseWithMetricesData,
   responseWithPreviousDayData: {} as ResponseWithMetricesData,
   timeSeriesWithCurrentDayData: { metadata: {}, records: [], types: [] },
+  timeSeriesWithPreviousDayData: { metadata: {}, records: [], types: [] },
+  refetch: {
+    refetchMainQuery: async () => undefined,
+    refetchSummarizationQuery1: async () => undefined,
+    refetchSummarizationQuery2: async () => undefined,
+  },
 };

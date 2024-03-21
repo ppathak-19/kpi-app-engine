@@ -4,6 +4,7 @@ import {
   Heading,
   TimeseriesChart,
 } from "@dynatrace/strato-components-preview";
+// import { RefreshIcon } from "@dynatrace/strato-icons";
 import Colors from "@dynatrace/strato-design-tokens/colors";
 import React, { useState } from "react";
 import type { AppCompProps, aggregationsType } from "types";
@@ -58,10 +59,20 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     aggregation: selectedAggregation,
   });
 
-  console.log(timeFrameOptions, "options");
+  console.count();
 
   return (
     <>
+      <button
+        onClick={() => {
+          console.log("refetching the data.....");
+          daysData.refetch.refetchMainQuery();
+          daysData.refetch.refetchSummarizationQuery1();
+          daysData.refetch.refetchSummarizationQuery2();
+        }}
+      >
+        refetch
+      </button>
       <Flex flexDirection="column">
         {/* Custom Selects for the app */}
         <Flex justifyContent="space-between">
