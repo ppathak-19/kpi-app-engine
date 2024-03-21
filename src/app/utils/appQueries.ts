@@ -4,7 +4,7 @@ export const buildAppMainQuery = (timeFrame: string) => `\
       | filter event.kind == "DAVIS_PROBLEM" and event.status == "CLOSED" and event.status_transition == "CLOSED"
       | sort  timestamp desc
       | expand dt.davis.event_ids // expanding the array of davis events
-      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp
+      | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp, event.category
       | fieldsAdd res = lookup([
         fetch events, timeframe:"${timeFrame}"
           | filter event.kind == "DAVIS_EVENT"

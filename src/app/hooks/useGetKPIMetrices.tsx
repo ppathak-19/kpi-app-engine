@@ -27,9 +27,10 @@ import useGetSummarizationData from "./useGetSummarizationData";
 
 /** This Hook Gives the Required Data for Table */
 const useGetKPIMetrices = (props: QueryProps) => {
-  const { timeLine1, timeLine2 } = props;
+  const { timeLine1, timeLine2, selectedEventCategory } = props;
 
   const {
+    categoryTypes,
     queryResponseWithTimeLine1: q1,
     queryResponseWithTimeLine2: q2,
     isLoading: mainQueryLoading,
@@ -43,70 +44,58 @@ const useGetKPIMetrices = (props: QueryProps) => {
   const [storeCurrentDay, setStoreCurrentDay] = useState<ResultRecord[]>([]);
   const [storePreviousDay, setStorePreviousDay] = useState<ResultRecord[]>([]);
 
+  const processRecords = (
+    records: (ResultRecord | null)[],
+    selectedEventCategory: string | undefined
+  ) => {
+    if (!records) return [];
+
+    return records.filter((eachR) => {
+      if (!eachR) return false;
+
+      if (
+        selectedEventCategory !== "" &&
+        eachR?.["event.category"] !== selectedEventCategory
+      ) {
+        return false;
+      }
+
+      // Here we are calculating the No.Of time Diff in minutes b/w event start and res.event start
+      const mttd = formatProblemTimeWithDiff(
+        convertUTCToDate(eachR?.["event.start"] as string),
+        convertUTCToDate(eachR?.["res.event.start"] as string)
+      );
+
+      // Here we are calculating the No.Of time Diff in minutes b/w event start & event end
+      const mttr = formatProblemTimeWithDiff(
+        convertUTCToDate(eachR?.["event.start"] as string),
+        convertUTCToDate(eachR?.["event.end"] as string)
+      );
+
+      // Add mttdTime and mttrTime to each record
+      eachR.mttdTime = mttd;
+      eachR.mttrTime = mttr;
+
+      // Filter out records where mttr is less than or equal to 5 minutes
+      return Number(mttr) > 5;
+    });
+  };
+
   useEffect(() => {
     if (q1?.records) {
-      const data1 = q1?.records
-        .map((eachR) => {
-          /** Here we are calculating the No.Of time Diff in minutes b/w event start and res.event start
-           *
-           * t0 -> res.event.start
-           * t1 -> event.start
-           * t2 -> event.end
-           *
-           */
-          const mttd = formatProblemTimeWithDiff(
-            convertUTCToDate(eachR?.["event.start"] as string),
-            convertUTCToDate(eachR?.["res.event.start"] as string)
-          );
+      const data1 = processRecords(q1.records, selectedEventCategory);
+      console.log(data1, "stored data for q1");
 
-          /** Here we are calculating the No.Of time Diff in minutes b/w event start & event end */
-          const mttr = formatProblemTimeWithDiff(
-            convertUTCToDate(eachR?.["event.start"] as string),
-            convertUTCToDate(eachR?.["event.end"] as string)
-          );
-
-          return {
-            ...eachR,
-            mttdTime: mttd,
-            mttrTime: mttr,
-          };
-        })
-        .filter((eachR) => Number(eachR.mttrTime) > 5); // filtering mttr values less than 5 min,as said by florent
-
-      setStoreCurrentDay(data1);
+      setStoreCurrentDay(data1 as ResultRecord[]);
     }
+
     if (q2?.records) {
-      const data2 = q2?.records
-        .map((eachR) => {
-          /** Here we are calculating the No.Of time Diff in minutes b/w event start and res.event start
-           *
-           * t0 -> res.event.start
-           * t1 -> event.start
-           * t2 -> event.end
-           *
-           */
-          const mttd = formatProblemTimeWithDiff(
-            convertUTCToDate(eachR?.["event.start"] as string),
-            convertUTCToDate(eachR?.["res.event.start"] as string)
-          );
+      const data2 = processRecords(q2.records, selectedEventCategory);
+      console.log(data2, "stored data for q2");
 
-          /** Here we are calculating the No.Of time Diff in minutes b/w event start & event end */
-          const mttr = formatProblemTimeWithDiff(
-            convertUTCToDate(eachR?.["event.start"] as string),
-            convertUTCToDate(eachR?.["event.end"] as string)
-          );
-
-          return {
-            ...eachR,
-            mttdTime: mttd,
-            mttrTime: mttr,
-          };
-        })
-        .filter((eachR) => Number(eachR.mttrTime) > 5); // filtering mttr values less than 5 min,as said by florent
-
-      setStorePreviousDay(data2);
+      setStorePreviousDay(data2 as ResultRecord[]);
     }
-  }, [q1, q2]);
+  }, [q1, q2, selectedEventCategory]);
 
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
 
@@ -136,21 +125,11 @@ const useGetKPIMetrices = (props: QueryProps) => {
     [averageMTTD]: !!metricData1 ? metricData1.averageMTTD : "0",
     [medianMTTD]: !!metricData1 ? metricData1.medianMTTD : "0",
 
-    // minMTTDInNumber: !!metricData1 ? metricData1.minMTTDInNum : 0,
-    // maxMTTDInNum: !!metricData1 ? metricData1.maxMTTDInNum : 0,
-    // averageMTTDInNum: !!metricData1 ? metricData1.averageMTTDInNum : 0,
-    // medianMTTDInNum: !!metricData1 ? metricData1.medianMTTDInNum : 0,
-
     /** MTTR Data */
     [minMTTR]: !!metricData1 ? metricData1.minMTTR : "0",
     [maxMTTR]: !!metricData1 ? metricData1.maxMTTR : "0",
     [averageMTTR]: !!metricData1 ? metricData1.averageMTTR : "0",
     [medianMTTR]: !!metricData1 ? metricData1.medianMTTR : "0",
-
-    // minMTTRInNumber: !!metricData1 ? metricData1.minMTTRInNum : 0,
-    // maxMTTRInNum: !!metricData1 ? metricData1.maxMTTRInNum : 0,
-    // averageMTTRInNum: !!metricData1 ? metricData1.averageMTTRInNum : 0,
-    // medianMTTRInNum: !!metricData1 ? metricData1.medianMTTRInNum : 0,
   };
 
   const responseWithPreviousDayData: ResponseWithMetricesData = {
@@ -160,21 +139,11 @@ const useGetKPIMetrices = (props: QueryProps) => {
     [averageMTTD]: !!metricData2 ? metricData2.averageMTTD : "0",
     [medianMTTD]: !!metricData2 ? metricData2.medianMTTD : "0",
 
-    // minMTTDInNumber: !!metricData2 ? metricData2.minMTTDInNum : 0,
-    // maxMTTDInNum: !!metricData2 ? metricData2.maxMTTDInNum : 0,
-    // averageMTTDInNum: !!metricData2 ? metricData2.averageMTTDInNum : 0,
-    // medianMTTDInNum: !!metricData2 ? metricData2.medianMTTDInNum : 0,
-
     /** MTTR Data */
     [minMTTR]: !!metricData2 ? metricData2.minMTTR : "0",
     [maxMTTR]: !!metricData2 ? metricData2.maxMTTR : "0",
     [averageMTTR]: !!metricData2 ? metricData2.averageMTTR : "0",
     [medianMTTR]: !!metricData2 ? metricData2.medianMTTR : "0",
-
-    // minMTTRInNumber: !!metricData2 ? metricData2.minMTTRInNum : 0,
-    // maxMTTRInNum: !!metricData2 ? metricData2.maxMTTRInNum : 0,
-    // averageMTTRInNum: !!metricData2 ? metricData2.averageMTTRInNum : 0,
-    // medianMTTRInNum: !!metricData2 ? metricData2.medianMTTRInNum : 0,
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
@@ -241,6 +210,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   /** Final Response */
   const finalResponse: RequiredDataResponse = {
+    categoryTypes,
     /** Other Info */
     isLoading:
       mainQueryLoading || metricData1.isLoading || metricData2.isLoading,

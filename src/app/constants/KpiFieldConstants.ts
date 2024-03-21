@@ -1,6 +1,7 @@
 // This variables are used in tableColumns and useGetSummarizationData() hook, so that we will get the response from the hook with this below keys
 
 import type {
+  CategoryType,
   RequiredDataResponse,
   ResponseWithMetricesData,
   ResponseWithPercentages,
@@ -22,6 +23,7 @@ export const minMTTR = "minMTTR";
 
 /** RequiredResponseType */
 export const emptyResponse: RequiredDataResponse = {
+  categoryTypes: [] as CategoryType,
   isError: false,
   isLoading: true,
   responseInPercentageWithBaseline: {} as ResponseWithPercentages,

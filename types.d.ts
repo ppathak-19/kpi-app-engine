@@ -29,7 +29,10 @@ export type ResponseWithPercentages = Record<KPIaggregationTypes, number>;
 
 export type ResponseWithMetricesData = Record<KPIaggregationTypes, string>;
 
+export type CategoryType = (ResultRecordValue | undefined)[];
+
 export type RequiredDataResponse = {
+  categoryTypes: CategoryType;
   responseInPercentageWithBaseline: ResponseWithPercentages;
   responseInPercentageWithPreviousDay: ResponseWithPercentages;
   responseWithCurrentDayData: ResponseWithMetricesData;
@@ -47,6 +50,7 @@ export type RequiredDataResponse = {
 export type QueryProps = {
   timeLine1: "now()-7d" | "now()-2d" | "now()-30d" | string;
   timeLine2: "now()-7d" | "now()-2d" | "now()-30d" | string;
+  selectedEventCategory?: "" | string;
 };
 
 /** Metric details */
