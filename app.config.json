@@ -23,6 +23,18 @@
       {
         "name": "state:app-states:delete",
         "comment": "Acess for deleting app states"
+      },
+      {
+        "name": "state:user-app-states:read",
+        "comment": "Read Access to user app state"
+      },
+      {
+        "name": "state:user-app-states:write",
+        "comment": "Write Access to user app state"
+      },
+      {
+        "name": "state:user-app-states:delete",
+        "comment": "Acess for deleting user app states"
       }
     ]
   }

@@ -12,7 +12,12 @@ import {
   setAppStatePersisted,
 } from "src/app/utils/appState";
 import { APP_STATE_KEY_METRICS, APP_STATE_KEY_SALARIES } from "./AppStateKeys";
-import { InitialAppStateType, initialAppStateValues } from "./InitialAppStates";
+import {
+  type InitialAppErrorType,
+  type InitialAppStateType,
+  initialAppErrorValues,
+  initialAppStateValues,
+} from "./InitialAppStates";
 
 type ProviderProps = {
   children: React.ReactNode;
@@ -20,9 +25,7 @@ type ProviderProps = {
 
 type ContextType = {
   state: InitialAppStateType;
-  setAppContextValues: React.Dispatch<
-    React.SetStateAction<InitialAppStateType>
-  >;
+  error: InitialAppErrorType;
   setAppStateValues: (val: InitialAppStateType) => void;
 };
 
@@ -31,6 +34,9 @@ export const AppContext = createContext<ContextType | null>(null);
 const AppContextProvider = ({ children }: ProviderProps) => {
   const [state, setAppContextValues] = useState<InitialAppStateType>(
     initialAppStateValues
+  );
+  const [appError, setAppError] = useState<InitialAppErrorType>(
+    initialAppErrorValues
   );
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
@@ -50,13 +56,13 @@ const AppContextProvider = ({ children }: ProviderProps) => {
     });
   }, []);
 
-  const contextValues = useMemo(
+  const contextValues: ContextType = useMemo(
     () => ({
       state,
-      setAppContextValues,
       setAppStateValues,
+      error: appError,
     }),
-    [setAppStateValues, state]
+    [setAppStateValues, state, appError]
   );
 
   useEffect(() => {
@@ -98,15 +104,22 @@ const AppContextProvider = ({ children }: ProviderProps) => {
           baseline: {
             mttd: res?.baselineResponse.mttd,
             mttr: res?.baselineResponse.mttr,
-            // mttd: 90,
-            // mttr: 88,
           },
           salary: res?.salary.salaryValue,
         };
         setAppContextValues(data);
         // console.log({ data, state });
       })
-      .catch((e) => console.log(e));
+      .catch((e) => {
+        console.log(e.message, e.code, e.details);
+        setAppError({
+          isError: true,
+          errorDetails: {
+            code: 401,
+            message: e.message,
+          },
+        });
+      });
   }, [setAppStateValues, state.baseline.mttd, state.baseline.mttr]);
 
   return (
