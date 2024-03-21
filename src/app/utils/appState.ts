@@ -7,7 +7,7 @@ type AppStateTypes = {
 };
 
 export const getPersistedAppState = async (key: string) => {
-  const { value } = await stateClient.getAppState({
+  const { value } = await stateClient.getUserAppState({
     key,
   });
 
@@ -17,7 +17,7 @@ export const getPersistedAppState = async (key: string) => {
 };
 
 export const setAppStatePersisted = async (args: AppStateTypes) => {
-  const data = await stateClient.setAppState({
+  const data = await stateClient.setUserAppState({
     key: args.key,
     body: { value: args.value },
   });
@@ -26,13 +26,12 @@ export const setAppStatePersisted = async (args: AppStateTypes) => {
 };
 
 export const deleteAllPersistedStates = async () => {
-  return await stateClient.deleteAppStates();
+  return await stateClient.deleteUserAppStates();
 };
 
 export const getListofKeysUsedInApp = async () => {
-  const appStateKeys: Array<{ key: string }> = await stateClient.getAppStates(
-    {}
-  );
+  const appStateKeys: Array<{ key: string }> =
+    await stateClient.getUserAppStates({});
   // console.log({ appStateKeys });
   return appStateKeys;
 };
