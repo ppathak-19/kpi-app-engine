@@ -1,10 +1,11 @@
 import {
+  Button,
   Container,
   Flex,
   Heading,
   TimeseriesChart,
 } from "@dynatrace/strato-components-preview";
-// import { RefreshIcon } from "@dynatrace/strato-icons";
+import { RefreshIcon } from "@dynatrace/strato-icons";
 import Colors from "@dynatrace/strato-design-tokens/colors";
 import React, { useState } from "react";
 import type { AppCompProps, aggregationsType } from "types";
@@ -15,12 +16,14 @@ import { useAppContext } from "../hooks/Context-API/AppContext";
 import useGetKPIMetrices from "../hooks/useGetKPIMetrices";
 import { giveTimeseriesData } from "../utils/giveTimeseriesData";
 import { getBeforePastDays, getPastDaysRange } from "../utils/timeConverters";
+import { MultiSelect } from "../components/ReusableComponents/MultiSelect";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** States For Two Dropdowns for the app */
   const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("2");
-  const [selectedEventCategory, setSelectedEventCategory] =
-    useState<string>("");
+  const [selectedEventCategory, setSelectedEventCategory] = useState<string[]>(
+    []
+  );
   const [selectedAggregation, setSelectedAggregation] =
     useState<aggregationsType>("min");
 
@@ -41,9 +44,9 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     setSelectedTimeFrame(time);
   };
 
-  const handleEventTypeChange = (type: string) => {
-    setSelectedEventCategory(type);
-  };
+  // const handleEventTypeChange = (type: string) => {
+  //   setSelectedEventCategory(type);
+  // };
 
   /** taking value from `MetricsDetailSection` and setting selected aggregation value to state */
   const handleAggregationChange = (clickedVal: aggregationsType) => {
@@ -63,37 +66,46 @@ const QueryKpi: React.FC<AppCompProps> = () => {
 
   return (
     <>
-      <button
-        onClick={() => {
-          console.log("refetching the data.....");
-          daysData.refetch.refetchMainQuery();
-          daysData.refetch.refetchSummarizationQuery1();
-          daysData.refetch.refetchSummarizationQuery2();
-        }}
-      >
-        refetch
-      </button>
       <Flex flexDirection="column">
         {/* Custom Selects for the app */}
         <Flex justifyContent="space-between">
-          <CustomSelect
-            label="Select Aggregation"
-            value={selectedAggregation}
-            onChange={handleAggregationChange}
-            options={aggregatorOptions}
-          />
-          <CustomSelect
-            label="Select Event Type"
-            value={selectedEventCategory}
-            onChange={handleEventTypeChange}
-            options={daysData.categoryTypes}
-          />
-          <CustomSelect
-            label="Select Timeframe"
-            value={selectedTimeFrame}
-            onChange={handleTimeFrameChange}
-            options={timeFrameOptions}
-          />
+          <Flex alignItems="end">
+            <CustomSelect
+              label="Select Aggregation"
+              value={selectedAggregation}
+              onChange={handleAggregationChange}
+              options={aggregatorOptions}
+            />
+            <MultiSelect
+              value={selectedEventCategory}
+              onChange={setSelectedEventCategory}
+              options={daysData.categoryTypes}
+            />
+          </Flex>
+
+          <Flex alignItems="end">
+            <CustomSelect
+              label="Select Timeframe"
+              value={selectedTimeFrame}
+              onChange={handleTimeFrameChange}
+              options={timeFrameOptions}
+            />
+            <Button
+              color="neutral"
+              variant="emphasized"
+              loading={daysData.isLoading}
+              onClick={() => {
+                daysData.refetch.refetchMainQuery();
+                daysData.refetch.refetchSummarizationQuery1();
+                daysData.refetch.refetchSummarizationQuery2();
+              }}
+            >
+              <Button.Prefix>
+                <RefreshIcon />
+              </Button.Prefix>
+              Refetch
+            </Button>
+          </Flex>
         </Flex>
 
         {/* First Container of app */}

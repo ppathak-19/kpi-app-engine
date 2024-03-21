@@ -46,16 +46,18 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   const processRecords = (
     records: (ResultRecord | null)[],
-    selectedEventCategory: string | undefined
+    selectedEventCategory: string[] | undefined
   ) => {
     if (!records) return [];
 
     return records.filter((eachR) => {
       if (!eachR) return false;
 
+      // Check if the record's event category matches any category in selectedEventCategory
       if (
-        selectedEventCategory !== "" &&
-        eachR?.["event.category"] !== selectedEventCategory
+        selectedEventCategory &&
+        selectedEventCategory.length > 0 &&
+        !selectedEventCategory.includes(eachR?.["event.category"] as string)
       ) {
         return false;
       }
