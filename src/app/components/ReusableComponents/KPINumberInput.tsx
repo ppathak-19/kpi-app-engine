@@ -23,10 +23,15 @@ const KPINumberInput: React.FC<KPINumberInputComponentProps> = (props) => {
   const { label, value, onChange, placeholder } = props;
   return (
     <FormField
+      style={{ width: "100%" }}
       label={
-        <StyledLabel htmlFor="baseline-mttd" required={true}>
-          {label}
-        </StyledLabel>
+        label !== "" ? (
+          <StyledLabel htmlFor="baseline-mttd" required={true}>
+            {label}
+          </StyledLabel>
+        ) : (
+          ""
+        )
       }
     >
       <NumberInput

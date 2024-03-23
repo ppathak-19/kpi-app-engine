@@ -1,4 +1,9 @@
-import { Flex, Page, showToast } from "@dynatrace/strato-components-preview";
+import {
+  Divider,
+  Flex,
+  Page,
+  showToast,
+} from "@dynatrace/strato-components-preview";
 import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
@@ -13,6 +18,7 @@ import {
   initialAppStateValues,
 } from "./hooks/Context-API/InitialAppStates";
 import Home from "./pages/Home";
+import { ReportingBehaviorFilter } from "./components/ReusableComponents/ReportingBehaviorFilter";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -82,46 +88,69 @@ const App: React.FC<AppCompProps> = () => {
         >
           {/* Modal For User Input */}
           <Flex flexDirection="column" gap={12}>
-            <KPINumberInput
-              label="Baseline MTTD"
-              value={userInputValues.baseline.mttd}
-              onChange={(value: number) =>
-                setUserInputValues((prev) => ({
-                  ...prev,
-                  baseline: {
-                    mttr: userInputValues.baseline.mttr,
-                    mttd: value,
-                  },
-                }))
-              }
-              placeholder="Enter Baseline for MTTD"
-            />
-            <KPINumberInput
-              label="Baseline MTTR"
-              value={userInputValues.baseline.mttr}
-              onChange={(value: number) =>
-                setUserInputValues((prev) => ({
-                  ...prev,
-                  baseline: {
-                    mttd: userInputValues.baseline.mttd,
-                    mttr: value,
-                  },
-                }))
-              }
-              placeholder="Enter Baseline for MTTR"
-            />
+            <div>
+              <h3>Calculation Variables</h3>
+              <KPINumberInput
+                label="Baseline MTTD"
+                value={userInputValues.baseline.mttd}
+                onChange={(value: number) =>
+                  setUserInputValues((prev) => ({
+                    ...prev,
+                    baseline: {
+                      mttr: userInputValues.baseline.mttr,
+                      mttd: value,
+                    },
+                  }))
+                }
+                placeholder="Enter Baseline for MTTD"
+              />
+              <KPINumberInput
+                label="Baseline MTTR"
+                value={userInputValues.baseline.mttr}
+                onChange={(value: number) =>
+                  setUserInputValues((prev) => ({
+                    ...prev,
+                    baseline: {
+                      mttd: userInputValues.baseline.mttd,
+                      mttr: value,
+                    },
+                  }))
+                }
+                placeholder="Enter Baseline for MTTR"
+              />
 
-            <KPINumberInput
-              label="Salary ($)"
-              value={userInputValues.salary}
-              onChange={(value: number) =>
-                setUserInputValues((prev) => ({
-                  ...prev,
-                  salaryInput: value,
-                }))
-              }
-              placeholder="Enter Salary-data"
-            />
+              <KPINumberInput
+                label="Salary ($)"
+                value={userInputValues.salary}
+                onChange={(value: number) =>
+                  setUserInputValues((prev) => ({
+                    ...prev,
+                    salaryInput: value,
+                  }))
+                }
+                placeholder="Enter Salary-data"
+              />
+            </div>
+            <Divider />
+            <div>
+              <h3>Reporting Behavior</h3>
+              <ReportingBehaviorFilter />
+
+              {/* <KPINumberInput
+                  label="Ignore problems longer than"
+                  value={userInputValues.baseline.mttr}
+                  onChange={(value: number) =>
+                    setUserInputValues((prev) => ({
+                      ...prev,
+                      baseline: {
+                        mttd: userInputValues.baseline.mttd,
+                        mttr: value,
+                      },
+                    }))
+                  }
+                  placeholder="Enter Baseline for MTTR"
+                /> */}
+            </div>
           </Flex>
         </KPIModal>
       </Page.Main>
