@@ -44,7 +44,6 @@ export const convertTimeToMinutes = (
 
   switch (indication) {
     case "hrs":
-      console.log("case hours");
       minutes = value * 60; // 1 hour = 60 minutes
       break;
     case "min":
@@ -56,7 +55,6 @@ export const convertTimeToMinutes = (
     default:
       console.error("Invalid indication provided.");
   }
-  console.log(minutes, "minutess");
   return minutes;
 };
 
