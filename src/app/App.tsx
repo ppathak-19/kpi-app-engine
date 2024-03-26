@@ -11,14 +11,14 @@ import Header from "./components/Header";
 import KPIButton from "./components/ReusableComponents/KPIButton";
 import KPIModal from "./components/ReusableComponents/KPIModal";
 import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
+import { ReportingBehaviorFilter } from "./components/ReusableComponents/ReportingBehaviorFilter";
 import { InformationModalData } from "./constants/ModalData";
 import { useAppContext } from "./hooks/Context-API/AppContext";
 import {
-  type InitialAppStateType,
   initialAppStateValues,
+  type InitialAppStateType,
 } from "./hooks/Context-API/InitialAppStates";
 import Home from "./pages/Home";
-import { ReportingBehaviorFilter } from "./components/ReusableComponents/ReportingBehaviorFilter";
 import PageNotFound from "./pages/PageNotFound";
 
 const App: React.FC<AppCompProps> = () => {
@@ -53,8 +53,8 @@ const App: React.FC<AppCompProps> = () => {
     setSettingsModalState(false);
   };
 
-  console.count();
-  console.log({ state });
+  // console.count();
+  // console.log({ state });
 
   return (
     <Page>
@@ -85,7 +85,10 @@ const App: React.FC<AppCompProps> = () => {
         <KPIModal
           modalTitle="KPI Configuration Panel"
           open={settingsModalState}
-          onClose={() => setSettingsModalState(false)}
+          onClose={() => {
+            setSettingsModalState(false);
+            setUserInputValues(state);
+          }}
           footer={<KPIButton label="Save" onClick={handleFormSubmit} />}
         >
           {/* Modal For User Input */}
@@ -127,7 +130,7 @@ const App: React.FC<AppCompProps> = () => {
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
                     ...prev,
-                    salaryInput: value,
+                    salary: value,
                   }))
                 }
                 placeholder="Enter Salary-data"
