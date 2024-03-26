@@ -1,6 +1,7 @@
 import {
   Divider,
   Flex,
+  Heading,
   Page,
   showToast,
 } from "@dynatrace/strato-components-preview";
@@ -8,17 +9,21 @@ import React, { useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import type { AppCompProps } from "types";
 import Header from "./components/Header";
+import ReportingBehaviorFilter from "./components/ReportingBehaviorFilter";
 import KPIButton from "./components/ReusableComponents/KPIButton";
 import KPIModal from "./components/ReusableComponents/KPIModal";
 import KPINumberInput from "./components/ReusableComponents/KPINumberInput";
 import { InformationModalData } from "./constants/ModalData";
 import { useAppContext } from "./hooks/Context-API/AppContext";
 import {
-  type InitialAppStateType,
   initialAppStateValues,
+  reportingDropDownInitialValues,
+  type InitialAppStateType,
+  type ReportingBehaviorFilterTypes,
 } from "./hooks/Context-API/InitialAppStates";
 import Home from "./pages/Home";
-import { ReportingBehaviorFilter } from "./components/ReusableComponents/ReportingBehaviorFilter";
+import PageNotFound from "./pages/PageNotFound";
+import { convertTimeToMinutes } from "./utils/timeConverters";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -27,9 +32,14 @@ const App: React.FC<AppCompProps> = () => {
 
   const { state, setAppStateValues } = useAppContext();
 
+  /** State For all inputs in the settings modal */
   const [userInputValues, setUserInputValues] = useState<InitialAppStateType>(
     initialAppStateValues
   );
+
+  /** State for ignorecases having additional dropdown like `min`, `hrs` etc.. */
+  const [reportingBehavior, setReportingBehavior] =
+    useState<ReportingBehaviorFilterTypes>(reportingDropDownInitialValues);
 
   useEffect(() => {
     setUserInputValues({
@@ -38,22 +48,42 @@ const App: React.FC<AppCompProps> = () => {
         mttr: state.baseline.mttr,
       },
       salary: state.salary,
+      ignoreCases: {
+        longerTime: state.ignoreCases.longerTime,
+        shorterTime: state.ignoreCases.shorterTime,
+      },
     });
   }, [state]);
 
   const handleFormSubmit = async () => {
+    /** Taking the filterBar state and converting into minutes and setting appStateContext*/
+    const getShorterTimeinMinutes = convertTimeToMinutes(
+      Number(reportingBehavior.shorterThanVal),
+      String(reportingBehavior.shorterThanDuration)
+    );
+
+    const getLongerTimeInMinutes = convertTimeToMinutes(
+      Number(reportingBehavior.longerThanVal),
+      String(reportingBehavior.longerThanDuration)
+    );
+
     showToast({
       type: "success",
       title: "Success",
       message: <>Configurations Added Successfully.</>,
     });
 
-    setAppStateValues(userInputValues);
+    setAppStateValues({
+      ...userInputValues,
+      ignoreCases: {
+        shorterTime: getShorterTimeinMinutes,
+        longerTime: getLongerTimeInMinutes,
+      },
+    });
     setSettingsModalState(false);
   };
 
-  console.count();
-  console.log({ state });
+  // console.count();
 
   return (
     <Page>
@@ -70,6 +100,7 @@ const App: React.FC<AppCompProps> = () => {
             element={<Home setModalState={setSettingsModalState} />}
             path="/"
           />
+          <Route element={<PageNotFound />} path="*" />
         </Routes>
 
         {/* Modals For Info & Settings */}
@@ -83,13 +114,17 @@ const App: React.FC<AppCompProps> = () => {
         <KPIModal
           modalTitle="KPI Configuration Panel"
           open={settingsModalState}
-          onClose={() => setSettingsModalState(false)}
+          onClose={() => {
+            setSettingsModalState(false);
+            setUserInputValues(state); //onClose, setting to prev state
+          }}
           footer={<KPIButton label="Save" onClick={handleFormSubmit} />}
         >
           {/* Modal For User Input */}
           <Flex flexDirection="column" gap={12}>
             <div>
-              <h3>Calculation Variables</h3>
+              <Heading level={4}>Calculation Variables</Heading>
+              <br />
               <KPINumberInput
                 label="Baseline MTTD"
                 value={userInputValues.baseline.mttd}
@@ -104,6 +139,7 @@ const App: React.FC<AppCompProps> = () => {
                 }
                 placeholder="Enter Baseline for MTTD"
               />
+              <br />
               <KPINumberInput
                 label="Baseline MTTR"
                 value={userInputValues.baseline.mttr}
@@ -118,14 +154,14 @@ const App: React.FC<AppCompProps> = () => {
                 }
                 placeholder="Enter Baseline for MTTR"
               />
-
+              <br />
               <KPINumberInput
                 label="Salary ($)"
                 value={userInputValues.salary}
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
                     ...prev,
-                    salaryInput: value,
+                    salary: value,
                   }))
                 }
                 placeholder="Enter Salary-data"
@@ -133,8 +169,12 @@ const App: React.FC<AppCompProps> = () => {
             </div>
             <Divider />
             <div>
-              <h3>Reporting Behavior</h3>
-              <ReportingBehaviorFilter />
+              <Heading level={4}>Reporting Behavior</Heading>
+              <br />
+              <ReportingBehaviorFilter
+                reportingBehavior={reportingBehavior}
+                setReportingBehavior={setReportingBehavior}
+              />
             </div>
           </Flex>
         </KPIModal>

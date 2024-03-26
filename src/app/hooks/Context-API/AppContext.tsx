@@ -13,11 +13,10 @@ import {
 } from "src/app/utils/appState";
 import { APP_STATE_KEY_METRICS, APP_STATE_KEY_SALARIES } from "./AppStateKeys";
 import {
-  type InitialAppErrorType,
-  type InitialAppStateType,
   initialAppErrorValues,
   initialAppStateValues,
-  type ReportingBehaviorTypes,
+  type InitialAppErrorType,
+  type InitialAppStateType,
 } from "./InitialAppStates";
 
 type ProviderProps = {
@@ -27,17 +26,7 @@ type ProviderProps = {
 type ContextType = {
   state: InitialAppStateType;
   error: InitialAppErrorType;
-  reportingProblemsData: {
-    shorterTimeInMin: number;
-    longerTimeInMin: number;
-  };
-  reportingBehavior: ReportingBehaviorTypes;
-  setReportingBehavior;
   setAppStateValues: (val: InitialAppStateType) => void;
-  setReportingProblemsData: (vaL: {
-    shorterTimeInMin: number;
-    longerTimeInMin: number;
-  }) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -49,20 +38,6 @@ const AppContextProvider = ({ children }: ProviderProps) => {
   const [appError, setAppError] = useState<InitialAppErrorType>(
     initialAppErrorValues
   );
-
-  const [reportingBehavior, setReportingBehavior] =
-    useState<ReportingBehaviorTypes>({
-      shorterThanVal: 5,
-      shorterThanDuration: "min",
-
-      longerThanVal: 30,
-      longerThanDuration: "day",
-    });
-
-  const [reportingProblemsData, setReportingProblemsData] = useState({
-    shorterTimeInMin: 5,
-    longerTimeInMin: 43200, // 30 Days,
-  });
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
     setAppContextValues(val);
@@ -86,27 +61,15 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       state,
       setAppStateValues,
       error: appError,
-      reportingProblemsData,
-      reportingBehavior,
-      setReportingBehavior,
-      setReportingProblemsData,
     }),
-    [
-      setAppStateValues,
-      state,
-      appError,
-      reportingProblemsData,
-      reportingBehavior,
-      setReportingBehavior,
-      setReportingProblemsData,
-    ]
+    [setAppStateValues, state, appError]
   );
 
   useEffect(() => {
     const appKeys = getListofKeysUsedInApp();
 
     const getValues = async () => {
-      console.log((await appKeys).map((aa) => aa.key));
+      // console.log((await appKeys).map((aa) => aa.key));
       if ((await appKeys).length > 0) {
         console.log("app key is there");
         const baselineResponse = await getPersistedAppState(
@@ -133,6 +96,11 @@ const AppContextProvider = ({ children }: ProviderProps) => {
             mttr: res?.baselineResponse.mttr,
           },
           salary: res?.salary.salaryValue,
+          // as ignore cases are not stored in appPersistState, we are taking values from `state`
+          ignoreCases: {
+            longerTime: state.ignoreCases.longerTime,
+            shorterTime: state.ignoreCases.shorterTime,
+          },
         };
         setAppContextValues(data);
         // console.log({ data, state });
@@ -147,7 +115,13 @@ const AppContextProvider = ({ children }: ProviderProps) => {
           },
         });
       });
-  }, [setAppStateValues, state.baseline.mttd, state.baseline.mttr]);
+  }, [
+    setAppStateValues,
+    state.baseline.mttd,
+    state.baseline.mttr,
+    state.ignoreCases.longerTime,
+    state.ignoreCases.shorterTime,
+  ]);
 
   return (
     <AppContext.Provider value={contextValues}>{children}</AppContext.Provider>

@@ -17,10 +17,7 @@ import {
   minMTTR,
 } from "../constants/KpiFieldConstants";
 import { calculatePercentage } from "../utils/calculations";
-import {
-  convertUTCToDate,
-  formatProblemTimeWithDiff,
-} from "../utils/timeConverters";
+import { processRecords } from "../utils/helpers";
 import { useAppContext } from "./Context-API/AppContext";
 import useGetKPIQueryData from "./useGetKPIQueryData";
 import useGetSummarizationData from "./useGetSummarizationData";
@@ -42,73 +39,36 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   /** Taking baseline values from useContext  */
   const {
-    state: { baseline },
-    reportingProblemsData,
+    state: { baseline, ignoreCases },
   } = useAppContext();
 
   /** State For Storing all data i.e, current day & previous day */
   const [storeCurrentDay, setStoreCurrentDay] = useState<ResultRecord[]>([]);
   const [storePreviousDay, setStorePreviousDay] = useState<ResultRecord[]>([]);
 
-  const processRecords = (
-    records: (ResultRecord | null)[],
-    selectedEventCategory: string[] | undefined
-  ) => {
-    if (!records) return [];
-
-    return records.filter((eachR) => {
-      if (!eachR) return false;
-
-      // Check if the record's event category matches any category in selectedEventCategory
-      if (
-        selectedEventCategory &&
-        selectedEventCategory.length > 0 &&
-        !selectedEventCategory.includes(eachR?.["event.category"] as string)
-      ) {
-        return false;
-      }
-
-      // Here we are calculating the No.Of time Diff in minutes b/w event start and res.event start
-      const mttd = formatProblemTimeWithDiff(
-        convertUTCToDate(eachR?.["event.start"] as string),
-        convertUTCToDate(eachR?.["res.event.start"] as string)
-      );
-
-      // Here we are calculating the No.Of time Diff in minutes b/w event start & event end
-      const mttr = formatProblemTimeWithDiff(
-        convertUTCToDate(eachR?.["event.start"] as string),
-        convertUTCToDate(eachR?.["event.end"] as string)
-      );
-
-      // Add mttdTime and mttrTime to each record
-      eachR.mttdTime = mttd;
-      eachR.mttrTime = mttr;
-
-      // Filter out records where mttr is less than or equal to 5 minutes
-      return (
-        Number(mttr) > reportingProblemsData.shorterTimeInMin &&
-        Number(mttr) < reportingProblemsData.longerTimeInMin
-      );
-    });
-  };
-
   useEffect(() => {
     if (q1?.records) {
-      const data1 = processRecords(q1.records, selectedEventCategory);
-      console.log(data1, "stored data for q1");
+      const data1 = processRecords({
+        records: q1.records,
+        selectedEventCategory: selectedEventCategory,
+        ignore: ignoreCases,
+      });
+      // console.log(data1, "stored data for q1");
 
       setStoreCurrentDay(data1 as ResultRecord[]);
     }
 
     if (q2?.records) {
-      const data2 = processRecords(q2.records, selectedEventCategory);
-      console.log(data2, "stored data for q2");
+      const data2 = processRecords({
+        records: q2.records,
+        selectedEventCategory: selectedEventCategory,
+        ignore: ignoreCases,
+      });
+      // console.log(data2, "stored data for q2");
 
       setStorePreviousDay(data2 as ResultRecord[]);
     }
-  }, [q1, q2, selectedEventCategory, reportingProblemsData]);
-
-  console.log(storeCurrentDay, storePreviousDay, "days dataaa---");
+  }, [q1, q2, selectedEventCategory, ignoreCases]);
 
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
 

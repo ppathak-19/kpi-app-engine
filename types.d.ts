@@ -32,7 +32,6 @@ export type ResponseWithMetricesData = Record<KPIaggregationTypes, string>;
 export type CategoryType = (ResultRecordValue | undefined)[];
 
 export type RequiredDataResponse = {
-  categoryTypes: CategoryType;
   responseInPercentageWithBaseline: ResponseWithPercentages;
   responseInPercentageWithPreviousDay: ResponseWithPercentages;
   responseWithCurrentDayData: ResponseWithMetricesData;
@@ -44,6 +43,7 @@ export type RequiredDataResponse = {
     refetchSummarizationQuery1: (...args) => Promise<QueryResult | undefined>;
     refetchSummarizationQuery2: (...args) => Promise<QueryResult | undefined>;
   };
+  categoryTypes: CategoryType;
 } & OtherType;
 
 /** Query Props */
@@ -65,3 +65,18 @@ export type MetricDetailsCardSection = {
 export type aggregationsType = "average" | "min" | "max";
 
 // export type aggregatorOptionsType = Record<aggregationsType, {value:string,label:string}>
+
+/** KPI's  in app */
+export type BaseLineTypes = {
+  mttd: number;
+  mttr: number;
+};
+
+/** ignore cases in app  */
+export type IgnoreCasesType = {
+  shorterTime: number;
+  longerTime: number;
+};
+
+/** Duration in app */
+export type DurationTypes = "min" | "hrs" | "day";

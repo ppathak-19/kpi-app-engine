@@ -1,13 +1,9 @@
+import type { BaseLineTypes, DurationTypes, IgnoreCasesType } from "types";
+
 export type InitialAppStateType = {
-  baseline: {
-    mttd: number;
-    mttr: number;
-  };
+  baseline: BaseLineTypes;
   salary: number;
-  // reportingBehaviors: {
-  //   shorterValueInMin: number;
-  //   longerValueInMin: number;
-  // };
+  ignoreCases: IgnoreCasesType;
 };
 
 export type InitialAppErrorType = {
@@ -18,12 +14,14 @@ export type InitialAppErrorType = {
   };
 };
 
-export type ReportingBehaviorTypes = {
+export type ReportingBehaviorFilterTypes = {
   shorterThanVal: number;
-  shorterThanDuration: string;
+  shorterThanDuration: DurationTypes;
   longerThanVal: number;
-  longerThanDuration: string;
+  longerThanDuration: DurationTypes;
 };
+
+/** Initial Values For the App */
 
 export const initialAppStateValues: InitialAppStateType = {
   baseline: {
@@ -31,10 +29,10 @@ export const initialAppStateValues: InitialAppStateType = {
     mttr: 0,
   },
   salary: 0,
-  // reportingBehaviors: {
-  //   shorterValueInMin: 5,
-  //   longerValueInMin: 0,
-  // },
+  ignoreCases: {
+    shorterTime: 5, // 5 mins
+    longerTime: 43200, // 30 Days
+  },
 };
 
 export const initialAppErrorValues: InitialAppErrorType = {
@@ -43,4 +41,12 @@ export const initialAppErrorValues: InitialAppErrorType = {
     code: 0,
     message: "",
   },
+};
+
+export const reportingDropDownInitialValues: ReportingBehaviorFilterTypes = {
+  shorterThanVal: 5,
+  shorterThanDuration: "min",
+
+  longerThanVal: 30,
+  longerThanDuration: "day",
 };
