@@ -1,3 +1,5 @@
+import type { DurationTypes } from "types";
+
 //  1707857340000  ->   "02:19:00"
 export function convertUTCToDate(date: number | string) {
   return new Date(date);
@@ -42,7 +44,7 @@ export const convertTimeToMinutes = (
 ): number => {
   let minutes = 0;
 
-  switch (indication) {
+  switch (indication as DurationTypes) {
     case "hrs":
       minutes = value * 60; // 1 hour = 60 minutes
       break;
