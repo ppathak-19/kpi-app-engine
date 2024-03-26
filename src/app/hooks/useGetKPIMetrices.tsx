@@ -40,6 +40,12 @@ const useGetKPIMetrices = (props: QueryProps) => {
     timeLine2,
   });
 
+  /** Taking baseline values from useContext  */
+  const {
+    state: { baseline },
+    reportingProblemsData,
+  } = useAppContext();
+
   /** State For Storing all data i.e, current day & previous day */
   const [storeCurrentDay, setStoreCurrentDay] = useState<ResultRecord[]>([]);
   const [storePreviousDay, setStorePreviousDay] = useState<ResultRecord[]>([]);
@@ -79,7 +85,10 @@ const useGetKPIMetrices = (props: QueryProps) => {
       eachR.mttrTime = mttr;
 
       // Filter out records where mttr is less than or equal to 5 minutes
-      return Number(mttr) > 5;
+      return (
+        Number(mttr) > reportingProblemsData.shorterTimeInMin &&
+        Number(mttr) < reportingProblemsData.longerTimeInMin
+      );
     });
   };
 
@@ -97,7 +106,9 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
       setStorePreviousDay(data2 as ResultRecord[]);
     }
-  }, [q1, q2, selectedEventCategory]);
+  }, [q1, q2, selectedEventCategory, reportingProblemsData]);
+
+  console.log(storeCurrentDay, storePreviousDay, "days dataaa---");
 
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
 
@@ -113,10 +124,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
     timeLine: timeLine2,
   });
 
-  /** Taking baseline values from useContext  */
-  const {
-    state: { baseline },
-  } = useAppContext();
   const baselineMTTD = baseline.mttd;
   const baselineMTTR = baseline.mttr;
 
