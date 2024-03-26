@@ -36,6 +36,30 @@ export function formatProblemTimeWithDiff(
   }
 }
 
+export const convertTimeToMinutes = (
+  value: number,
+  indication: string
+): number => {
+  let minutes = 0;
+
+  switch (indication) {
+    case "hrs":
+      console.log("case hours");
+      minutes = value * 60; // 1 hour = 60 minutes
+      break;
+    case "min":
+      minutes = value; // Given time is already in minutes
+      break;
+    case "day":
+      minutes = value * 24 * 60; // 1 day = 24 hours = 24 * 60 minutes
+      break;
+    default:
+      console.error("Invalid indication provided.");
+  }
+  console.log(minutes, "minutess");
+  return minutes;
+};
+
 export function convertMilliSecondsIntoDate(ms: number) {
   return new Date(ms).toString();
 }

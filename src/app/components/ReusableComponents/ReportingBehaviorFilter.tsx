@@ -6,6 +6,7 @@ import {
 } from "@dynatrace/strato-components-preview";
 import KPINumberInput from "./KPINumberInput";
 import { reportingOptions } from "src/app/constants/options";
+import { convertTimeToMinutes } from "src/app/utils/timeConverters";
 
 export const ReportingBehaviorFilter = () => {
   const [resportingProblems, setReportingProblems] = useState({
@@ -15,27 +16,6 @@ export const ReportingBehaviorFilter = () => {
     longerThanVal: 0,
     longerThanDuration: "min",
   });
-
-  const convertTimeToMinutes = (value: number, indication: string): number => {
-    let minutes = 0;
-
-    switch (indication) {
-      case "hrs":
-        console.log("case hours");
-        minutes = value * 60; // 1 hour = 60 minutes
-        break;
-      case "min":
-        minutes = value; // Given time is already in minutes
-        break;
-      case "day":
-        minutes = value * 24 * 60; // 1 day = 24 hours = 24 * 60 minutes
-        break;
-      default:
-        console.error("Invalid indication provided.");
-    }
-    console.log(minutes, "minutess");
-    return minutes;
-  };
 
   return (
     <FilterBar

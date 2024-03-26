@@ -4,6 +4,10 @@ export type InitialAppStateType = {
     mttr: number;
   };
   salary: number;
+  // reportingBehaviors: {
+  //   shorterValueInMin: number;
+  //   longerValueInMin: number;
+  // };
 };
 
 export type InitialAppErrorType = {
@@ -20,6 +24,10 @@ export const initialAppStateValues: InitialAppStateType = {
     mttr: 0,
   },
   salary: 0,
+  // reportingBehaviors: {
+  //   shorterValueInMin: 5,
+  //   longerValueInMin: 0,
+  // },
 };
 
 export const initialAppErrorValues: InitialAppErrorType = {

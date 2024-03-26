@@ -44,10 +44,6 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     setSelectedTimeFrame(time);
   };
 
-  // const handleEventTypeChange = (type: string) => {
-  //   setSelectedEventCategory(type);
-  // };
-
   /** taking value from `MetricsDetailSection` and setting selected aggregation value to state */
   const handleAggregationChange = (clickedVal: aggregationsType) => {
     setSelectedAggregation(clickedVal);
