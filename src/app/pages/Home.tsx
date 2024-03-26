@@ -14,6 +14,7 @@ import { WarningIcon } from "@dynatrace/strato-icons";
 import React from "react";
 import { useAppContext } from "../hooks/Context-API/AppContext";
 import QueryKpi from "./QueryKpi";
+import KPIFallBackUI from "../components/ReusableComponents/KPIFallBackUI";
 
 type HomeCompProps = {
   setModalState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -35,13 +36,15 @@ const Home: React.FC<HomeCompProps> = (props) => {
     <Surface>
       {isErrorInApp ? (
         <>
-          <Heading level={4}>Oops, An Error Occured</Heading>
-          <br />
-          <ExpandableText>
-            <Paragraph>
-              {error.errorDetails.code}-{error.errorDetails.message}
-            </Paragraph>
-          </ExpandableText>
+          <KPIFallBackUI>
+            <Heading level={4}>Oops, An Error Occured</Heading>
+            <br />
+            <ExpandableText>
+              <Paragraph>
+                {error.errorDetails.code}-{error.errorDetails.message}
+              </Paragraph>
+            </ExpandableText>
+          </KPIFallBackUI>
         </>
       ) : (
         <>
@@ -50,29 +53,20 @@ const Home: React.FC<HomeCompProps> = (props) => {
               <QueryKpi />
             </>
           ) : (
-            <Surface height={400}>
-              <Flex
-                style={{
-                  textAlign: "center",
-                  cursor: "pointer",
-                }}
-                justifyContent="center"
-                alignContent="center"
-              >
-                <Flex>
-                  <Button color="warning" size="condensed">
-                    <Tooltip text="Click Here to add values">
-                      <WarningIcon />
-                    </Tooltip>
-                  </Button>
-                </Flex>
-                <Flex onClick={() => setModalState(true)}>
-                  <Text>
-                    Click Here to add the BaseLine Values For Calculations
-                  </Text>
-                </Flex>
+            <KPIFallBackUI>
+              <Flex>
+                <Button color="warning" size="condensed">
+                  <Tooltip text="Click Here to add values">
+                    <WarningIcon />
+                  </Tooltip>
+                </Button>
               </Flex>
-            </Surface>
+              <Flex onClick={() => setModalState(true)}>
+                <Text>
+                  Click Here to add the BaseLine Values For Calculations
+                </Text>
+              </Flex>
+            </KPIFallBackUI>
           )}
         </>
       )}
