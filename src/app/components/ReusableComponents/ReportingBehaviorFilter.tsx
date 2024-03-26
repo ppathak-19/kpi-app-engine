@@ -1,7 +1,9 @@
 import React from "react";
 import {
+  Divider,
   FilterBar,
   FilterItemValues,
+  Flex,
   SelectV2,
 } from "@dynatrace/strato-components-preview";
 import KPINumberInput from "./KPINumberInput";
@@ -70,7 +72,13 @@ export const ReportingBehaviorFilter = () => {
           </SelectV2.Content>
         </SelectV2>
       </FilterBar.Item>
-      &nbsp;&nbsp;&nbsp;&nbsp;
+
+      <FilterBar.Item name="hidden" label="">
+        <Flex height={50} style={{ marginLeft: "25px", marginRight: "25px" }}>
+          <Divider orientation="vertical" />
+        </Flex>
+      </FilterBar.Item>
+
       <FilterBar.Item name="ignoreLonger" label="Ignore problems longer than">
         <KPINumberInput
           label=""
