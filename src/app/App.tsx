@@ -19,6 +19,7 @@ import {
 } from "./hooks/Context-API/InitialAppStates";
 import Home from "./pages/Home";
 import { ReportingBehaviorFilter } from "./components/ReusableComponents/ReportingBehaviorFilter";
+import PageNotFound from "./pages/PageNotFound";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -70,6 +71,7 @@ const App: React.FC<AppCompProps> = () => {
             element={<Home setModalState={setSettingsModalState} />}
             path="/"
           />
+          <Route element={<PageNotFound />} path="*" />
         </Routes>
 
         {/* Modals For Info & Settings */}
