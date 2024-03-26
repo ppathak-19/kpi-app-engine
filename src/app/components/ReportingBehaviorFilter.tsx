@@ -8,6 +8,7 @@ import React from "react";
 import { reportingOptions } from "src/app/constants/options";
 import { type ReportingBehaviorFilterTypes } from "src/app/hooks/Context-API/InitialAppStates";
 import KPINumberInput from "./ReusableComponents/KPINumberInput";
+import { DurationTypes } from "types";
 
 type ReportingBehaviorFilterCompProps = {
   reportingBehavior: ReportingBehaviorFilterTypes;
@@ -41,7 +42,7 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
           onChange={(e) =>
             setReportingBehavior((prev) => ({
               ...prev,
-              shorterThanDuration: String(e),
+              shorterThanDuration: String(e) as DurationTypes,
             }))
           }
         >
@@ -78,7 +79,7 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
           onChange={(e) =>
             setReportingBehavior((prev) => ({
               ...prev,
-              longerThanDuration: String(e),
+              longerThanDuration: String(e) as DurationTypes,
             }))
           }
         >
