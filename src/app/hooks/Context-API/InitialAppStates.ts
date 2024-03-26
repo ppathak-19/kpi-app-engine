@@ -18,6 +18,13 @@ export type InitialAppErrorType = {
   };
 };
 
+export type ReportingBehaviorTypes = {
+  shorterThanVal: number;
+  shorterThanDuration: string;
+  longerThanVal: number;
+  longerThanDuration: string;
+};
+
 export const initialAppStateValues: InitialAppStateType = {
   baseline: {
     mttd: 0,

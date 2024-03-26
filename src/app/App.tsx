@@ -135,21 +135,6 @@ const App: React.FC<AppCompProps> = () => {
             <div>
               <h3>Reporting Behavior</h3>
               <ReportingBehaviorFilter />
-
-              {/* <KPINumberInput
-                  label="Ignore problems longer than"
-                  value={userInputValues.baseline.mttr}
-                  onChange={(value: number) =>
-                    setUserInputValues((prev) => ({
-                      ...prev,
-                      baseline: {
-                        mttd: userInputValues.baseline.mttd,
-                        mttr: value,
-                      },
-                    }))
-                  }
-                  placeholder="Enter Baseline for MTTR"
-                /> */}
             </div>
           </Flex>
         </KPIModal>
