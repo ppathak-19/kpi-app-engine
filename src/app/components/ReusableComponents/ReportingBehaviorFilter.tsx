@@ -1,5 +1,9 @@
 import React, { useState } from "react";
-import { FilterBar, SelectV2 } from "@dynatrace/strato-components-preview";
+import {
+  FilterBar,
+  FilterItemValues,
+  SelectV2,
+} from "@dynatrace/strato-components-preview";
 import KPINumberInput from "./KPINumberInput";
 import { reportingOptions } from "src/app/constants/options";
 
@@ -8,20 +12,53 @@ export const ReportingBehaviorFilter = () => {
     shorterThanVal: 5,
     shorterThanDuration: "min",
 
-    longerThanVal: 900,
+    longerThanVal: 0,
     longerThanDuration: "min",
   });
 
+  const convertTimeToMinutes = (value: number, indication: string): number => {
+    let minutes = 0;
+
+    switch (indication) {
+      case "hrs":
+        console.log("case hours");
+        minutes = value * 60; // 1 hour = 60 minutes
+        break;
+      case "min":
+        minutes = value; // Given time is already in minutes
+        break;
+      case "day":
+        minutes = value * 24 * 60; // 1 day = 24 hours = 24 * 60 minutes
+        break;
+      default:
+        console.error("Invalid indication provided.");
+    }
+    console.log(minutes, "minutess");
+    return minutes;
+  };
+
   return (
     <FilterBar
-      onFilterChange={(e) => {
-        console.log(e, "event");
+      onFilterChange={({
+        ignoreShorter,
+        shorterVal,
+        ignoreLonger,
+        longerVal,
+      }: FilterItemValues) => {
+        const getShorterTimeinMinutes = convertTimeToMinutes(
+          Number(ignoreShorter.value),
+          String(shorterVal.value)
+        );
+
+        const getLongerTimeInMinutes = convertTimeToMinutes(
+          Number(ignoreLonger.value),
+          String(longerVal.value)
+        );
+
+        console.log(getLongerTimeInMinutes, getShorterTimeinMinutes, "event");
       }}
     >
-      <FilterBar.Item
-        name="ignore-shorter"
-        label="Ignore problems shorter than"
-      >
+      <FilterBar.Item name="ignoreShorter" label="Ignore problems shorter than">
         <KPINumberInput
           label=""
           value={resportingProblems.shorterThanVal}
@@ -34,7 +71,7 @@ export const ReportingBehaviorFilter = () => {
           placeholder="Enter Baseline for MTTD"
         />
       </FilterBar.Item>
-      <FilterBar.Item name="shorter-val" label="Problem duration in">
+      <FilterBar.Item name="shorterVal" label="Problem duration in">
         <SelectV2
           value={resportingProblems.shorterThanDuration}
           onChange={(e) =>
@@ -55,7 +92,7 @@ export const ReportingBehaviorFilter = () => {
         </SelectV2>
       </FilterBar.Item>
       &nbsp;&nbsp;&nbsp;&nbsp;
-      <FilterBar.Item name="ignore-longer" label="Ignore problems longer than">
+      <FilterBar.Item name="ignoreLonger" label="Ignore problems longer than">
         <KPINumberInput
           label=""
           value={resportingProblems.longerThanVal}
@@ -68,7 +105,7 @@ export const ReportingBehaviorFilter = () => {
           placeholder="Enter Baseline for MTTD"
         />
       </FilterBar.Item>
-      <FilterBar.Item name="longer-val" label="Problem duration in">
+      <FilterBar.Item name="longerVal" label="Problem duration in">
         <SelectV2
           value={resportingProblems.longerThanDuration}
           onChange={(e) =>
