@@ -17,6 +17,7 @@ import {
   type InitialAppStateType,
   initialAppErrorValues,
   initialAppStateValues,
+  type ReportingBehaviorTypes,
 } from "./InitialAppStates";
 
 type ProviderProps = {
@@ -26,7 +27,17 @@ type ProviderProps = {
 type ContextType = {
   state: InitialAppStateType;
   error: InitialAppErrorType;
+  reportingProblemsData: {
+    shorterTimeInMin: number;
+    longerTimeInMin: number;
+  };
+  reportingBehavior: ReportingBehaviorTypes;
+  setReportingBehavior;
   setAppStateValues: (val: InitialAppStateType) => void;
+  setReportingProblemsData: (vaL: {
+    shorterTimeInMin: number;
+    longerTimeInMin: number;
+  }) => void;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -38,6 +49,20 @@ const AppContextProvider = ({ children }: ProviderProps) => {
   const [appError, setAppError] = useState<InitialAppErrorType>(
     initialAppErrorValues
   );
+
+  const [reportingBehavior, setReportingBehavior] =
+    useState<ReportingBehaviorTypes>({
+      shorterThanVal: 5,
+      shorterThanDuration: "min",
+
+      longerThanVal: 30,
+      longerThanDuration: "day",
+    });
+
+  const [reportingProblemsData, setReportingProblemsData] = useState({
+    shorterTimeInMin: 5,
+    longerTimeInMin: 43200, // 30 Days,
+  });
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
     setAppContextValues(val);
@@ -61,8 +86,20 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       state,
       setAppStateValues,
       error: appError,
+      reportingProblemsData,
+      reportingBehavior,
+      setReportingBehavior,
+      setReportingProblemsData,
     }),
-    [setAppStateValues, state, appError]
+    [
+      setAppStateValues,
+      state,
+      appError,
+      reportingProblemsData,
+      reportingBehavior,
+      setReportingBehavior,
+      setReportingProblemsData,
+    ]
   );
 
   useEffect(() => {

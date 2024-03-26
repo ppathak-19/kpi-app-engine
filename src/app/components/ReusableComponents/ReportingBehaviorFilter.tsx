@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   FilterBar,
   FilterItemValues,
@@ -7,15 +7,11 @@ import {
 import KPINumberInput from "./KPINumberInput";
 import { reportingOptions } from "src/app/constants/options";
 import { convertTimeToMinutes } from "src/app/utils/timeConverters";
+import { useAppContext } from "src/app/hooks/Context-API/AppContext";
 
 export const ReportingBehaviorFilter = () => {
-  const [resportingProblems, setReportingProblems] = useState({
-    shorterThanVal: 5,
-    shorterThanDuration: "min",
-
-    longerThanVal: 0,
-    longerThanDuration: "min",
-  });
+  const { reportingBehavior, setReportingBehavior, setReportingProblemsData } =
+    useAppContext();
 
   return (
     <FilterBar
@@ -35,15 +31,18 @@ export const ReportingBehaviorFilter = () => {
           String(longerVal.value)
         );
 
-        console.log(getLongerTimeInMinutes, getShorterTimeinMinutes, "event");
+        setReportingProblemsData({
+          shorterTimeInMin: getShorterTimeinMinutes,
+          longerTimeInMin: getLongerTimeInMinutes,
+        });
       }}
     >
       <FilterBar.Item name="ignoreShorter" label="Ignore problems shorter than">
         <KPINumberInput
           label=""
-          value={resportingProblems.shorterThanVal}
+          value={reportingBehavior.shorterThanVal}
           onChange={(e) =>
-            setReportingProblems((prev) => ({
+            setReportingBehavior((prev) => ({
               ...prev,
               shorterThanVal: Number(e),
             }))
@@ -53,9 +52,9 @@ export const ReportingBehaviorFilter = () => {
       </FilterBar.Item>
       <FilterBar.Item name="shorterVal" label="Problem duration in">
         <SelectV2
-          value={resportingProblems.shorterThanDuration}
+          value={reportingBehavior.shorterThanDuration}
           onChange={(e) =>
-            setReportingProblems((prev) => ({
+            setReportingBehavior((prev) => ({
               ...prev,
               shorterThanDuration: String(e),
             }))
@@ -75,9 +74,9 @@ export const ReportingBehaviorFilter = () => {
       <FilterBar.Item name="ignoreLonger" label="Ignore problems longer than">
         <KPINumberInput
           label=""
-          value={resportingProblems.longerThanVal}
+          value={reportingBehavior.longerThanVal}
           onChange={(e) =>
-            setReportingProblems((prev) => ({
+            setReportingBehavior((prev) => ({
               ...prev,
               longerThanVal: Number(e),
             }))
@@ -87,9 +86,9 @@ export const ReportingBehaviorFilter = () => {
       </FilterBar.Item>
       <FilterBar.Item name="longerVal" label="Problem duration in">
         <SelectV2
-          value={resportingProblems.longerThanDuration}
+          value={reportingBehavior.longerThanDuration}
           onChange={(e) =>
-            setReportingProblems((prev) => ({
+            setReportingBehavior((prev) => ({
               ...prev,
               longerThanDuration: String(e),
             }))
