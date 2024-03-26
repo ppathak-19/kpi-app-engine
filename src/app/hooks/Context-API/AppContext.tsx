@@ -86,16 +86,6 @@ const AppContextProvider = ({ children }: ProviderProps) => {
         );
         setAppStateValues(initialAppStateValues);
       }
-      // try {
-      //   const baselineResponse = await getPersistedAppState(
-      //     APP_STATE_KEY_METRICS
-      //   );
-      //   return { baselineResponse };
-      // } catch (e) {
-      //   if (e) {
-      //     console.error(e);
-      //   }
-      // }
     };
 
     getValues()

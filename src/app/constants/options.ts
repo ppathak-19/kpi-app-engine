@@ -14,6 +14,12 @@ export const timeFrameOptions = [
   { value: "-m", label: "This month" },
 ];
 
+export const reportingOptions = [
+  { value: "min", label: "Minutes" },
+  { value: "hrs", label: "Hours" },
+  { value: "day", label: "Days" },
+];
+
 export const estimatedSalaries = {
   salary: {
     "Level 1 Support FTE": "$40,000",
