@@ -89,7 +89,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             <Button
               color="neutral"
               variant="emphasized"
-              loading={daysData.isLoading}
+              disabled={daysData.isLoading}
               onClick={() => {
                 daysData.refetch.refetchMainQuery();
                 daysData.refetch.refetchSummarizationQuery1();
