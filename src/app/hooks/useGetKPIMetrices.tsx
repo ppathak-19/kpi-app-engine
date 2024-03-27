@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type {
   QueryProps,
   RequiredDataResponse,
+  ResponseWithCostSavingsType,
   ResponseWithMetricesData,
   ResponseWithPercentages,
 } from "types";
@@ -16,7 +17,10 @@ import {
   minMTTD,
   minMTTR,
 } from "../constants/KpiFieldConstants";
-import { calculatePercentage } from "../utils/calculations";
+import {
+  calculateDiffInHours,
+  calculatePercentage,
+} from "../utils/calculations";
 import { processRecords } from "../utils/helpers";
 import { useAppContext } from "./Context-API/AppContext";
 import useGetKPIQueryData from "./useGetKPIQueryData";
@@ -39,7 +43,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   /** Taking baseline values from useContext  */
   const {
-    state: { baseline, ignoreCases },
+    state: { baseline, ignoreCases, salary },
   } = useAppContext();
 
   /** State For Storing all data i.e, current day & previous day */
@@ -177,6 +181,55 @@ const useGetKPIMetrices = (props: QueryProps) => {
     ),
   };
 
+  /** To Calculate Cost Savings */
+  const responseWithCostSavings: ResponseWithCostSavingsType = {
+    // MTTD Cost Saving Values
+    [minMTTD]: calculateDiffInHours(
+      metricData1.minMTTDInNum,
+      baselineMTTD,
+      salary
+    ),
+    [maxMTTD]: calculateDiffInHours(
+      metricData1.maxMTTDInNum,
+      baselineMTTD,
+      salary
+    ),
+    [averageMTTD]: calculateDiffInHours(
+      metricData1.averageMTTDInNum,
+      baselineMTTD,
+      salary
+    ),
+    [medianMTTD]: calculateDiffInHours(
+      metricData1.medianMTTDInNum,
+      baselineMTTD,
+      salary
+    ),
+
+    // MTTR Cost Saving Values
+    [minMTTR]: calculateDiffInHours(
+      metricData1.minMTTRInNum,
+      baselineMTTR,
+      salary
+    ),
+    [maxMTTR]: calculateDiffInHours(
+      metricData1.maxMTTRInNum,
+      baselineMTTR,
+      salary
+    ),
+    [averageMTTR]: calculateDiffInHours(
+      metricData1.averageMTTRInNum,
+      baselineMTTR,
+      salary
+    ),
+    [medianMTTR]: calculateDiffInHours(
+      metricData1.minMTTRInNum,
+      baselineMTTR,
+      salary
+    ),
+  };
+
+  // console.log({ responseWithCostSavings });
+
   /** Final Response */
   const finalResponse: RequiredDataResponse = {
     categoryTypes,
@@ -197,6 +250,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
       refetchSummarizationQuery1: metricData1.refetch,
       refetchSummarizationQuery2: metricData2.refetch,
     },
+    responseWithCostSavings,
   };
   return finalResponse;
 };

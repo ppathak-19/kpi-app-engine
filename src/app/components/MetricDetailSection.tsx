@@ -116,6 +116,14 @@ const MetricDetailSection = ({
                   ] + "%"
                 }
               />
+              <InfoItem
+                title={"Cost Savings"}
+                value={
+                  daysData?.responseWithCostSavings[
+                    `${clickedAggregation}MTTD`
+                  ] + "$"
+                }
+              />
             </div>
           )}
         </Container>
@@ -158,6 +166,14 @@ const MetricDetailSection = ({
                   daysData?.responseInPercentageWithPreviousDay[
                     `${clickedAggregation}MTTR`
                   ] + "%"
+                }
+              />
+              <InfoItem
+                title={"Cost Savings"}
+                value={
+                  daysData?.responseWithCostSavings[
+                    `${clickedAggregation}MTTR`
+                  ] + "$"
                 }
               />
             </div>
