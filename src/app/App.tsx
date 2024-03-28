@@ -137,7 +137,7 @@ const App: React.FC<AppCompProps> = () => {
                     },
                   }))
                 }
-                placeholder="Enter Baseline for MTTD"
+                placeholder="Enter Baseline Minutes for MTTD"
               />
               <br />
               <KPINumberInput
@@ -152,7 +152,7 @@ const App: React.FC<AppCompProps> = () => {
                     },
                   }))
                 }
-                placeholder="Enter Baseline for MTTR"
+                placeholder="Enter Baseline Minutes for MTTR"
               />
               <br />
               <KPINumberInput
@@ -164,12 +164,12 @@ const App: React.FC<AppCompProps> = () => {
                     salary: value,
                   }))
                 }
-                placeholder="Enter Salary-data"
+                placeholder="Enter Per-Hour Salary"
               />
             </div>
             <Divider />
             <div>
-              <Heading level={4}>Reporting Behavior</Heading>
+              <Heading level={4}>Ignore Cases</Heading>
               <br />
               <ReportingBehaviorFilter
                 reportingBehavior={reportingBehavior}

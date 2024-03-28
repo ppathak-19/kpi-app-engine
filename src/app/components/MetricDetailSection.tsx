@@ -25,7 +25,9 @@ const InfoItem = ({ title, value }) => {
       alignItems="center"
       justifyContent="space-between"
     >
-      <p style={{ fontWeight: "600" }}>{title}</p>
+      <Heading level={6} as="h6">
+        {title}
+      </Heading>
       <hr
         style={{
           margin: "0 1rem",
@@ -79,7 +81,7 @@ const MetricDetailSection = ({
 
       <Flex flexDirection="row" width="100%">
         <Container variant="minimal" width="50%">
-          <Heading level={5} as="h2">
+          <Heading level={5} as="h5">
             MTTD
           </Heading>
           {daysData.isLoading ? (
@@ -131,7 +133,7 @@ const MetricDetailSection = ({
         </Container>
 
         <Container variant="minimal" width="50%">
-          <Heading level={5} as="h2">
+          <Heading level={5} as="h5">
             MTTR
           </Heading>
           {daysData.isLoading ? (
