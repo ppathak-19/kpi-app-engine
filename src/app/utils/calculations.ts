@@ -20,3 +20,16 @@ export const convertNumberIntoK = (val: number) => {
   const res = new Intl.NumberFormat("en", { notation: "compact" }).format(val);
   return res;
 };
+
+export const calculateDiffInHours = (
+  kpi: number,
+  baseline: number,
+  salary: number
+) => {
+  // console.log({ kpi, baseline, salary });
+  const diffInHours = (baseline - kpi) / 60;
+
+  const perHourSalary = diffInHours * salary;
+
+  return Math.round(perHourSalary);
+};

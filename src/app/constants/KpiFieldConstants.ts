@@ -3,6 +3,7 @@
 import type {
   CategoryType,
   RequiredDataResponse,
+  ResponseWithCostSavingsType,
   ResponseWithMetricesData,
   ResponseWithPercentages,
 } from "types";
@@ -37,4 +38,5 @@ export const emptyResponse: RequiredDataResponse = {
     refetchSummarizationQuery1: async () => undefined,
     refetchSummarizationQuery2: async () => undefined,
   },
+  responseWithCostSavings: {} as ResponseWithCostSavingsType,
 };

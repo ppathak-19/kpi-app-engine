@@ -27,6 +27,8 @@ export type KPIaggregationTypes =
 
 export type ResponseWithPercentages = Record<KPIaggregationTypes, number>;
 
+export type ResponseWithCostSavingsType = Record<KPIaggregationTypes, number>;
+
 export type ResponseWithMetricesData = Record<KPIaggregationTypes, string>;
 
 export type CategoryType = (ResultRecordValue | undefined)[];
@@ -44,6 +46,7 @@ export type RequiredDataResponse = {
     refetchSummarizationQuery2: (...args) => Promise<QueryResult | undefined>;
   };
   categoryTypes: CategoryType;
+  responseWithCostSavings: ResponseWithCostSavingsType;
 } & OtherType;
 
 /** Query Props */
