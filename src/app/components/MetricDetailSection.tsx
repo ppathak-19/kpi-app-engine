@@ -14,7 +14,9 @@ type MetricDetailSectionProps = {
 };
 
 const InfoItem = ({ title, value }) => {
-  const isPercentage = value?.includes("%") && value.includes("-");
+  const isPercentage =
+    (value?.includes("%") && value.includes("-")) ||
+    (value?.includes("$") && value.includes("-"));
   const isMin = value?.includes("min");
   const textColor = isMin ? "" : isPercentage ? "red" : "green";
   return (
