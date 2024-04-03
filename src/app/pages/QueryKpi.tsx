@@ -7,7 +7,7 @@ import {
 } from "@dynatrace/strato-components-preview";
 import { RefreshIcon } from "@dynatrace/strato-icons";
 import Colors from "@dynatrace/strato-design-tokens/colors";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import type { AppCompProps, aggregationsType } from "types";
 import MetricDetailSection from "../components/MetricDetailSection";
 import { CustomSelect } from "../components/ReusableComponents/CustomSelect";
@@ -30,6 +30,8 @@ const QueryKpi: React.FC<AppCompProps> = () => {
   /** taking values from context, to give thresholds to timeseries comp */
   const {
     state: { baseline },
+    setAppError,
+    error,
   } = useAppContext();
 
   /** Getting Metrices Selected Timeframe */
@@ -38,6 +40,18 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     timeLine2: getBeforePastDays(selectedTimeFrame),
     selectedEventCategory,
   });
+
+  useEffect(() => {
+    if (daysData.isError) {
+      setAppError({
+        isError: true,
+        errorDetails: {
+          code: 401,
+          message: "Error In App Query...Please Try After Some Time.",
+        },
+      });
+    }
+  }, [daysData.isError, setAppError]);
 
   /** taking value from `MetricsDetailSection` and setting selected timeframe value to state */
   const handleTimeFrameChange = (time: string) => {
@@ -134,6 +148,11 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             <TimeseriesChart.YAxis
               formatter={(value) => `${Math.round(value)} mins`}
             />
+            {daysData.isError && (
+              <TimeseriesChart.ErrorState>
+                {error.errorDetails.message}
+              </TimeseriesChart.ErrorState>
+            )}
           </TimeseriesChart>
         </Container>
         <Container variant="minimal" width="42%">
@@ -150,6 +169,11 @@ const QueryKpi: React.FC<AppCompProps> = () => {
             <TimeseriesChart.YAxis
               formatter={(value) => `${Math.round(value)} mins`}
             />
+            {daysData.isError && (
+              <TimeseriesChart.ErrorState>
+                {error.errorDetails.message}
+              </TimeseriesChart.ErrorState>
+            )}
           </TimeseriesChart>
         </Container>
       </Flex>

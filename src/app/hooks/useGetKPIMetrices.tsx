@@ -35,6 +35,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     queryResponseWithTimeLine1: q1,
     queryResponseWithTimeLine2: q2,
     isLoading: mainQueryLoading,
+    isErrorInMainQuery,
     refetch,
   } = useGetKPIQueryData({
     timeLine1,
@@ -236,7 +237,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     /** Other Info */
     isLoading:
       mainQueryLoading || metricData1.isLoading || metricData2.isLoading,
-    isError: metricData1.isError || metricData2.isError,
+    isError: metricData1.isError || metricData2.isError || isErrorInMainQuery,
 
     /** Other calculations */
     responseInPercentageWithBaseline,

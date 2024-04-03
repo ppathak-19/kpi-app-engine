@@ -59,3 +59,31 @@ export const processRecords = ({
 
   return !!result ? result : [];
 };
+
+/** This Function gives MeaningFull and Customized Errors instead of Using catched Errors */
+export const giveMeaningFullErrorDetails = (err: string) => {
+  // eslint-disable-next-line prefer-const
+  let errorDetails = {
+    code: 0,
+    message: " ",
+  };
+
+  if (err === "Unauthorized" || "Error") {
+    errorDetails = {
+      code: 401,
+      message: "You are UnAuthorized. Please Contact Your Admin",
+    };
+  } else if (err.includes("Jwt")) {
+    errorDetails = {
+      code: 401,
+      message: "Your JWT Token has Expired. Please Try After Some Time",
+    };
+  } else {
+    errorDetails = {
+      code: 401,
+      message: "Error Occurred, Please Try After Some Time",
+    };
+  }
+
+  return errorDetails;
+};

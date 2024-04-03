@@ -18,6 +18,7 @@ import {
   type InitialAppErrorType,
   type InitialAppStateType,
 } from "./InitialAppStates";
+import { giveMeaningFullErrorDetails } from "src/app/utils/helpers";
 
 type ProviderProps = {
   children: React.ReactNode;
@@ -27,6 +28,7 @@ type ContextType = {
   state: InitialAppStateType;
   error: InitialAppErrorType;
   setAppStateValues: (val: InitialAppStateType) => void;
+  setAppError: React.Dispatch<React.SetStateAction<InitialAppErrorType>>;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -61,8 +63,9 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       state,
       setAppStateValues,
       error: appError,
+      setAppError,
     }),
-    [setAppStateValues, state, appError]
+    [setAppStateValues, state, appError, setAppError]
   );
 
   useEffect(() => {
@@ -106,13 +109,10 @@ const AppContextProvider = ({ children }: ProviderProps) => {
         // console.log({ data, state });
       })
       .catch((e) => {
-        console.log(e.message, e.code, e.details);
+        // console.log(e.message, e.code, e.details);
         setAppError({
           isError: true,
-          errorDetails: {
-            code: 401,
-            message: e.message,
-          },
+          errorDetails: giveMeaningFullErrorDetails(e.message || ""),
         });
       });
   }, [
