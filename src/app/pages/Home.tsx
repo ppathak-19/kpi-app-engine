@@ -9,12 +9,12 @@ import {
   Paragraph,
   Text,
 } from "@dynatrace/strato-components-preview/typography";
-import { ExpandableText } from "@dynatrace/strato-components-preview/content";
-import { WarningIcon } from "@dynatrace/strato-icons";
+import Colors from "@dynatrace/strato-design-tokens/colors";
+import { CriticalFailedIcon, WarningIcon } from "@dynatrace/strato-icons";
 import React from "react";
+import KPIFallBackUI from "../components/ReusableComponents/KPIFallBackUI";
 import { useAppContext } from "../hooks/Context-API/AppContext";
 import QueryKpi from "./QueryKpi";
-import KPIFallBackUI from "../components/ReusableComponents/KPIFallBackUI";
 
 type HomeCompProps = {
   setModalState: React.Dispatch<React.SetStateAction<boolean>>;
@@ -37,13 +37,21 @@ const Home: React.FC<HomeCompProps> = (props) => {
       {isErrorInApp ? (
         <>
           <KPIFallBackUI>
-            <Heading level={4}>Oops, An Error Occured</Heading>
-            <br />
-            <ExpandableText>
+            <Flex
+              flexDirection="column"
+              style={{
+                color: Colors.Text.Critical.Default,
+              }}
+            >
+              <Flex alignContent="center">
+                <CriticalFailedIcon size={"large"} />
+                <Heading level={4}>Oops, An Error Occured</Heading>
+              </Flex>
+              <br />
               <Paragraph>
-                {error.errorDetails.code}-{error.errorDetails.message}
+                {error.errorDetails.code} - {error.errorDetails.message}
               </Paragraph>
-            </ExpandableText>
+            </Flex>
           </KPIFallBackUI>
         </>
       ) : (
