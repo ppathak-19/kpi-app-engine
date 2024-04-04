@@ -126,7 +126,7 @@ const App: React.FC<AppCompProps> = () => {
               <Heading level={4}>Calculation Variables</Heading>
               <br />
               <KPINumberInput
-                label="Baseline MTTD"
+                label="Baseline MTTD (In Minutes)"
                 value={userInputValues.baseline.mttd}
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
@@ -141,7 +141,7 @@ const App: React.FC<AppCompProps> = () => {
               />
               <br />
               <KPINumberInput
-                label="Baseline MTTR"
+                label="Baseline MTTR (In Minutes)"
                 value={userInputValues.baseline.mttr}
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
@@ -156,7 +156,7 @@ const App: React.FC<AppCompProps> = () => {
               />
               <br />
               <KPINumberInput
-                label="Salary ($)"
+                label="Per-Hour Salary ($)"
                 value={userInputValues.salary}
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
