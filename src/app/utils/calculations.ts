@@ -1,6 +1,6 @@
 export const calculatePercentage = (x: number, y: number): number => {
   if (x !== 0 && y !== 0) {
-    const division = (x - y) / y;
+    const division = (y - x) / y;
     return Math.floor(division * 100);
   } else {
     return 0;
@@ -30,8 +30,8 @@ export const calculateDiffInHours = (
   salary: number
 ): number => {
   // console.log({ kpi, baseline, salary });
-  // const diffInHours = (baseline - kpi) / 60;
-  const diffInHours = (kpi - baseline) / 60;
+  const diffInHours = (baseline - kpi) / 60;
+  // const diffInHours = (kpi - baseline) / 60;
 
   const perHourSalary = diffInHours * salary;
 
