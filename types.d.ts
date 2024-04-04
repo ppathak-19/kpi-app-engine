@@ -16,12 +16,8 @@ export type OtherType = {
 };
 
 export type KPIaggregationTypes =
-  | "minMTTD"
-  | "maxMTTD"
   | "medianMTTD"
   | "averageMTTD"
-  | "minMTTR"
-  | "maxMTTR"
   | "medianMTTR"
   | "averageMTTR";
 
@@ -56,16 +52,8 @@ export type QueryProps = {
   selectedEventCategory?: [] | string[];
 };
 
-/** Metric details */
-export type MetricDetailsCardSection = {
-  currentDayValue: string;
-  baselinePercentage: string;
-  previousDayValue: string;
-  comparisonWithPreviousDay: string;
-};
-
 /** Different types of aggregations in app */
-export type aggregationsType = "average" | "min" | "max";
+export type aggregationsType = "average" | "median";
 
 // export type aggregatorOptionsType = Record<aggregationsType, {value:string,label:string}>
 

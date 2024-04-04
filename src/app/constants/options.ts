@@ -1,8 +1,6 @@
 export const aggregatorOptions = [
-  { value: "min", label: "Minimum" },
-  { value: "max", label: "Maximum" },
-  { value: "median", label: "Median" },
   { value: "average", label: "Average" },
+  { value: "median", label: "Median" },
 ];
 
 export const timeFrameOptions = [

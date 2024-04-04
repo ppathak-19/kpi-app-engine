@@ -3,12 +3,8 @@ import { useDqlQuery } from "@dynatrace-sdk/react-hooks";
 import {
   averageMTTD,
   averageMTTR,
-  maxMTTD,
-  maxMTTR,
   medianMTTD,
   medianMTTR,
-  minMTTD,
-  minMTTR,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
 
@@ -32,9 +28,9 @@ const useGetSummarizationData = ({
     body: {
       query: `
       data record(a = array(${mttdArrayList}))
-      | fieldsAdd ${averageMTTD} = arrayAvg(a), ${maxMTTD} = arrayMax(a), ${minMTTD} = arrayMin(a), ${medianMTTD} = arrayMedian(a)
+      | fieldsAdd ${averageMTTD} = arrayAvg(a), ${medianMTTD} = arrayMedian(a)
       | append [   data record(a = array(${mttrArrayList}))
-        | fieldsAdd ${averageMTTR} = arrayAvg(a), ${maxMTTR} = arrayMax(a), ${minMTTR} = arrayMin(a), ${medianMTTR} = arrayMedian(a) ]
+        | fieldsAdd ${averageMTTR} = arrayAvg(a), ${medianMTTR} = arrayMedian(a) ]
       `,
     },
   });
@@ -46,8 +42,8 @@ const useGetSummarizationData = ({
       data json:"""${JSON.stringify(queryData)}"""
       | fieldsAdd  timestamp =  toTimestamp(timestamp) //converting into required timestamp
       | makeTimeseries {
-        ${maxMTTD} = max(mttdTime), ${minMTTD} = min(mttdTime), ${averageMTTD} = avg(mttdTime), ${medianMTTD} = median(mttdTime), // MTTD series
-        ${maxMTTR} = max(mttrTime), ${minMTTR} = min(mttrTime), ${averageMTTR} = avg(mttrTime), ${medianMTTR} = median(mttrTime) // MTTR series
+        ${averageMTTD} = avg(mttdTime), ${medianMTTD} = median(mttdTime), // MTTD series
+        ${averageMTTR} = avg(mttrTime), ${medianMTTR} = median(mttrTime) // MTTR series
       }, 
         timeframe: toTimeframe("${timeLine}") //converting into required timeframe
       `,
@@ -56,16 +52,6 @@ const useGetSummarizationData = ({
 
   const response = {
     /** MTTD Data */
-    [maxMTTD]:
-      !!summarizationData &&
-      convertKpiQueryMin_to_Time(
-        (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
-      ),
-    [minMTTD]:
-      !!summarizationData &&
-      convertKpiQueryMin_to_Time(
-        (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
-      ),
     [medianMTTD]:
       !!summarizationData &&
       convertKpiQueryMin_to_Time(
@@ -78,16 +64,6 @@ const useGetSummarizationData = ({
       ),
 
     /** MTTR Data */
-    [maxMTTR]:
-      !!summarizationData &&
-      convertKpiQueryMin_to_Time(
-        (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
-      ),
-    [minMTTR]:
-      !!summarizationData &&
-      convertKpiQueryMin_to_Time(
-        (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
-      ),
     [medianMTTR]:
       !!summarizationData &&
       convertKpiQueryMin_to_Time(
@@ -106,12 +82,6 @@ const useGetSummarizationData = ({
     isError: summarizationData.isError || timeSeriesCals.isError,
 
     /** MTTR Data & MTTD in minutes -> directly returning the number */
-    minMTTDInNum: Math.floor(
-      (summarizationData.data?.records[0]?.[`${minMTTD}`] as number) || 0
-    ),
-    maxMTTDInNum: Math.floor(
-      (summarizationData.data?.records[0]?.[`${maxMTTD}`] as number) || 0
-    ),
     averageMTTDInNum: Math.floor(
       (summarizationData.data?.records[0]?.[`${averageMTTD}`] as number) || 0
     ),
@@ -119,12 +89,6 @@ const useGetSummarizationData = ({
       (summarizationData.data?.records[0]?.[`${medianMTTD}`] as number) || 0
     ),
 
-    minMTTRInNum: Math.floor(
-      (summarizationData.data?.records[1]?.[`${minMTTR}`] as number) || 0
-    ),
-    maxMTTRInNum: Math.floor(
-      (summarizationData.data?.records[1]?.[`${maxMTTR}`] as number) || 0
-    ),
     averageMTTRInNum: Math.floor(
       (summarizationData.data?.records[1]?.[`${averageMTTR}`] as number) || 0
     ),
@@ -133,16 +97,6 @@ const useGetSummarizationData = ({
     ),
 
     /** MakeTimeseries data */
-    // timeSeriesData: {
-    //   mttd:
-    //     !!timeSeriesCalsMttd && timeSeriesCalsMttd.data
-    //       ? timeSeriesCalsMttd.data
-    //       : { metadata: {}, records: [], types: [] },
-    //   mttr:
-    //     !!timeSeriesCalsMttr && timeSeriesCalsMttr.data
-    //       ? timeSeriesCalsMttr.data
-    //       : { metadata: {}, records: [], types: [] },
-    // },
     dataTimeseries:
       !!timeSeriesCals && timeSeriesCals.data
         ? timeSeriesCals.data

@@ -25,7 +25,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     []
   );
   const [selectedAggregation, setSelectedAggregation] =
-    useState<aggregationsType>("min");
+    useState<aggregationsType>("average");
 
   /** taking values from context, to give thresholds to timeseries comp */
   const {

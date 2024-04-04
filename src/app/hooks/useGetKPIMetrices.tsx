@@ -10,12 +10,8 @@ import type {
 import {
   averageMTTD,
   averageMTTR,
-  maxMTTD,
-  maxMTTR,
   medianMTTD,
   medianMTTR,
-  minMTTD,
-  minMTTR,
 } from "../constants/KpiFieldConstants";
 import {
   calculateDiffInHours,
@@ -94,36 +90,26 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   const responseWithCurrentDayData: ResponseWithMetricesData = {
     /** MTTD Data */
-    [minMTTD]: !!metricData1 ? metricData1.minMTTD : "0",
-    [maxMTTD]: !!metricData1 ? metricData1.maxMTTD : "0",
     [averageMTTD]: !!metricData1 ? metricData1.averageMTTD : "0",
     [medianMTTD]: !!metricData1 ? metricData1.medianMTTD : "0",
 
     /** MTTR Data */
-    [minMTTR]: !!metricData1 ? metricData1.minMTTR : "0",
-    [maxMTTR]: !!metricData1 ? metricData1.maxMTTR : "0",
     [averageMTTR]: !!metricData1 ? metricData1.averageMTTR : "0",
     [medianMTTR]: !!metricData1 ? metricData1.medianMTTR : "0",
   };
 
   const responseWithPreviousDayData: ResponseWithMetricesData = {
     /** MTTD Data */
-    [minMTTD]: !!metricData2 ? metricData2.minMTTD : "0",
-    [maxMTTD]: !!metricData2 ? metricData2.maxMTTD : "0",
     [averageMTTD]: !!metricData2 ? metricData2.averageMTTD : "0",
     [medianMTTD]: !!metricData2 ? metricData2.medianMTTD : "0",
 
     /** MTTR Data */
-    [minMTTR]: !!metricData2 ? metricData2.minMTTR : "0",
-    [maxMTTR]: !!metricData2 ? metricData2.maxMTTR : "0",
     [averageMTTR]: !!metricData2 ? metricData2.averageMTTR : "0",
     [medianMTTR]: !!metricData2 ? metricData2.medianMTTR : "0",
   };
 
   /** To cal % with respect to baseline -> divide metricData by baseline value from context */
   const responseInPercentageWithBaseline: ResponseWithPercentages = {
-    [minMTTD]: calculatePercentage(metricData1.minMTTDInNum, baselineMTTD),
-    [maxMTTD]: calculatePercentage(metricData1.maxMTTDInNum, baselineMTTD),
     [averageMTTD]: calculatePercentage(
       metricData1.averageMTTDInNum,
       baselineMTTD
@@ -133,8 +119,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
       baselineMTTD
     ),
 
-    [minMTTR]: calculatePercentage(metricData1.minMTTRInNum, baselineMTTR),
-    [maxMTTR]: calculatePercentage(metricData1.maxMTTRInNum, baselineMTTR),
     [averageMTTR]: calculatePercentage(
       metricData1.averageMTTRInNum,
       baselineMTTR
@@ -147,14 +131,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
   /** To cal % with respect to current days & relative day  */
   const responseInPercentageWithPreviousDay: ResponseWithPercentages = {
-    [minMTTD]: calculatePercentage(
-      metricData1.minMTTDInNum,
-      metricData2.minMTTDInNum
-    ),
-    [maxMTTD]: calculatePercentage(
-      metricData1.maxMTTDInNum,
-      metricData2.maxMTTDInNum
-    ),
     [averageMTTD]: calculatePercentage(
       metricData1.averageMTTDInNum,
       metricData2.averageMTTDInNum
@@ -164,14 +140,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
       metricData2.medianMTTDInNum
     ),
 
-    [minMTTR]: calculatePercentage(
-      metricData1.minMTTRInNum,
-      metricData2.minMTTRInNum
-    ),
-    [maxMTTR]: calculatePercentage(
-      metricData1.maxMTTRInNum,
-      metricData2.maxMTTRInNum
-    ),
     [averageMTTR]: calculatePercentage(
       metricData1.averageMTTRInNum,
       metricData2.averageMTTRInNum
@@ -185,16 +153,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** To Calculate Cost Savings */
   const responseWithCostSavings: ResponseWithCostSavingsType = {
     // MTTD Cost Saving Values
-    [minMTTD]: calculateDiffInHours(
-      metricData1.minMTTDInNum,
-      baselineMTTD,
-      salary
-    ),
-    [maxMTTD]: calculateDiffInHours(
-      metricData1.maxMTTDInNum,
-      baselineMTTD,
-      salary
-    ),
     [averageMTTD]: calculateDiffInHours(
       metricData1.averageMTTDInNum,
       baselineMTTD,
@@ -207,23 +165,13 @@ const useGetKPIMetrices = (props: QueryProps) => {
     ),
 
     // MTTR Cost Saving Values
-    [minMTTR]: calculateDiffInHours(
-      metricData1.minMTTRInNum,
-      baselineMTTR,
-      salary
-    ),
-    [maxMTTR]: calculateDiffInHours(
-      metricData1.maxMTTRInNum,
-      baselineMTTR,
-      salary
-    ),
     [averageMTTR]: calculateDiffInHours(
       metricData1.averageMTTRInNum,
       baselineMTTR,
       salary
     ),
     [medianMTTR]: calculateDiffInHours(
-      metricData1.minMTTRInNum,
+      metricData1.medianMTTRInNum,
       baselineMTTR,
       salary
     ),
