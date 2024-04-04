@@ -63,10 +63,10 @@ const MetricDetailSection = ({
 
   const baseLineComparisonLabel =
     selectedTimeFrame === "-w"
-      ? "Baseline comparison"
+      ? "Baseline Improvement"
       : selectedTimeFrame === "-m"
-      ? "Baseline comparison"
-      : `Baseline comparison: past ${selectedTimeFrame} days`;
+      ? "Baseline Improvement"
+      : `Baseline Improvement: past ${selectedTimeFrame} days`;
 
   const comparingRecentLabel =
     selectedTimeFrame === "-w"
