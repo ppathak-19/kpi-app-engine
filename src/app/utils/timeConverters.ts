@@ -86,11 +86,16 @@ export function formatDate(date: Date) {
   // leading zero if date/month is single digit
   const pad = (num) => (num < 10 ? "0" + num : num);
 
+  const hours = pad(date.getHours());
+  // const minutes = pad(date.getMinutes());
+  // const seconds = pad(date.getSeconds());
+
   const year = date.getFullYear();
   const month = pad(date.getMonth() + 1);
   const day = pad(date.getDate());
 
-  return `${year}-${month}-${day}T00:00:00Z`;
+  // we are taking minutes,seconds as 00 becoz, on each render seconds get changed so timeLine passing to query is not stable.
+  return `${year}-${month}-${day}T${hours}:00:00Z`;
 }
 
 // get past months start and end date
