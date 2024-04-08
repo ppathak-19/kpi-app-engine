@@ -33,13 +33,13 @@ export type InitialAppErrorType = {
 
 /** Initial Values For the App */
 export const initialBaselineValues: BaseLineTypes = {
-  mttd: 0,
-  mttr: 0,
+  mttd: 45, // 45 minutes
+  mttr: 240, // 4 hours
 };
 
 export const initialSalaryValues: SalaryType = {
-  salaryValue: 0,
-  defaultPeopleWorkingOnAProblem: 0,
+  salaryValue: 65, // 65 Dollars per hour
+  defaultPeopleWorkingOnAProblem: 3, // 3 people working on a problem
 };
 
 export const initialIgnoreCasesValuesInMinutes: IgnoreCasesType = {
