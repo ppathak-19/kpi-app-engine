@@ -17,9 +17,7 @@ import { InformationModalData } from "./constants/ModalData";
 import { useAppContext } from "./hooks/Context-API/AppContext";
 import {
   initialAppStateValues,
-  reportingDropDownInitialValues,
   type InitialAppStateType,
-  type ReportingBehaviorFilterTypes,
 } from "./hooks/Context-API/InitialAppStates";
 import Home from "./pages/Home";
 import PageNotFound from "./pages/PageNotFound";
@@ -37,10 +35,6 @@ const App: React.FC<AppCompProps> = () => {
     initialAppStateValues
   );
 
-  /** State for ignorecases having additional dropdown like `min`, `hrs` etc.. */
-  const [reportingBehavior, setReportingBehavior] =
-    useState<ReportingBehaviorFilterTypes>(reportingDropDownInitialValues);
-
   useEffect(() => {
     setUserInputValues({
       baseline: {
@@ -49,8 +43,21 @@ const App: React.FC<AppCompProps> = () => {
       },
       salary: state.salary,
       ignoreCases: {
-        longerTime: state.ignoreCases.longerTime,
-        shorterTime: state.ignoreCases.shorterTime,
+        valuesInMinutes: {
+          longerTime: state.ignoreCases.valuesInMinutes.longerTime,
+          shorterTime: state.ignoreCases.valuesInMinutes.shorterTime,
+        },
+        reportingBehaviourDropDown: {
+          shorterThanVal:
+            state.ignoreCases.reportingBehaviourDropDown.shorterThanVal,
+          shorterThanDuration:
+            state.ignoreCases.reportingBehaviourDropDown.shorterThanDuration,
+
+          longerThanVal:
+            state.ignoreCases.reportingBehaviourDropDown.longerThanVal,
+          longerThanDuration:
+            state.ignoreCases.reportingBehaviourDropDown.longerThanDuration,
+        },
       },
     });
   }, [state]);
@@ -58,13 +65,23 @@ const App: React.FC<AppCompProps> = () => {
   const handleFormSubmit = async () => {
     /** Taking the filterBar state and converting into minutes and setting appStateContext*/
     const getShorterTimeinMinutes = convertTimeToMinutes(
-      Number(reportingBehavior.shorterThanVal),
-      String(reportingBehavior.shorterThanDuration)
+      Number(
+        userInputValues.ignoreCases.reportingBehaviourDropDown.shorterThanVal
+      ),
+      String(
+        userInputValues.ignoreCases.reportingBehaviourDropDown
+          .shorterThanDuration
+      )
     );
 
     const getLongerTimeInMinutes = convertTimeToMinutes(
-      Number(reportingBehavior.longerThanVal),
-      String(reportingBehavior.longerThanDuration)
+      Number(
+        userInputValues.ignoreCases.reportingBehaviourDropDown.longerThanVal
+      ),
+      String(
+        userInputValues.ignoreCases.reportingBehaviourDropDown
+          .longerThanDuration
+      )
     );
 
     showToast({
@@ -76,8 +93,12 @@ const App: React.FC<AppCompProps> = () => {
     setAppStateValues({
       ...userInputValues,
       ignoreCases: {
-        shorterTime: getShorterTimeinMinutes,
-        longerTime: getLongerTimeInMinutes,
+        valuesInMinutes: {
+          shorterTime: getShorterTimeinMinutes,
+          longerTime: getLongerTimeInMinutes,
+        },
+        reportingBehaviourDropDown:
+          userInputValues.ignoreCases.reportingBehaviourDropDown,
       },
     });
     setSettingsModalState(false);
@@ -157,11 +178,13 @@ const App: React.FC<AppCompProps> = () => {
               <br />
               <KPINumberInput
                 label="Per-Hour Salary ($)"
-                value={userInputValues.salary}
+                value={userInputValues.salary.salaryValue}
                 onChange={(value: number) =>
                   setUserInputValues((prev) => ({
                     ...prev,
-                    salary: value,
+                    salary: {
+                      salaryValue: value,
+                    },
                   }))
                 }
                 placeholder="Enter Per-Hour Salary"
@@ -172,8 +195,11 @@ const App: React.FC<AppCompProps> = () => {
               <Heading level={4}>Ignore Cases</Heading>
               <br />
               <ReportingBehaviorFilter
-                reportingBehavior={reportingBehavior}
-                setReportingBehavior={setReportingBehavior}
+                appValues={userInputValues}
+                reportingBehavior={
+                  userInputValues.ignoreCases.reportingBehaviourDropDown
+                }
+                setReportingBehavior={setUserInputValues}
               />
             </div>
           </Flex>
