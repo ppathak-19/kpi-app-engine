@@ -1,4 +1,4 @@
-import type { ResultRecord } from "@dynatrace-sdk/client-query";
+import type { QueryResult, ResultRecord } from "@dynatrace-sdk/client-query";
 import { useEffect, useState } from "react";
 import type {
   QueryProps,
@@ -27,7 +27,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
   const { timeLine1, timeLine2, selectedEventCategory } = props;
 
   const {
-    categoryTypes,
     queryResponseWithTimeLine1: q1,
     queryResponseWithTimeLine2: q2,
     isLoading: mainQueryLoading,
@@ -37,6 +36,37 @@ const useGetKPIMetrices = (props: QueryProps) => {
     timeLine1,
     timeLine2,
   });
+
+
+  const getAllEventCategoryTypes = (
+    data1: QueryResult | undefined,
+    data2: QueryResult | undefined
+  ) => {
+    const categoriesData1 = new Set(
+      data1?.records.map((recordData) => recordData?.["event.category"])
+    );
+
+    const categoriesData2 = new Set(
+      data2?.records.map((recordData) => recordData?.["event.category"])
+    );
+
+    // Find the intersection of categories from both data sets
+    const commonCategories = [...categoriesData1].filter((category) =>
+      categoriesData2.has(category)
+    );
+
+    const categoryOptions = commonCategories.map((category) => ({
+      value: category,
+      label: category,
+    }));
+
+    return categoryOptions;
+  };
+
+  const categoryTypes = getAllEventCategoryTypes(
+    q1,
+    q2
+  );
 
   /** Taking baseline values from useContext  */
   const {
