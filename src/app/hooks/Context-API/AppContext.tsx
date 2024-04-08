@@ -62,6 +62,8 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       key: APP_STATE_KEY_SALARIES,
       value: JSON.stringify({
         salaryValue: val.salary.salaryValue,
+        defaultPeopleWorkingOnAProblem:
+          val.salary.defaultPeopleWorkingOnAProblem,
       }),
     });
     setAppStatePersisted({
@@ -143,6 +145,8 @@ const AppContextProvider = ({ children }: ProviderProps) => {
           },
           salary: {
             salaryValue: res?.salary.salaryValue || 0,
+            defaultPeopleWorkingOnAProblem:
+              res?.salary.defaultPeopleWorkingOnAProblem || 0,
           },
           ignoreCases: {
             valuesInMinutes: {

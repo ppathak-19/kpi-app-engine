@@ -14,6 +14,7 @@ export type IgnoreCasesObjectType = {
 
 export type SalaryType = {
   salaryValue: number;
+  defaultPeopleWorkingOnAProblem: number;
 };
 
 export type InitialAppStateType = {
@@ -38,6 +39,7 @@ export const initialBaselineValues: BaseLineTypes = {
 
 export const initialSalaryValues: SalaryType = {
   salaryValue: 0,
+  defaultPeopleWorkingOnAProblem: 0,
 };
 
 export const initialIgnoreCasesValuesInMinutes: IgnoreCasesType = {

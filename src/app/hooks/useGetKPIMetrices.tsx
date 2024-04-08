@@ -14,7 +14,7 @@ import {
   medianMTTR,
 } from "../constants/KpiFieldConstants";
 import {
-  calculateDiffInHours,
+  giveCostSavingsData,
   calculatePercentage,
 } from "../utils/calculations";
 import { getAllEventCategoryTypes, processRecords } from "../utils/helpers";
@@ -152,28 +152,32 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** To Calculate Cost Savings */
   const responseWithCostSavings: ResponseWithCostSavingsType = {
     // MTTD Cost Saving Values
-    [averageMTTD]: calculateDiffInHours(
-      metricData1.averageMTTDInNum,
-      baselineMTTD,
-      salary.salaryValue
-    ),
-    [medianMTTD]: calculateDiffInHours(
-      metricData1.medianMTTDInNum,
-      baselineMTTD,
-      salary.salaryValue
-    ),
+    [averageMTTD]: giveCostSavingsData({
+      kpi: metricData1.averageMTTDInNum,
+      baseline: baselineMTTD,
+      perHourSalary: salary.salaryValue,
+      noOfPeopleWorking: salary.defaultPeopleWorkingOnAProblem,
+    }),
+    [medianMTTD]: giveCostSavingsData({
+      kpi: metricData1.medianMTTDInNum,
+      baseline: baselineMTTD,
+      perHourSalary: salary.salaryValue,
+      noOfPeopleWorking: salary.defaultPeopleWorkingOnAProblem,
+    }),
 
     // MTTR Cost Saving Values
-    [averageMTTR]: calculateDiffInHours(
-      metricData1.averageMTTRInNum,
-      baselineMTTR,
-      salary.salaryValue
-    ),
-    [medianMTTR]: calculateDiffInHours(
-      metricData1.medianMTTRInNum,
-      baselineMTTR,
-      salary.salaryValue
-    ),
+    [averageMTTR]: giveCostSavingsData({
+      kpi: metricData1.averageMTTRInNum,
+      baseline: baselineMTTR,
+      perHourSalary: salary.salaryValue,
+      noOfPeopleWorking: salary.defaultPeopleWorkingOnAProblem,
+    }),
+    [medianMTTR]: giveCostSavingsData({
+      kpi: metricData1.medianMTTRInNum,
+      baseline: baselineMTTR,
+      perHourSalary: salary.salaryValue,
+      noOfPeopleWorking: salary.defaultPeopleWorkingOnAProblem,
+    }),
   };
 
   /** Getting all the category types from two query records */

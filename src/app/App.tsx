@@ -176,19 +176,36 @@ const App: React.FC<AppCompProps> = () => {
                 placeholder="Enter Baseline Minutes for MTTR"
               />
               <br />
-              <KPINumberInput
-                label="Per-Hour Salary ($)"
-                value={userInputValues.salary.salaryValue}
-                onChange={(value: number) =>
-                  setUserInputValues((prev) => ({
-                    ...prev,
-                    salary: {
-                      salaryValue: value,
-                    },
-                  }))
-                }
-                placeholder="Enter Per-Hour Salary"
-              />
+              <Flex justifyContent="space-between">
+                <KPINumberInput
+                  label="No.Of People Working On A Problem"
+                  value={userInputValues.salary.defaultPeopleWorkingOnAProblem}
+                  onChange={(value: number) =>
+                    setUserInputValues((prev) => ({
+                      ...prev,
+                      salary: {
+                        ...userInputValues.salary,
+                        defaultPeopleWorkingOnAProblem: value,
+                      },
+                    }))
+                  }
+                  placeholder="Enter average people working on a problem"
+                />
+                <KPINumberInput
+                  label="Per-Hour Salary ($)"
+                  value={userInputValues.salary.salaryValue}
+                  onChange={(value: number) =>
+                    setUserInputValues((prev) => ({
+                      ...prev,
+                      salary: {
+                        ...userInputValues.salary,
+                        salaryValue: value,
+                      },
+                    }))
+                  }
+                  placeholder="Enter Per-Hour Salary"
+                />
+              </Flex>
             </div>
             <Divider />
             <div>

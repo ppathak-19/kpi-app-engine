@@ -24,16 +24,24 @@ export const convertNumberIntoK = (val: number): string => {
   return res;
 };
 
-export const calculateDiffInHours = (
-  kpi: number,
-  baseline: number,
-  salary: number
-): number => {
-  // console.log({ kpi, baseline, salary });
+type CostSavingsParamsType = {
+  kpi: number;
+  baseline: number;
+  perHourSalary: number;
+  noOfPeopleWorking: number;
+};
+
+export const giveCostSavingsData = ({
+  kpi,
+  baseline,
+  perHourSalary,
+  noOfPeopleWorking = 1,
+}: CostSavingsParamsType): number => {
   const diffInHours = (baseline - kpi) / 60;
   // const diffInHours = (kpi - baseline) / 60;
 
-  const perHourSalary = diffInHours * salary;
+  const salary = noOfPeopleWorking * perHourSalary;
+  const costSavings = diffInHours * salary;
 
-  return Math.round(perHourSalary);
+  return Math.round(costSavings);
 };
