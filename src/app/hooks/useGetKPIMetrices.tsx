@@ -82,7 +82,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
       const data1 = processRecords({
         records: q1.records,
         selectedEventCategory: selectedEventCategory,
-        ignore: ignoreCases,
+        ignore: ignoreCases.valuesInMinutes,
       });
       // console.log(data1, "stored data for q1");
 
@@ -93,7 +93,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
       const data2 = processRecords({
         records: q2.records,
         selectedEventCategory: selectedEventCategory,
-        ignore: ignoreCases,
+        ignore: ignoreCases.valuesInMinutes,
       });
       // console.log(data2, "stored data for q2");
 
@@ -186,24 +186,24 @@ const useGetKPIMetrices = (props: QueryProps) => {
     [averageMTTD]: calculateDiffInHours(
       metricData1.averageMTTDInNum,
       baselineMTTD,
-      salary
+      salary.salaryValue
     ),
     [medianMTTD]: calculateDiffInHours(
       metricData1.medianMTTDInNum,
       baselineMTTD,
-      salary
+      salary.salaryValue
     ),
 
     // MTTR Cost Saving Values
     [averageMTTR]: calculateDiffInHours(
       metricData1.averageMTTRInNum,
       baselineMTTR,
-      salary
+      salary.salaryValue
     ),
     [medianMTTR]: calculateDiffInHours(
       metricData1.medianMTTRInNum,
       baselineMTTR,
-      salary
+      salary.salaryValue
     ),
   };
 

@@ -6,21 +6,25 @@ import {
 } from "@dynatrace/strato-components-preview";
 import React from "react";
 import { reportingOptions } from "src/app/constants/options";
-import { type ReportingBehaviorFilterTypes } from "src/app/hooks/Context-API/InitialAppStates";
+import {
+  type InitialAppStateType,
+  type ReportingBehaviorFilterTypes,
+} from "src/app/hooks/Context-API/InitialAppStates";
+import type { DurationTypes } from "types";
 import KPINumberInput from "./ReusableComponents/KPINumberInput";
-import { DurationTypes } from "types";
 
 type ReportingBehaviorFilterCompProps = {
+  appValues: InitialAppStateType;
   reportingBehavior: ReportingBehaviorFilterTypes;
   setReportingBehavior: React.Dispatch<
-    React.SetStateAction<ReportingBehaviorFilterTypes>
+    React.SetStateAction<InitialAppStateType>
   >;
 };
 
 const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
   props
 ) => {
-  const { reportingBehavior, setReportingBehavior } = props;
+  const { appValues, reportingBehavior, setReportingBehavior } = props;
 
   return (
     <Flex>
@@ -28,10 +32,16 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
         label="Ignore problems shorter than"
         value={reportingBehavior.shorterThanVal}
         onChange={(e) =>
-          setReportingBehavior((prev) => ({
-            ...prev,
-            shorterThanVal: Number(e),
-          }))
+          setReportingBehavior({
+            ...appValues,
+            ignoreCases: {
+              valuesInMinutes: appValues.ignoreCases.valuesInMinutes,
+              reportingBehaviourDropDown: {
+                ...appValues.ignoreCases.reportingBehaviourDropDown,
+                shorterThanVal: Number(e),
+              },
+            },
+          })
         }
         placeholder="Enter Duration of Problem"
       />
@@ -40,10 +50,16 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
         <SelectV2
           value={reportingBehavior.shorterThanDuration}
           onChange={(e) =>
-            setReportingBehavior((prev) => ({
-              ...prev,
-              shorterThanDuration: String(e) as DurationTypes,
-            }))
+            setReportingBehavior({
+              ...appValues,
+              ignoreCases: {
+                valuesInMinutes: appValues.ignoreCases.valuesInMinutes,
+                reportingBehaviourDropDown: {
+                  ...appValues.ignoreCases.reportingBehaviourDropDown,
+                  shorterThanDuration: String(e) as DurationTypes,
+                },
+              },
+            })
           }
         >
           <SelectV2.Trigger width="200px" />
@@ -65,10 +81,16 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
         label="Ignore problems longer than"
         value={reportingBehavior.longerThanVal}
         onChange={(e) =>
-          setReportingBehavior((prev) => ({
-            ...prev,
-            longerThanVal: Number(e),
-          }))
+          setReportingBehavior({
+            ...appValues,
+            ignoreCases: {
+              valuesInMinutes: appValues.ignoreCases.valuesInMinutes,
+              reportingBehaviourDropDown: {
+                ...appValues.ignoreCases.reportingBehaviourDropDown,
+                longerThanVal: Number(e),
+              },
+            },
+          })
         }
         placeholder="Enter Duration of Problem"
       />
@@ -77,10 +99,16 @@ const ReportingBehaviorFilter: React.FC<ReportingBehaviorFilterCompProps> = (
         <SelectV2
           value={reportingBehavior.longerThanDuration}
           onChange={(e) =>
-            setReportingBehavior((prev) => ({
-              ...prev,
-              longerThanDuration: String(e) as DurationTypes,
-            }))
+            setReportingBehavior({
+              ...appValues,
+              ignoreCases: {
+                valuesInMinutes: appValues.ignoreCases.valuesInMinutes,
+                reportingBehaviourDropDown: {
+                  ...appValues.ignoreCases.reportingBehaviourDropDown,
+                  longerThanDuration: String(e) as DurationTypes,
+                },
+              },
+            })
           }
         >
           <SelectV2.Trigger width="200px" />
