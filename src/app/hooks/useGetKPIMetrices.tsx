@@ -1,4 +1,4 @@
-import type { QueryResult, ResultRecord } from "@dynatrace-sdk/client-query";
+import type { ResultRecord } from "@dynatrace-sdk/client-query";
 import { useEffect, useState } from "react";
 import type {
   QueryProps,
@@ -17,7 +17,7 @@ import {
   calculateDiffInHours,
   calculatePercentage,
 } from "../utils/calculations";
-import { processRecords } from "../utils/helpers";
+import { getAllEventCategoryTypes, processRecords } from "../utils/helpers";
 import { useAppContext } from "./Context-API/AppContext";
 import useGetKPIQueryData from "./useGetKPIQueryData";
 import useGetSummarizationData from "./useGetSummarizationData";
@@ -36,37 +36,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
     timeLine1,
     timeLine2,
   });
-
-
-  const getAllEventCategoryTypes = (
-    data1: QueryResult | undefined,
-    data2: QueryResult | undefined
-  ) => {
-    const categoriesData1 = new Set(
-      data1?.records.map((recordData) => recordData?.["event.category"])
-    );
-
-    const categoriesData2 = new Set(
-      data2?.records.map((recordData) => recordData?.["event.category"])
-    );
-
-    // Find the intersection of categories from both data sets
-    const commonCategories = [...categoriesData1].filter((category) =>
-      categoriesData2.has(category)
-    );
-
-    const categoryOptions = commonCategories.map((category) => ({
-      value: category,
-      label: category,
-    }));
-
-    return categoryOptions;
-  };
-
-  const categoryTypes = getAllEventCategoryTypes(
-    q1,
-    q2
-  );
 
   /** Taking baseline values from useContext  */
   const {
@@ -207,21 +176,23 @@ const useGetKPIMetrices = (props: QueryProps) => {
     ),
   };
 
-  // console.log({ responseWithCostSavings });
+  /** Getting all the category types from two query records */
+  const categoryTypes = getAllEventCategoryTypes(q1, q2);
 
   /** Final Response */
   const finalResponse: RequiredDataResponse = {
-    categoryTypes,
     /** Other Info */
     isLoading:
       mainQueryLoading || metricData1.isLoading || metricData2.isLoading,
     isError: metricData1.isError || metricData2.isError || isErrorInMainQuery,
 
     /** Other calculations */
+    categoryTypes,
     responseInPercentageWithBaseline,
     responseInPercentageWithPreviousDay,
     responseWithCurrentDayData,
     responseWithPreviousDayData,
+    responseWithCostSavings,
     timeSeriesWithCurrentDayData: metricData1.dataTimeseries,
     timeSeriesWithPreviousDayData: metricData2.dataTimeseries,
     refetch: {
@@ -229,7 +200,6 @@ const useGetKPIMetrices = (props: QueryProps) => {
       refetchSummarizationQuery1: metricData1.refetch,
       refetchSummarizationQuery2: metricData2.refetch,
     },
-    responseWithCostSavings,
   };
   return finalResponse;
 };

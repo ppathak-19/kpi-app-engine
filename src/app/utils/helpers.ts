@@ -1,6 +1,9 @@
-import { type ResultRecord } from "@dynatrace-sdk/client-query";
-import { convertUTCToDate, formatProblemTimeWithDiff } from "./timeConverters";
+import {
+  type QueryResult,
+  type ResultRecord,
+} from "@dynatrace-sdk/client-query";
 import type { IgnoreCasesType } from "types";
+import { convertUTCToDate, formatProblemTimeWithDiff } from "./timeConverters";
 
 type processRecordsParameterType = {
   records: (ResultRecord | null)[];
@@ -8,6 +11,7 @@ type processRecordsParameterType = {
   ignore: IgnoreCasesType;
 };
 
+/** This Helper function returns a ResultRecord containing additional fields required by the app */
 export const processRecords = ({
   records,
   selectedEventCategory,
@@ -15,7 +19,7 @@ export const processRecords = ({
 }: processRecordsParameterType): (ResultRecord | null)[] => {
   const processedRecords: (ResultRecord | null)[] = [];
 
-  records.forEach(eachR => {
+  records.forEach((eachR) => {
     if (!eachR) return;
 
     // Check if the record's event category matches any category in selectedEventCategory
@@ -89,4 +93,30 @@ export const giveMeaningFullErrorDetails = (err: string) => {
   }
 
   return errorDetails;
+};
+
+/** This Helper func gives all the category types present in the params passed */
+export const getAllEventCategoryTypes = (
+  data1: QueryResult | undefined,
+  data2: QueryResult | undefined
+) => {
+  const categoriesData1 = new Set(
+    data1?.records.map((recordData) => recordData?.["event.category"])
+  );
+
+  const categoriesData2 = new Set(
+    data2?.records.map((recordData) => recordData?.["event.category"])
+  );
+
+  // Find the intersection of categories from both data sets
+  const commonCategories = [...categoriesData1].filter((category) =>
+    categoriesData2.has(category)
+  );
+
+  const categoryOptions = commonCategories.map((category) => ({
+    value: category,
+    label: category,
+  }));
+
+  return categoryOptions;
 };
