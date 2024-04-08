@@ -11,14 +11,21 @@ import {
   getPersistedAppState,
   setAppStatePersisted,
 } from "src/app/utils/appState";
-import { APP_STATE_KEY_METRICS, APP_STATE_KEY_SALARIES } from "./AppStateKeys";
+import { giveMeaningFullErrorDetails } from "src/app/utils/helpers";
+import type { BaseLineTypes } from "types";
+import {
+  APP_STATE_KEY_IGNORE_CASES,
+  APP_STATE_KEY_METRICS,
+  APP_STATE_KEY_SALARIES,
+} from "./AppStateKeys";
 import {
   initialAppErrorValues,
   initialAppStateValues,
+  type IgnoreCasesObjectType,
   type InitialAppErrorType,
   type InitialAppStateType,
+  type SalaryType,
 } from "./InitialAppStates";
-import { giveMeaningFullErrorDetails } from "src/app/utils/helpers";
 
 type ProviderProps = {
   children: React.ReactNode;
@@ -42,6 +49,7 @@ const AppContextProvider = ({ children }: ProviderProps) => {
   );
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
+    // console.log(val);
     setAppContextValues(val);
     setAppStatePersisted({
       key: APP_STATE_KEY_METRICS,
@@ -53,7 +61,27 @@ const AppContextProvider = ({ children }: ProviderProps) => {
     setAppStatePersisted({
       key: APP_STATE_KEY_SALARIES,
       value: JSON.stringify({
-        salaryValue: val.salary,
+        salaryValue: val.salary.salaryValue,
+      }),
+    });
+    setAppStatePersisted({
+      key: APP_STATE_KEY_IGNORE_CASES,
+      value: JSON.stringify({
+        valuesInMinutes: {
+          shorterTime: val.ignoreCases.valuesInMinutes.shorterTime,
+          longerTime: val.ignoreCases.valuesInMinutes.longerTime,
+        },
+        reportingBehaviourDropDown: {
+          shorterThanVal:
+            val.ignoreCases.reportingBehaviourDropDown.shorterThanVal,
+          shorterThanDuration:
+            val.ignoreCases.reportingBehaviourDropDown.shorterThanDuration,
+
+          longerThanVal:
+            val.ignoreCases.reportingBehaviourDropDown.longerThanVal,
+          longerThanDuration:
+            val.ignoreCases.reportingBehaviourDropDown.longerThanDuration,
+        },
       }),
     });
   }, []);
@@ -72,17 +100,31 @@ const AppContextProvider = ({ children }: ProviderProps) => {
     const appKeys = getListofKeysUsedInApp();
 
     const getValues = async () => {
-      // console.log((await appKeys).map((aa) => aa.key));
-      if ((await appKeys).length > 0) {
-        console.log("app key is there");
-        const baselineResponse = await getPersistedAppState(
+      const listOfAvailableKeys = await (
+        await appKeys
+      ).map((eachKey) => eachKey.key);
+      // console.log({ listOfAvailableKeys });
+
+      //here we are checking,if required keys are present or not
+      if (
+        listOfAvailableKeys.includes(APP_STATE_KEY_METRICS) &&
+        listOfAvailableKeys.includes(APP_STATE_KEY_SALARIES) &&
+        listOfAvailableKeys.includes(APP_STATE_KEY_IGNORE_CASES)
+      ) {
+        console.log("required app keys are there");
+        const baselineResponse: BaseLineTypes = await getPersistedAppState(
           APP_STATE_KEY_METRICS
         );
 
-        const salary = await getPersistedAppState(APP_STATE_KEY_SALARIES);
-        // console.log({ salary });
+        const salary: SalaryType = await getPersistedAppState(
+          APP_STATE_KEY_SALARIES
+        );
 
-        return { baselineResponse, salary };
+        const ignoreCases: IgnoreCasesObjectType = await getPersistedAppState(
+          APP_STATE_KEY_IGNORE_CASES
+        );
+
+        return { baselineResponse, salary, ignoreCases };
       } else {
         console.log(
           "key is not there, hence setting appState with initial values"
@@ -93,23 +135,41 @@ const AppContextProvider = ({ children }: ProviderProps) => {
 
     getValues()
       .then((res) => {
+        // console.log({ res });
         const data: InitialAppStateType = {
           baseline: {
-            mttd: res?.baselineResponse.mttd,
-            mttr: res?.baselineResponse.mttr,
+            mttd: res?.baselineResponse.mttd || 0,
+            mttr: res?.baselineResponse.mttr || 0,
           },
-          salary: res?.salary.salaryValue,
-          // as ignore cases are not stored in appPersistState, we are taking values from `state`
+          salary: {
+            salaryValue: res?.salary.salaryValue || 0,
+          },
           ignoreCases: {
-            longerTime: state.ignoreCases.longerTime,
-            shorterTime: state.ignoreCases.shorterTime,
+            valuesInMinutes: {
+              longerTime: res?.ignoreCases?.valuesInMinutes?.longerTime || 0,
+              shorterTime: res?.ignoreCases?.valuesInMinutes?.shorterTime || 0,
+            },
+            reportingBehaviourDropDown: {
+              shorterThanVal:
+                res?.ignoreCases?.reportingBehaviourDropDown?.shorterThanVal ||
+                0,
+              shorterThanDuration:
+                res?.ignoreCases?.reportingBehaviourDropDown
+                  ?.shorterThanDuration || "min",
+
+              longerThanVal:
+                res?.ignoreCases?.reportingBehaviourDropDown?.longerThanVal ||
+                0,
+              longerThanDuration:
+                res?.ignoreCases?.reportingBehaviourDropDown
+                  ?.longerThanDuration || "day",
+            },
           },
         };
         setAppContextValues(data);
         // console.log({ data, state });
       })
       .catch((e) => {
-        // console.log(e.message, e.code, e.details);
         setAppError({
           isError: true,
           errorDetails: giveMeaningFullErrorDetails(e.message || ""),
@@ -119,8 +179,8 @@ const AppContextProvider = ({ children }: ProviderProps) => {
     setAppStateValues,
     state.baseline.mttd,
     state.baseline.mttr,
-    state.ignoreCases.longerTime,
-    state.ignoreCases.shorterTime,
+    state.ignoreCases.valuesInMinutes.longerTime,
+    state.ignoreCases.valuesInMinutes.shorterTime,
   ]);
 
   return (
