@@ -6,6 +6,7 @@ import {
 } from "@dynatrace/strato-components-preview";
 import React from "react";
 import type { RequiredDataResponse } from "types";
+import { useAppContext } from "../hooks/Context-API/AppContext";
 
 type MetricDetailSectionProps = {
   daysData: RequiredDataResponse;
@@ -47,6 +48,10 @@ const MetricDetailSection = ({
   selectedTimeFrame,
   clickedAggregation,
 }: MetricDetailSectionProps) => {
+  const {
+    state: { baseline },
+  } = useAppContext();
+
   const daysPriorLabel =
     selectedTimeFrame === "-w"
       ? "Last week (Minutes)"
@@ -88,6 +93,10 @@ const MetricDetailSection = ({
             <SkeletonText lines={4} />
           ) : (
             <div style={{ margin: "1rem" }}>
+              <InfoItem
+                title={"Baseline value (Minutes)"}
+                value={`${baseline.mttd} min`}
+              />
               <InfoItem
                 title={lastDaysLabel}
                 value={
@@ -140,6 +149,10 @@ const MetricDetailSection = ({
             <SkeletonText lines={4} />
           ) : (
             <div style={{ margin: "1rem" }}>
+              <InfoItem
+                title={"Baseline value (Minutes)"}
+                value={`${baseline.mttr} min`}
+              />
               <InfoItem
                 title={lastDaysLabel}
                 value={
