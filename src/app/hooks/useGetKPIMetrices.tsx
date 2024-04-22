@@ -24,7 +24,8 @@ import useGetSummarizationData from "./useGetSummarizationData";
 
 /** This Hook Gives the Required Data for Table */
 const useGetKPIMetrices = (props: QueryProps) => {
-  const { timeLine1, timeLine2, selectedEventCategory } = props;
+  const { timeLine1, timeLine2, selectedEventCategory, selectedTimeFrame } =
+    props;
 
   const {
     queryResponseWithTimeLine1: q1,
@@ -35,6 +36,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
   } = useGetKPIQueryData({
     timeLine1,
     timeLine2,
+    selectedTimeFrame,
   });
 
   /** Taking baseline values from useContext  */

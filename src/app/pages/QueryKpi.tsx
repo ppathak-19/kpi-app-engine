@@ -20,7 +20,7 @@ import { MultiSelect } from "../components/ReusableComponents/MultiSelect";
 
 const QueryKpi: React.FC<AppCompProps> = () => {
   /** States For Two Dropdowns for the app */
-  const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("2");
+  const [selectedTimeFrame, setSelectedTimeFrame] = useState<string>("365");
   const [selectedEventCategory, setSelectedEventCategory] = useState<string[]>(
     []
   );
@@ -39,6 +39,7 @@ const QueryKpi: React.FC<AppCompProps> = () => {
     timeLine1: getPastDaysRange(selectedTimeFrame),
     timeLine2: getBeforePastDays(selectedTimeFrame),
     selectedEventCategory,
+    selectedTimeFrame,
   });
 
   useEffect(() => {

@@ -105,7 +105,7 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       const listOfAvailableKeys = await (
         await appKeys
       ).map((eachKey) => eachKey.key);
-      // console.log({ listOfAvailableKeys });
+      console.log({ listOfAvailableKeys });
 
       //here we are checking,if required keys are present or not
       if (

@@ -50,6 +50,7 @@ export type QueryProps = {
   timeLine1: "now()-7d" | "now()-2d" | "now()-30d" | string;
   timeLine2: "now()-7d" | "now()-2d" | "now()-30d" | string;
   selectedEventCategory?: [] | string[];
+  selectedTimeFrame: string;
 };
 
 /** Different types of aggregations in app */
@@ -71,3 +72,15 @@ export type IgnoreCasesType = {
 
 /** Duration in app */
 export type DurationTypes = "min" | "hrs" | "day";
+
+export type queryType = {
+  data: QueryResult | undefined;
+  error: Error | undefined;
+  errorDetails: ErrorResponse | undefined;
+  isError: boolean;
+  isLoading: boolean;
+  isSuccess: false | QueryResult | undefined | undefined;
+  status: AsyncStateStatus;
+  refetch: (...args: any[]) => Promise<QueryResult | undefined>;
+  cancel: () => void;
+};

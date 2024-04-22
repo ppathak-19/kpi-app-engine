@@ -32,6 +32,6 @@ export const deleteAllPersistedStates = async () => {
 export const getListofKeysUsedInApp = async () => {
   const appStateKeys: Array<{ key: string }> =
     await stateClient.getUserAppStates({});
-  // console.log({ appStateKeys });
+  console.log({ appStateKeys });
   return appStateKeys;
 };
