@@ -35,6 +35,14 @@
       {
         "name": "state:user-app-states:delete",
         "comment": "Acess for deleting user app states"
+      },
+      {
+        "name": "document:documents:write",
+        "comment": " Document to write app data"
+      },
+      {
+        "name": "document:documents:read",
+        "comment": " Access to read document data"
       }
     ]
   }
