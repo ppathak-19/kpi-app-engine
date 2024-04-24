@@ -36,6 +36,7 @@ type ContextType = {
   error: InitialAppErrorType;
   setAppStateValues: (val: InitialAppStateType) => void;
   setAppError: React.Dispatch<React.SetStateAction<InitialAppErrorType>>;
+  appKeys: string[];
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -47,6 +48,8 @@ const AppContextProvider = ({ children }: ProviderProps) => {
   const [appError, setAppError] = useState<InitialAppErrorType>(
     initialAppErrorValues
   );
+
+  const [appKeys, setAppKeys] = useState<string[]>([]);
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
     // console.log(val);
@@ -94,8 +97,9 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       setAppStateValues,
       error: appError,
       setAppError,
+      appKeys,
     }),
-    [setAppStateValues, state, appError, setAppError]
+    [setAppStateValues, state, appError, setAppError, appKeys]
   );
 
   useEffect(() => {
@@ -105,6 +109,7 @@ const AppContextProvider = ({ children }: ProviderProps) => {
       const listOfAvailableKeys = await (
         await appKeys
       ).map((eachKey) => eachKey.key);
+      setAppKeys(listOfAvailableKeys);
       // console.log({ listOfAvailableKeys });
 
       //here we are checking,if required keys are present or not
