@@ -50,6 +50,7 @@ export type QueryProps = {
   timeLine1: "now()-7d" | "now()-2d" | "now()-30d" | string;
   timeLine2: "now()-7d" | "now()-2d" | "now()-30d" | string;
   selectedEventCategory?: [] | string[];
+  shouldCancelQuery: boolean;
 };
 
 /** Different types of aggregations in app */

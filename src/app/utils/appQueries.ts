@@ -17,6 +17,14 @@
 //       | filter res != "null" // removing records having res == null
 // `;
 
+import {
+  EventCategory,
+  EventEnd,
+  EventStart,
+  InitialEventStart,
+  timestamp,
+} from "../constants/KpiFieldConstants";
+
 /** Radu Query */
 // export const buildAppMainQuery = (timeFrame: string) => `\
 // // fetching events in given timeline/timeframe
@@ -49,31 +57,28 @@ fetch dt.davis.problems.snapshots, timeframe: "${timeline}"
   | filter (event.status_transition == "CLOSED" OR event.status_transition == "CREATED")
   | fieldsKeep event.start, event.end,resolved_problem_duration,dt.davis.event_ids,event.id, display_id, timestamp,event.category
   | expand  dt.davis.event_ids
-  | fieldsRename mykey = dt.davis.event_ids
+  | fieldsRename myDavisId = dt.davis.event_ids
   | filter isNotNull(event.end)
   | append [
     fetch  dt.davis.events.snapshots
-    | fieldsAdd mykey = event.id , firsteventstart = event.start
+    | fieldsAdd myDavisId = event.id , firsteventstart = event.start
     | sort firsteventstart asc
   ]
   | summarize {
     mttr = max(resolved_problem_duration),
-    event.start = takeFirst(event.start),
-    event.end = takeFirst(event.end),
-    event.category = takeAny(event.category),
+    ${EventStart} = takeFirst(event.start),
+    ${EventEnd} = takeFirst(event.end),
+    ${EventCategory} = takeAny(event.category),
     display_id = takeAny(display_id),
-    res.event.start = takeMin(firsteventstart),
+    ${InitialEventStart} = takeMin(firsteventstart),
     res.event.kind = takeLast(event.kind),
     res.event.id = takeLast(event.id),
-    timestamp = takeFirst(timestamp),
+    ${timestamp} = takeFirst(timestamp),
     event.id = takeFirst(event.id)
-  }, by: { mykey }
+  }, by: { myDavisId }
   | fieldsAdd mttd = event.start - res.event.start
   | filter isNotNull(mttr) and isNotNull(display_id) and isNotNull(mttd)
   | sort mttd desc
   | dedup display_id
   | limit 9999
 `;
-
-// eslint-disable-next-line no-secrets/no-secrets
-// timestamp4/8/2024, 3:30:59 PMdt.davis.event_ids-2789155000165963988_1712566500000resComplex recordevent.id-2789155000165963988_1712566500000V2res.event.id-2789155000165963988_1712566500000res.event.kindDAVIS_EVENTres.event.start4/8/2024, 2:25 PMres.event.status_transitionCREATEDmttd5 mindisplay_idP-2404269event.categoryERRORevent.end4/8/2024, 3:00 PMevent.start4/8/2024, 2:30 PMresolved_problem_duration30 min

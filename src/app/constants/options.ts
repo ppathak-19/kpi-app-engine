@@ -4,6 +4,7 @@ export const aggregatorOptions = [
 ];
 
 export const timeFrameOptions = [
+  { value: "1", label: "Past 1 Days" },
   { value: "2", label: "Past 2 Days" },
   { value: "7", label: "Past 7 Days" },
   { value: "30", label: "Past 30 Days" },
@@ -68,3 +69,18 @@ export const estimatedSalaries = {
     Customers: 200000,
   },
 };
+
+export const monthNames = [
+  "january",
+  "february",
+  "march",
+  "april",
+  "may",
+  "june",
+  "july",
+  "august",
+  "september",
+  "october",
+  "november",
+  "december",
+];

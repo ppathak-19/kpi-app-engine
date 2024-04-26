@@ -5,22 +5,35 @@ import {
   averageMTTR,
   medianMTTD,
   medianMTTR,
+  mttdTime,
+  mttrTime,
+  timestamp,
 } from "../constants/KpiFieldConstants";
 import { convertKpiQueryMin_to_Time } from "../utils/timeConverters";
 
 type SummarizationDataHookProps = {
   queryData: ResultRecord[];
   timeLine: string;
+  shouldCancelQuery: boolean;
 };
 
 /** This Query Returns the Following Metrices -> Average, Maximum, Minimum, Median */
 const useGetSummarizationData = ({
   queryData,
   timeLine,
-}: SummarizationDataHookProps) => {
-  // console.log(queryData);
+}: // tf,
+// shouldCancel,
+SummarizationDataHookProps) => {
+  // console.log({ queryData });
   const mttdArrayList = queryData.map((each) => each.mttdTime);
   const mttrArrayList = queryData.map((each) => each.mttrTime);
+  const modifiedQueryData = queryData.map((eachData) => ({
+    [`${timestamp}`]: eachData?.[`${timestamp}`],
+    [`${mttdTime}`]: eachData?.[`${mttdTime}`],
+    [`${mttrTime}`]: eachData?.[`${mttrTime}`],
+  }));
+
+  console.log("inside useSum hook...");
 
   /** returns a array of data. 0 index -> MTTD Metrices, 1st index -> MTTR Metrices */
   // here we are using `append` cmd to combine two queries and return two results -> arr[0,1]
@@ -39,7 +52,7 @@ const useGetSummarizationData = ({
   const timeSeriesCals = useDqlQuery({
     body: {
       query: `
-      data json:"""${JSON.stringify(queryData)}"""
+      data json:"""${JSON.stringify(modifiedQueryData)}"""
       | fieldsAdd  timestamp =  toTimestamp(timestamp) //converting into required timestamp
       | makeTimeseries {
         ${averageMTTD} = avg(mttdTime), ${medianMTTD} = median(mttdTime), // MTTD series
@@ -49,6 +62,8 @@ const useGetSummarizationData = ({
       `,
     },
   });
+
+  console.log("near useSum response");
 
   const response = {
     /** MTTD Data */
@@ -106,6 +121,7 @@ const useGetSummarizationData = ({
     refetch: summarizationData.refetch && timeSeriesCals.refetch,
   };
 
+  console.log("near return of response useSumm hook");
   return response;
 };
 

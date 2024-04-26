@@ -24,7 +24,11 @@ import useGetSummarizationData from "./useGetSummarizationData";
 
 /** This Hook Gives the Required Data for Table */
 const useGetKPIMetrices = (props: QueryProps) => {
-  const { timeLine1, timeLine2, selectedEventCategory } = props;
+  const { timeLine1, timeLine2, selectedEventCategory, shouldCancelQuery } =
+    props;
+
+  console.log("\n");
+  console.log("inside useGetKPIMetrices hook...");
 
   const {
     queryResponseWithTimeLine1: q1,
@@ -35,6 +39,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
   } = useGetKPIQueryData({
     timeLine1,
     timeLine2,
+    shouldCancelQuery,
   });
 
   /** Taking baseline values from useContext  */
@@ -47,7 +52,9 @@ const useGetKPIMetrices = (props: QueryProps) => {
   const [storePreviousDay, setStorePreviousDay] = useState<ResultRecord[]>([]);
 
   useEffect(() => {
+    console.warn("inside uef of useGetKPIMetrices hook...");
     if (q1?.records) {
+      console.warn("inside if cond of useGetKPIMetrices hook...");
       const data1 = processRecords({
         records: q1.records,
         selectedEventCategory: selectedEventCategory,
@@ -59,6 +66,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
     }
 
     if (q2?.records) {
+      console.warn("inside if cond of useGetKPIMetrices hook...");
       const data2 = processRecords({
         records: q2.records,
         selectedEventCategory: selectedEventCategory,
@@ -68,21 +76,35 @@ const useGetKPIMetrices = (props: QueryProps) => {
 
       setStorePreviousDay(data2 as ResultRecord[]);
     }
+
+    return () => {
+      console.warn("inside uef return of useGetKPIMetrices hook...");
+      setStoreCurrentDay([]);
+      setStorePreviousDay([]);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q1, q2, selectedEventCategory, ignoreCases]);
 
   /** After Quering the data, take all the mttr,mttd list in an array and pass to useGetSummarizationData() hook to get the required metrices */
 
+  // console.log({ storeCurrentDay, storePreviousDay });
+  console.log(`\n near useSumm hook 1`);
   //* passing current days mttd,mttr values so we get avg,min,etc.. for current days data
   const metricData1 = useGetSummarizationData({
     queryData: storeCurrentDay,
     timeLine: timeLine1,
+    shouldCancelQuery,
   });
 
+  console.log(`\n near useSumm hook 2`);
   //* passing previous days mttd,mttr values so we get avg,min,etc.. for previous days data
   const metricData2 = useGetSummarizationData({
     queryData: storePreviousDay,
     timeLine: timeLine2,
+    shouldCancelQuery,
   });
+
+  // console.log({ metricData1, metricData2 });
 
   const baselineMTTD = baseline.mttd;
   const baselineMTTR = baseline.mttr;
@@ -183,6 +205,7 @@ const useGetKPIMetrices = (props: QueryProps) => {
   /** Getting all the category types from two query records */
   const categoryTypes = getAllEventCategoryTypes(q1, q2);
 
+  console.log("near finalresponse");
   /** Final Response */
   const finalResponse: RequiredDataResponse = {
     /** Other Info */
@@ -205,6 +228,8 @@ const useGetKPIMetrices = (props: QueryProps) => {
       refetchSummarizationQuery2: metricData2.refetch,
     },
   };
+  console.log("near return of hook useGetKPI");
+  // console.log({ finalResponse });
   return finalResponse;
 };
 

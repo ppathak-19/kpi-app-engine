@@ -22,6 +22,10 @@ import {
 import Home from "./pages/Home";
 import PageNotFound from "./pages/PageNotFound";
 import { convertTimeToMinutes } from "./utils/timeConverters";
+import {
+  deleteAllAppPersistedStates,
+  deleteAllUserAppPersistedStates,
+} from "./utils/appState";
 
 const App: React.FC<AppCompProps> = () => {
   /** States For settings, info modal open and close  */
@@ -109,6 +113,14 @@ const App: React.FC<AppCompProps> = () => {
   return (
     <Page>
       <Page.Header>
+        <button
+          onClick={() => {
+            deleteAllAppPersistedStates();
+            deleteAllUserAppPersistedStates();
+          }}
+        >
+          delete
+        </button>
         <Header
           setInfoModalState={setInfoModalState}
           setSettingModalState={setSettingsModalState}

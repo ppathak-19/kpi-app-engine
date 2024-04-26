@@ -7,9 +7,10 @@ import React, {
   useState,
 } from "react";
 import {
-  getListofKeysUsedInApp,
-  getPersistedAppState,
-  setAppStatePersisted,
+  getListofAppKeysInApp,
+  getListofUserAppKeysInApp,
+  getPersistedUserAppState,
+  setUserAppStatePersisted,
 } from "src/app/utils/appState";
 import { giveMeaningFullErrorDetails } from "src/app/utils/helpers";
 import type { BaseLineTypes } from "types";
@@ -31,12 +32,17 @@ type ProviderProps = {
   children: React.ReactNode;
 };
 
+type AppKeysType = {
+  userAppKeys: string[];
+  appKeys: string[];
+};
+
 type ContextType = {
   state: InitialAppStateType;
   error: InitialAppErrorType;
   setAppStateValues: (val: InitialAppStateType) => void;
   setAppError: React.Dispatch<React.SetStateAction<InitialAppErrorType>>;
-  appKeys: string[];
+  appKeys: AppKeysType;
 };
 
 export const AppContext = createContext<ContextType | null>(null);
@@ -49,19 +55,22 @@ const AppContextProvider = ({ children }: ProviderProps) => {
     initialAppErrorValues
   );
 
-  const [appKeys, setAppKeys] = useState<string[]>([]);
+  const [appKeys, setAppKeys] = useState<AppKeysType>({
+    appKeys: [],
+    userAppKeys: [],
+  });
 
   const setAppStateValues = useCallback((val: InitialAppStateType) => {
     // console.log(val);
     setAppContextValues(val);
-    setAppStatePersisted({
+    setUserAppStatePersisted({
       key: APP_STATE_KEY_METRICS,
       value: JSON.stringify({
         mttd: val.baseline.mttd,
         mttr: val.baseline.mttr,
       }),
     });
-    setAppStatePersisted({
+    setUserAppStatePersisted({
       key: APP_STATE_KEY_SALARIES,
       value: JSON.stringify({
         salaryValue: val.salary.salaryValue,
@@ -69,7 +78,7 @@ const AppContextProvider = ({ children }: ProviderProps) => {
           val.salary.defaultPeopleWorkingOnAProblem,
       }),
     });
-    setAppStatePersisted({
+    setUserAppStatePersisted({
       key: APP_STATE_KEY_IGNORE_CASES,
       value: JSON.stringify({
         valuesInMinutes: {
@@ -103,33 +112,40 @@ const AppContextProvider = ({ children }: ProviderProps) => {
   );
 
   useEffect(() => {
-    const appKeys = getListofKeysUsedInApp();
+    const userAppKeys = getListofUserAppKeysInApp();
+    const appKeys = getListofAppKeysInApp();
 
     const getValues = async () => {
-      const listOfAvailableKeys = await (
+      const listOfAvailableUserAppKeys = await (
+        await userAppKeys
+      ).map((eachKey) => eachKey.key);
+
+      const listOfAvailableAppKeys = await (
         await appKeys
       ).map((eachKey) => eachKey.key);
-      setAppKeys(listOfAvailableKeys);
-      // console.log({ listOfAvailableKeys });
+      setAppKeys({
+        appKeys: listOfAvailableAppKeys,
+        userAppKeys: listOfAvailableUserAppKeys,
+      });
+      console.log({ listOfAvailableAppKeys, listOfAvailableUserAppKeys });
 
       //here we are checking,if required keys are present or not
       if (
-        listOfAvailableKeys.includes(APP_STATE_KEY_METRICS) &&
-        listOfAvailableKeys.includes(APP_STATE_KEY_SALARIES) &&
-        listOfAvailableKeys.includes(APP_STATE_KEY_IGNORE_CASES)
+        listOfAvailableUserAppKeys.includes(APP_STATE_KEY_METRICS) &&
+        listOfAvailableUserAppKeys.includes(APP_STATE_KEY_SALARIES) &&
+        listOfAvailableUserAppKeys.includes(APP_STATE_KEY_IGNORE_CASES)
       ) {
         console.log("required app keys are there");
-        const baselineResponse: BaseLineTypes = await getPersistedAppState(
+        const baselineResponse: BaseLineTypes = await getPersistedUserAppState(
           APP_STATE_KEY_METRICS
         );
 
-        const salary: SalaryType = await getPersistedAppState(
+        const salary: SalaryType = await getPersistedUserAppState(
           APP_STATE_KEY_SALARIES
         );
 
-        const ignoreCases: IgnoreCasesObjectType = await getPersistedAppState(
-          APP_STATE_KEY_IGNORE_CASES
-        );
+        const ignoreCases: IgnoreCasesObjectType =
+          await getPersistedUserAppState(APP_STATE_KEY_IGNORE_CASES);
 
         return { baselineResponse, salary, ignoreCases };
       } else {

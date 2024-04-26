@@ -22,6 +22,15 @@ export const medianMTTR = "medianMTTR";
 export const maxMTTR = "maxMTTR";
 export const minMTTR = "minMTTR";
 
+/** Other Constants Used In Query and other places*/
+export const timestamp = "timestamp";
+export const mttrTime = "mttrTime";
+export const mttdTime = "mttdTime";
+export const EventStart = "event.start";
+export const EventEnd = "event.end";
+export const InitialEventStart = "res.event.start";
+export const EventCategory = "event.category";
+
 /** RequiredResponseType */
 export const emptyResponse: RequiredDataResponse = {
   categoryTypes: [] as CategoryType,

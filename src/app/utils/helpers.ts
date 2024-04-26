@@ -3,6 +3,14 @@ import {
   type ResultRecord,
 } from "@dynatrace-sdk/client-query";
 import type { IgnoreCasesType } from "types";
+import {
+  EventCategory,
+  EventEnd,
+  EventStart,
+  InitialEventStart,
+  mttdTime,
+  mttrTime,
+} from "../constants/KpiFieldConstants";
 import { convertUTCToDate, formatProblemTimeWithDiff } from "./timeConverters";
 
 type processRecordsParameterType = {
@@ -26,7 +34,7 @@ export const processRecords = ({
     if (
       selectedEventCategory &&
       selectedEventCategory.length > 0 &&
-      !selectedEventCategory.includes(eachR?.["event.category"] as string)
+      !selectedEventCategory.includes(eachR?.[`${EventCategory}`] as string)
     ) {
       return;
     }
@@ -41,21 +49,21 @@ export const processRecords = ({
 
     // Here we are calculating the No.Of time Diff in minutes b/w event start and res.event start
     const mttd = formatProblemTimeWithDiff(
-      convertUTCToDate(eachR?.["event.start"] as string),
-      convertUTCToDate(eachR?.["res.event.start"] as string)
+      convertUTCToDate(eachR?.[`${EventStart}`] as string),
+      convertUTCToDate(eachR?.[`${InitialEventStart}`] as string)
     );
 
     // Here we are calculating the No.Of time Diff in minutes b/w event start & event end
     const mttr = formatProblemTimeWithDiff(
-      convertUTCToDate(eachR?.["event.start"] as string),
-      convertUTCToDate(eachR?.["event.end"] as string)
+      convertUTCToDate(eachR?.[`${EventStart}`] as string),
+      convertUTCToDate(eachR?.[`${EventEnd}`] as string)
     );
 
     // Create a new object with existing properties and add mttdTime and mttrTime
     const processedRecord: ResultRecord = {
       ...eachR,
-      mttdTime: mttd,
-      mttrTime: mttr,
+      [`${mttdTime}`]: mttd,
+      [`${mttrTime}`]: mttr,
     };
 
     // Filter out records where mttr is less than or equal to 5 minutes
